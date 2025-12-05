@@ -7,26 +7,8 @@ import { createClient } from '@/utils/supabase/server'
 export async function login(formData: FormData) {
     const supabase = await createClient()
 
-    const usernameOrEmail = formData.get('username') as string
+    const email = formData.get('email') as string
     const password = formData.get('password') as string
-
-    let email = usernameOrEmail
-
-    // Check if input is a username (not an email)
-    if (!usernameOrEmail.includes('@')) {
-        // Look up email by username from profiles table
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('email')
-            .eq('username', usernameOrEmail.toLowerCase())
-            .single()
-
-        if (profile && profile.email) {
-            email = profile.email
-        } else {
-            redirect(`/login?error=${encodeURIComponent('Invalid username or password')}`)
-        }
-    }
 
     const { error } = await supabase.auth.signInWithPassword({
         email,
@@ -34,7 +16,34 @@ export async function login(formData: FormData) {
     })
 
     if (error) {
-        redirect(`/login?error=${encodeURIComponent('Invalid username or password')}`)
+        redirect(`/login?error=${encodeURIComponent(error.message)}`)
+    }
+
+    revalidatePath('/', 'layout')
+    redirect('/')
+}
+
+export async function signup(formData: FormData) {
+    const supabase = await createClient()
+
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+
+    const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+            emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
+        },
+    })
+
+    if (error) {
+        redirect(`/login?error=${encodeURIComponent(error.message)}`)
+    }
+
+    // Check if email confirmation is required
+    if (data?.user && !data.session) {
+        redirect('/login?message=Please check your email to confirm your account')
     }
 
     revalidatePath('/', 'layout')
