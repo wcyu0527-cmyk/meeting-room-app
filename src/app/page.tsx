@@ -62,13 +62,13 @@ export default async function Home() {
           </div>
 
           {/* My Bookings Section */}
-          {user && myBookings && myBookings.length > 0 && (
+          {user && (
             <div className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">
                 My Bookings
               </h2>
               <div className="bg-white rounded-lg">
-                <MyBookings bookings={myBookings} userId={user.id} />
+                <MyBookings bookings={myBookings || []} userId={user.id} />
               </div>
             </div>
           )}
