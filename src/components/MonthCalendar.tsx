@@ -125,7 +125,6 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
             title,
             start_time: startDateTime.toISOString(),
             end_time: endDateTime.toISOString(),
-            end_time: endDateTime.toISOString(),
         })
 
         if (error) {
