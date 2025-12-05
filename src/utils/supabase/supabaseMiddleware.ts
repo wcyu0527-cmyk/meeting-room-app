@@ -33,7 +33,17 @@ export async function updateSession(request: NextRequest) {
         }
     )
 
-    await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    // If user is not logged in and trying to access protected routes, redirect to login
+    if (!user && !request.nextUrl.pathname.startsWith('/login')) {
+        return NextResponse.redirect(new URL('/login', request.url))
+    }
+
+    // If user is logged in and trying to access login page, redirect to home
+    if (user && request.nextUrl.pathname === '/login') {
+        return NextResponse.redirect(new URL('/', request.url))
+    }
 
     return response
 }
