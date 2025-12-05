@@ -16,6 +16,15 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     const [loading, setLoading] = useState(false)
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [user, setUser] = useState<any>(null)
+    const [editingBooking, setEditingBooking] = useState<BookingWithRoom | null>(null)
+
+    useMemo(() => {
+        const supabase = createClient()
+        supabase.auth.getUser().then(({ data: { user } }) => {
+            setUser(user)
+        })
+    }, [])
 
     // Calendar logic helpers
     const getDaysInMonth = (date: Date) => {
@@ -93,6 +102,27 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
         })
     }
 
+    const handleDeleteBooking = async () => {
+        if (!editingBooking || !confirm('確定要刪除此預約嗎？')) return
+
+        setIsSubmitting(true)
+        const supabase = createClient()
+        const { error } = await supabase
+            .from('bookings')
+            .delete()
+            .eq('id', editingBooking.id)
+
+        if (error) {
+            alert('刪除失敗: ' + error.message)
+        } else {
+            alert('刪除成功！')
+            setIsBookingModalOpen(false)
+            setEditingBooking(null)
+            fetchMonthBookings(currentDate)
+        }
+        setIsSubmitting(false)
+    }
+
     const handleBookRoom = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setIsSubmitting(true)
@@ -102,7 +132,6 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
         const title = formData.get('title') as string
         const startTimeStr = formData.get('start_time') as string
         const endTimeStr = formData.get('end_time') as string
-        const notes = formData.get('notes') as string
 
         // Combine date and time
         if (!selectedDate) return
@@ -124,19 +153,37 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
             return
         }
 
-        const { error } = await supabase.from('bookings').insert({
-            room_id: roomId,
-            user_id: user.id,
-            title,
-            start_time: startDateTime.toISOString(),
-            end_time: endDateTime.toISOString(),
-        })
+        let error
+        if (editingBooking) {
+            const { error: updateError } = await supabase
+                .from('bookings')
+                .update({
+                    room_id: roomId,
+                    title,
+                    start_time: startDateTime.toISOString(),
+                    end_time: endDateTime.toISOString(),
+                })
+                .eq('id', editingBooking.id)
+            error = updateError
+        } else {
+            const { error: insertError } = await supabase
+                .from('bookings')
+                .insert({
+                    room_id: roomId,
+                    user_id: user.id,
+                    title,
+                    start_time: startDateTime.toISOString(),
+                    end_time: endDateTime.toISOString(),
+                })
+            error = insertError
+        }
 
         if (error) {
-            alert('預約失敗: ' + error.message)
+            alert((editingBooking ? '更新' : '預約') + '失敗: ' + error.message)
         } else {
-            alert('預約成功！')
+            alert((editingBooking ? '更新' : '預約') + '成功！')
             setIsBookingModalOpen(false)
+            setEditingBooking(null)
             fetchMonthBookings(currentDate) // Refresh bookings
         }
         setIsSubmitting(false)
@@ -226,14 +273,27 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
 
                                     {/* Booking Indicators */}
                                     <div className="mt-2 space-y-1 overflow-y-auto max-h-[calc(100%-2rem)] scrollbar-hide">
-                                        {dayBookings.slice(0, 3).map(booking => (
-                                            <div
-                                                key={booking.id}
-                                                className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary truncate border border-primary/20"
-                                            >
-                                                {new Date(booking.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                            </div>
-                                        ))}
+                                        {dayBookings.slice(0, 3).map(booking => {
+                                            const isMyBooking = user && booking.user_id === user.id
+                                            return (
+                                                <div
+                                                    key={booking.id}
+                                                    onClick={(e) => {
+                                                        if (isMyBooking) {
+                                                            e.stopPropagation()
+                                                            setEditingBooking(booking)
+                                                            setIsBookingModalOpen(true)
+                                                        }
+                                                    }}
+                                                    className={`text-[10px] px-1.5 py-0.5 rounded truncate border ${isMyBooking
+                                                        ? 'bg-primary text-primary-foreground border-primary cursor-pointer hover:opacity-90'
+                                                        : 'bg-primary/10 text-primary border-primary/20'
+                                                        }`}
+                                                >
+                                                    {new Date(booking.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </div>
+                                            )
+                                        })}
                                         {dayBookings.length > 3 && (
                                             <div className="text-[10px] text-muted-foreground pl-1">
                                                 +{dayBookings.length - 3} 更多
@@ -291,7 +351,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                     <div className="bg-background rounded-lg shadow-lg w-full max-w-md p-6 border border-border">
                         <h3 className="text-lg font-semibold text-foreground mb-4">
-                            預約會議 - {selectedDate?.toLocaleDateString('zh-TW')}
+                            {editingBooking ? '編輯預約' : '預約會議'} - {selectedDate?.toLocaleDateString('zh-TW')}
                         </h3>
                         <form onSubmit={handleBookRoom} className="space-y-4">
                             <div>
@@ -301,6 +361,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                 <select
                                     name="room_id"
                                     required
+                                    defaultValue={editingBooking?.room_id}
                                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     {rooms.map(room => (
@@ -318,6 +379,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                     type="text"
                                     name="title"
                                     required
+                                    defaultValue={editingBooking?.title}
                                     placeholder="例如：週會"
                                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 />
@@ -331,7 +393,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                         type="time"
                                         name="start_time"
                                         required
-                                        defaultValue="09:00"
+                                        defaultValue={editingBooking ? new Date(editingBooking.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : "09:00"}
                                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     />
                                 </div>
@@ -343,36 +405,41 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                         type="time"
                                         name="end_time"
                                         required
-                                        defaultValue="10:00"
+                                        defaultValue={editingBooking ? new Date(editingBooking.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : "10:00"}
                                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     />
                                 </div>
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium text-foreground mb-1">
-                                    備註 (選填)
-                                </label>
-                                <textarea
-                                    name="notes"
-                                    rows={3}
-                                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                />
-                            </div>
-                            <div className="flex justify-end space-x-2 pt-2">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsBookingModalOpen(false)}
-                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
-                                >
-                                    取消
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-                                >
-                                    {isSubmitting ? '預約中...' : '確認預約'}
-                                </button>
+
+                            <div className="flex justify-between space-x-2 pt-2">
+                                {editingBooking ? (
+                                    <button
+                                        type="button"
+                                        onClick={handleDeleteBooking}
+                                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2"
+                                    >
+                                        刪除
+                                    </button>
+                                ) : <div />}
+                                <div className="flex space-x-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setIsBookingModalOpen(false)
+                                            setEditingBooking(null)
+                                        }}
+                                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+                                    >
+                                        取消
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmitting}
+                                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                                    >
+                                        {isSubmitting ? (editingBooking ? '更新中...' : '預約中...') : (editingBooking ? '更新預約' : '確認預約')}
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
