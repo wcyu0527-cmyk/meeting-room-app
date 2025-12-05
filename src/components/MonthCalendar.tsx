@@ -149,6 +149,16 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                 </h2>
                 <div className="flex space-x-1">
                     <button
+                        onClick={() => {
+                            const today = new Date()
+                            setCurrentDate(today)
+                            setSelectedDate(today)
+                        }}
+                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-2 mr-1"
+                    >
+                        今日
+                    </button>
+                    <button
                         onClick={() => changeMonth(-1)}
                         className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8"
                     >
@@ -239,12 +249,6 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                             <h3 className="text-lg font-medium text-foreground">
                                 {selectedDate.toLocaleDateString('zh-TW', { weekday: 'long', month: 'long', day: 'numeric' })}
                             </h3>
-                            <button
-                                onClick={() => setIsBookingModalOpen(true)}
-                                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-3"
-                            >
-                                預約
-                            </button>
                         </div>
 
                         {selectedDayBookings.length > 0 ? (
