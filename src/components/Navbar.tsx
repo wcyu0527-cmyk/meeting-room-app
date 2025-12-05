@@ -15,7 +15,7 @@ export default function Navbar() {
 
     useEffect(() => {
         const supabase = createClient()
-        
+
         // Get initial user
         supabase.auth.getUser().then(({ data: { user } }) => {
             setUser(user)
@@ -46,7 +46,7 @@ export default function Navbar() {
             .select('is_admin')
             .eq('id', userId)
             .single()
-        
+
         setIsAdmin(data?.is_admin ?? false)
     }
 
@@ -63,73 +63,73 @@ export default function Navbar() {
     }
 
     return (
-        <nav className="bg-white shadow">
+        <nav className="bg-background border-b border-border/40 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16">
                     <div className="flex">
                         <div className="flex-shrink-0 flex items-center">
-                            <Link href="/" className="text-xl font-bold text-indigo-600">
-                                Meeting Room App
+                            <Link href="/" className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-primary">
+                                    <path d="M3 7V5c0-1.1.9-2 2-2h2" /><path d="M17 3h2c1.1 0 2 .9 2 2v2" /><path d="M21 17v2c0 1.1-.9 2-2 2h-2" /><path d="M7 21H5c-1.1 0-2-.9-2-2v-2" /><rect width="10" height="8" x="7" y="8" rx="1" />
+                                </svg>
+                                <span>會議室預約</span>
                             </Link>
                         </div>
                         {/* Desktop Navigation */}
                         <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                             <Link
                                 href="/"
-                                className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
-                                    isActive('/') 
-                                        ? 'text-indigo-600 border-b-2 border-indigo-600' 
-                                        : 'text-gray-900 hover:text-indigo-600'
-                                }`}
+                                className={`inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors ${isActive('/')
+                                    ? 'text-primary border-b-2 border-primary'
+                                    : 'text-muted-foreground hover:text-foreground border-b-2 border-transparent'
+                                    }`}
                             >
-                                Rooms
+                                會議室
                             </Link>
                             {user && (
                                 <Link
                                     href="/my-bookings"
-                                    className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
-                                        isActive('/my-bookings') 
-                                            ? 'text-indigo-600 border-b-2 border-indigo-600' 
-                                            : 'text-gray-900 hover:text-indigo-600'
-                                    }`}
+                                    className={`inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors ${isActive('/my-bookings')
+                                        ? 'text-primary border-b-2 border-primary'
+                                        : 'text-muted-foreground hover:text-foreground border-b-2 border-transparent'
+                                        }`}
                                 >
-                                    My Bookings
+                                    我的預約
                                 </Link>
                             )}
                             {isAdmin && (
                                 <Link
                                     href="/admin"
-                                    className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
-                                        pathname?.startsWith('/admin')
-                                            ? 'text-red-600 border-b-2 border-red-600' 
-                                            : 'text-red-600 hover:text-red-700'
-                                    }`}
+                                    className={`inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors ${pathname?.startsWith('/admin')
+                                        ? 'text-destructive border-b-2 border-destructive'
+                                        : 'text-destructive/80 hover:text-destructive border-b-2 border-transparent'
+                                        }`}
                                 >
-                                    Admin
+                                    管理後台
                                 </Link>
                             )}
                         </div>
                     </div>
                     {/* Desktop User Menu */}
-                    <div className="hidden sm:flex sm:items-center">
+                    <div className="hidden sm:flex sm:items-center gap-4">
                         {user ? (
                             <div className="flex items-center gap-4">
-                                <span className="text-sm text-gray-700">
+                                <span className="text-sm text-muted-foreground">
                                     {user.email}
                                 </span>
-                                <button 
+                                <button
                                     onClick={signOut}
-                                    className="text-sm text-gray-500 hover:text-gray-700"
+                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2"
                                 >
-                                    Sign out
+                                    登出
                                 </button>
                             </div>
                         ) : (
                             <Link
                                 href="/login"
-                                className="text-sm text-indigo-600 hover:text-indigo-500"
+                                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2"
                             >
-                                Sign in
+                                登入
                             </Link>
                         )}
                     </div>
@@ -140,7 +140,7 @@ export default function Navbar() {
                             className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
                             aria-expanded="false"
                         >
-                            <span className="sr-only">Open main menu</span>
+                            <span className="sr-only">開啟選單</span>
                             {/* Icon when menu is closed */}
                             <svg
                                 className={`${mobileMenuOpen ? 'hidden' : 'block'} h-6 w-6`}
@@ -179,59 +179,54 @@ export default function Navbar() {
             </div>
 
             {/* Mobile menu */}
-            <div className={`${mobileMenuOpen ? 'block' : 'hidden'} sm:hidden`}>
-                <div className="pt-2 pb-3 space-y-1">
+            <div className={`${mobileMenuOpen ? 'block' : 'hidden'} sm:hidden border-t border-border`}>
+                <div className="pt-2 pb-3 space-y-1 px-2">
                     <Link
                         href="/"
                         onClick={() => setMobileMenuOpen(false)}
-                        className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
-                            isActive('/')
-                                ? 'bg-indigo-50 border-indigo-500 text-indigo-700'
-                                : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800'
-                        }`}
+                        className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive('/')
+                            ? 'bg-accent text-accent-foreground'
+                            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                            }`}
                     >
-                        Rooms
+                        會議室
                     </Link>
                     {user && (
                         <Link
                             href="/my-bookings"
                             onClick={() => setMobileMenuOpen(false)}
-                            className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
-                                isActive('/my-bookings')
-                                    ? 'bg-indigo-50 border-indigo-500 text-indigo-700'
-                                    : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800'
-                            }`}
+                            className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive('/my-bookings')
+                                ? 'bg-accent text-accent-foreground'
+                                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                                }`}
                         >
-                            My Bookings
+                            我的預約
                         </Link>
                     )}
                     {isAdmin && (
                         <Link
                             href="/admin"
                             onClick={() => setMobileMenuOpen(false)}
-                            className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
-                                pathname?.startsWith('/admin')
-                                    ? 'bg-red-50 border-red-500 text-red-700'
-                                    : 'border-transparent text-red-600 hover:bg-red-50 hover:border-red-300 hover:text-red-800'
-                            }`}
+                            className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${pathname?.startsWith('/admin')
+                                ? 'bg-destructive/10 text-destructive'
+                                : 'text-destructive/80 hover:bg-destructive/10 hover:text-destructive'
+                                }`}
                         >
-                            Admin
+                            管理後台
                         </Link>
                     )}
                 </div>
-                <div className="pt-4 pb-3 border-t border-gray-200">
+                <div className="pt-4 pb-3 border-t border-border">
                     {user ? (
-                        <div className="space-y-1">
-                            <div className="px-4 py-2">
-                                <div className="text-base font-medium text-gray-800">
-                                    {user.email}
-                                </div>
+                        <div className="space-y-3 px-4">
+                            <div className="text-base font-medium text-foreground">
+                                {user.email}
                             </div>
                             <button
                                 onClick={signOut}
-                                className="block w-full text-left px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                                className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                             >
-                                Sign out
+                                登出
                             </button>
                         </div>
                     ) : (
@@ -239,9 +234,9 @@ export default function Navbar() {
                             <Link
                                 href="/login"
                                 onClick={() => setMobileMenuOpen(false)}
-                                className="block text-base font-medium text-indigo-600 hover:text-indigo-500"
+                                className="block w-full text-center rounded-md bg-primary px-3 py-2 text-base font-medium text-primary-foreground hover:bg-primary/90"
                             >
-                                Sign in
+                                登入
                             </Link>
                         </div>
                     )}
