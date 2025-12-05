@@ -5,7 +5,11 @@ import { Room } from '@/types'
 
 export default async function Home() {
   const supabase = await createClient()
-  const { data: rooms } = await supabase.from('rooms').select('*').order('name')
+  const { data: rooms, error } = await supabase.from('rooms').select('*').order('name')
+
+  if (error) {
+    console.error('Error fetching rooms:', error)
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
