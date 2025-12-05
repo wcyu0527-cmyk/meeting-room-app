@@ -12,15 +12,28 @@ export default async function AdminBookingsPage() {
     }
 
     const supabase = await createClient()
+
+    // Try simple query first
     const { data: bookings, error } = await supabase
         .from('bookings')
-        .select('*, rooms(*), profiles(*)')
+        .select(`
+      id,
+      title,
+      start_time,
+      end_time,
+      user_id,
+      room_id,
+      rooms (
+        name
+      )
+    `)
         .order('start_time', { ascending: false })
         .limit(100)
 
-    if (error) {
-        console.error('Error fetching bookings:', error)
-    }
+    console.log('Admin bookings query:', {
+        count: bookings?.length || 0,
+        error: error?.message
+    })
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -39,10 +52,16 @@ export default async function AdminBookingsPage() {
                         </Link>
                     </div>
 
+                    {error && (
+                        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+                            Error: {error.message}
+                        </div>
+                    )}
+
                     <div className="bg-white shadow overflow-hidden sm:rounded-lg">
                         {(!bookings || bookings.length === 0) ? (
                             <div className="text-center py-12 text-gray-500">
-                                No bookings found
+                                {error ? 'Error loading bookings' : 'No bookings found'}
                             </div>
                         ) : (
                             <table className="min-w-full divide-y divide-gray-300">
@@ -58,7 +77,7 @@ export default async function AdminBookingsPage() {
                                             Title
                                         </th>
                                         <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                            User
+                                            User ID
                                         </th>
                                     </tr>
                                 </thead>
@@ -83,8 +102,8 @@ export default async function AdminBookingsPage() {
                                                 <td className="px-3 py-4 text-sm text-gray-900">
                                                     {booking.title}
                                                 </td>
-                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                    {booking.profiles?.full_name || 'N/A'}
+                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 font-mono text-xs">
+                                                    {booking.user_id.substring(0, 8)}...
                                                 </td>
                                             </tr>
                                         )
