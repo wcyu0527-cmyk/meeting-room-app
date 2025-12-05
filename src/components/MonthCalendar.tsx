@@ -6,13 +6,16 @@ import { Booking, Room, BookingWithRoom } from '@/types'
 
 type CalendarProps = {
     initialBookings: BookingWithRoom[]
+    rooms: Room[]
 }
 
-export default function MonthCalendar({ initialBookings }: CalendarProps) {
+export default function MonthCalendar({ initialBookings, rooms }: CalendarProps) {
     const [currentDate, setCurrentDate] = useState(new Date())
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
     const [bookings, setBookings] = useState<BookingWithRoom[]>(initialBookings)
     const [loading, setLoading] = useState(false)
+    const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     // Calendar logic helpers
     const getDaysInMonth = (date: Date) => {
@@ -88,6 +91,51 @@ export default function MonthCalendar({ initialBookings }: CalendarProps) {
             const bookingDate = new Date(booking.start_time)
             return isSameDay(bookingDate, date)
         })
+    }
+
+    const handleBookRoom = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setIsSubmitting(true)
+
+        const formData = new FormData(e.currentTarget)
+        const roomId = formData.get('room_id') as string
+        const title = formData.get('title') as string
+        const startTimeStr = formData.get('start_time') as string
+        const endTimeStr = formData.get('end_time') as string
+        const notes = formData.get('notes') as string
+
+        // Combine date and time
+        if (!selectedDate) return
+
+        const startDateTime = new Date(`${selectedDate.toISOString().split('T')[0]}T${startTimeStr}`)
+        const endDateTime = new Date(`${selectedDate.toISOString().split('T')[0]}T${endTimeStr}`)
+
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+
+        if (!user) {
+            alert('請先登入')
+            setIsSubmitting(false)
+            return
+        }
+
+        const { error } = await supabase.from('bookings').insert({
+            room_id: roomId,
+            user_id: user.id,
+            title,
+            start_time: startDateTime.toISOString(),
+            end_time: endDateTime.toISOString(),
+            notes: notes || null,
+        })
+
+        if (error) {
+            alert('預約失敗: ' + error.message)
+        } else {
+            alert('預約成功！')
+            setIsBookingModalOpen(false)
+            fetchMonthBookings(currentDate) // Refresh bookings
+        }
+        setIsSubmitting(false)
     }
 
     const selectedDayBookings = selectedDate ? getDayBookings(selectedDate) : []
@@ -184,9 +232,17 @@ export default function MonthCalendar({ initialBookings }: CalendarProps) {
                 {/* Selected Day Details Panel */}
                 {selectedDate && (
                     <div className="w-full md:w-80 border-l border-border bg-card p-4 overflow-y-auto max-h-[600px]">
-                        <h3 className="text-lg font-medium text-foreground mb-4">
-                            {selectedDate.toLocaleDateString('zh-TW', { weekday: 'long', month: 'long', day: 'numeric' })}
-                        </h3>
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-medium text-foreground">
+                                {selectedDate.toLocaleDateString('zh-TW', { weekday: 'long', month: 'long', day: 'numeric' })}
+                            </h3>
+                            <button
+                                onClick={() => setIsBookingModalOpen(true)}
+                                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-3"
+                            >
+                                預約
+                            </button>
+                        </div>
 
                         {selectedDayBookings.length > 0 ? (
                             <div className="space-y-3">
@@ -218,6 +274,99 @@ export default function MonthCalendar({ initialBookings }: CalendarProps) {
                     </div>
                 )}
             </div>
+
+            {/* Booking Modal */}
+            {isBookingModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-background rounded-lg shadow-lg w-full max-w-md p-6 border border-border">
+                        <h3 className="text-lg font-semibold text-foreground mb-4">
+                            預約會議 - {selectedDate?.toLocaleDateString('zh-TW')}
+                        </h3>
+                        <form onSubmit={handleBookRoom} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-foreground mb-1">
+                                    會議室
+                                </label>
+                                <select
+                                    name="room_id"
+                                    required
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                    {rooms.map(room => (
+                                        <option key={room.id} value={room.id}>
+                                            {room.name} ({room.capacity}人)
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-foreground mb-1">
+                                    會議主題
+                                </label>
+                                <input
+                                    type="text"
+                                    name="title"
+                                    required
+                                    placeholder="例如：週會"
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-foreground mb-1">
+                                        開始時間
+                                    </label>
+                                    <input
+                                        type="time"
+                                        name="start_time"
+                                        required
+                                        defaultValue="09:00"
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-foreground mb-1">
+                                        結束時間
+                                    </label>
+                                    <input
+                                        type="time"
+                                        name="end_time"
+                                        required
+                                        defaultValue="10:00"
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-foreground mb-1">
+                                    備註 (選填)
+                                </label>
+                                <textarea
+                                    name="notes"
+                                    rows={3}
+                                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                />
+                            </div>
+                            <div className="flex justify-end space-x-2 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsBookingModalOpen(false)}
+                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+                                >
+                                    取消
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                                >
+                                    {isSubmitting ? '預約中...' : '確認預約'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

@@ -67,7 +67,7 @@ export default async function Home() {
               <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">
                 月曆總覽
               </h2>
-              <MonthCalendar initialBookings={monthBookings} />
+              <MonthCalendar initialBookings={monthBookings} rooms={rooms as Room[]} />
             </div>
           )}
 
