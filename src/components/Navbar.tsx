@@ -98,7 +98,7 @@ export default function Navbar() {
                                     我的預約
                                 </Link>
                             )}
-                            {isAdmin && (
+                            {user && (
                                 <Link
                                     href="/admin"
                                     className={`inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors ${pathname?.startsWith('/admin')
@@ -205,7 +205,7 @@ export default function Navbar() {
                             我的預約
                         </Link>
                     )}
-                    {isAdmin && (
+                    {user && (
                         <Link
                             href="/admin"
                             onClick={() => setMobileMenuOpen(false)}
