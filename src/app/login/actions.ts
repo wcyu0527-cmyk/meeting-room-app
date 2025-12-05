@@ -30,18 +30,24 @@ export async function signup(formData: FormData) {
     const password = formData.get('password') as string
     const fullName = formData.get('fullName') as string
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
             data: {
                 full_name: fullName,
             },
+            emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
         },
     })
 
     if (error) {
         redirect(`/login?error=${encodeURIComponent(error.message)}`)
+    }
+
+    // Check if email confirmation is required
+    if (data?.user && !data.session) {
+        redirect('/login?message=Please check your email to confirm your account')
     }
 
     revalidatePath('/', 'layout')
