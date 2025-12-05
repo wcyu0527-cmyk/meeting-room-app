@@ -4,7 +4,12 @@ import { isAdmin } from '@/utils/admin'
 import { redirect } from 'next/navigation'
 import EditRoomForm from './EditRoomForm'
 
-export default async function EditRoomPage({ params }: { params: { id: string } }) {
+export default async function EditRoomPage({
+    params
+}: {
+    params: Promise<{ id: string }>
+}) {
+    const { id } = await params
     const admin = await isAdmin()
 
     if (!admin) {
@@ -12,13 +17,14 @@ export default async function EditRoomPage({ params }: { params: { id: string } 
     }
 
     const supabase = await createClient()
-    const { data: room } = await supabase
+    const { data: room, error } = await supabase
         .from('rooms')
         .select('*')
-        .eq('id', params.id)
+        .eq('id', id)
         .single()
 
-    if (!room) {
+    if (error || !room) {
+        console.error('Error fetching room:', error)
         redirect('/admin/rooms')
     }
 
