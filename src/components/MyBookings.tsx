@@ -93,9 +93,10 @@ export default function MyBookings({
                         const isEditing = editingId === booking.id
                         const startTime = new Date(booking.start_time)
                         const endTime = new Date(booking.end_time)
+                        const isPast = endTime < new Date()
 
                         return (
-                            <tr key={booking.id}>
+                            <tr key={booking.id} className={isPast ? 'bg-gray-50 opacity-75' : ''}>
                                 <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                                     {isEditing ? (
                                         <div className="space-y-2">
@@ -115,7 +116,8 @@ export default function MyBookings({
                                     ) : (
                                         <>
                                             <div className="font-medium text-gray-900">
-                                                {startTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                                {startTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                {isPast && <span className="ml-2 text-xs text-gray-500">(Past)</span>}
                                             </div>
                                             <div className="text-gray-500">
                                                 {startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} - {endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
@@ -156,12 +158,14 @@ export default function MyBookings({
                                         </div>
                                     ) : (
                                         <div className="flex gap-2">
-                                            <button
-                                                onClick={() => handleEdit(booking)}
-                                                className="text-indigo-600 hover:text-indigo-900"
-                                            >
-                                                Edit
-                                            </button>
+                                            {!isPast && (
+                                                <button
+                                                    onClick={() => handleEdit(booking)}
+                                                    className="text-indigo-600 hover:text-indigo-900"
+                                                >
+                                                    Edit
+                                                </button>
+                                            )}
                                             <button
                                                 onClick={() => handleDelete(booking.id)}
                                                 disabled={isDeleting === booking.id}

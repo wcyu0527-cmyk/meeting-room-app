@@ -36,15 +36,19 @@ export default async function Home() {
     .order('start_time')
     .limit(50)
 
-  // Get current user's bookings
+  // Get current user's bookings (all bookings, including past ones)
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: myBookings } = user ? await supabase
+  const { data: myBookings, error: myBookingsError } = user ? await supabase
     .from('bookings')
     .select('*, rooms(*)')
     .eq('user_id', user.id)
-    .gte('end_time', now.toISOString())
-    .order('start_time')
-    : { data: null }
+    .order('start_time', { ascending: false })
+    .limit(20)
+    : { data: null, error: null }
+
+  if (myBookingsError) {
+    console.error('Error fetching my bookings:', myBookingsError)
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
