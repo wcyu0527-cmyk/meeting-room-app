@@ -1,6 +1,7 @@
 'use client'
 
 import { createClient } from '@/utils/supabase/client'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -112,6 +113,7 @@ export default function Navbar() {
                     </div>
                     {/* Desktop User Menu */}
                     <div className="hidden sm:flex sm:items-center gap-4">
+                        <ThemeToggle />
                         {user ? (
                             <div className="flex items-center gap-4">
                                 <span className="text-sm text-muted-foreground">
@@ -217,6 +219,10 @@ export default function Navbar() {
                     )}
                 </div>
                 <div className="pt-4 pb-3 border-t border-border">
+                    <div className="flex items-center justify-between px-4 mb-4">
+                        <span className="text-sm font-medium text-muted-foreground">切換主題</span>
+                        <ThemeToggle />
+                    </div>
                     {user ? (
                         <div className="space-y-3 px-4">
                             <div className="text-base font-medium text-foreground">
