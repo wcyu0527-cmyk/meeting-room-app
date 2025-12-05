@@ -301,7 +301,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                 >
                                     {rooms.map(room => (
                                         <option key={room.id} value={room.id}>
-                                            {room.name} ({room.capacity}人)
+                                            {room.name}
                                         </option>
                                     ))}
                                 </select>
