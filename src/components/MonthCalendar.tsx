@@ -188,7 +188,10 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                             return (
                                 <button
                                     key={date.toISOString()}
-                                    onClick={() => setSelectedDate(date)}
+                                    onClick={() => {
+                                        setSelectedDate(date)
+                                        setIsBookingModalOpen(true)
+                                    }}
                                     className={`
                                         relative h-24 md:h-32 p-2 rounded-lg border transition-all text-left group
                                         ${isSelected
