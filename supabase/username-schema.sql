@@ -1,9 +1,5 @@
--- Add username column to profiles table
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS username TEXT UNIQUE;
+-- Add email column to profiles table for username login
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS email TEXT;
 
--- Create index for faster username queries
-CREATE INDEX IF NOT EXISTS profiles_username_idx ON profiles(username);
-
--- Add constraint to ensure username is lowercase and alphanumeric
-ALTER TABLE profiles ADD CONSTRAINT username_format 
-  CHECK (username ~ '^[a-z0-9_]{3,20}$');
+-- Create index for email
+CREATE INDEX IF NOT EXISTS profiles_email_idx ON profiles(email);

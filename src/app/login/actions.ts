@@ -14,20 +14,15 @@ export async function login(formData: FormData) {
 
     // Check if input is a username (not an email)
     if (!usernameOrEmail.includes('@')) {
-        // Look up email by username
+        // Look up email by username from profiles table
         const { data: profile } = await supabase
             .from('profiles')
-            .select('id')
+            .select('email')
             .eq('username', usernameOrEmail.toLowerCase())
             .single()
 
-        if (profile) {
-            // Get email from auth.users
-            const { data: { users } } = await supabase.auth.admin.listUsers()
-            const user = users?.find(u => u.id === profile.id)
-            if (user) {
-                email = user.email || usernameOrEmail
-            }
+        if (profile && profile.email) {
+            email = profile.email
         } else {
             redirect(`/login?error=${encodeURIComponent('Invalid username or password')}`)
         }
