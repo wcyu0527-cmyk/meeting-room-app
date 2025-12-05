@@ -107,8 +107,13 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
         // Combine date and time
         if (!selectedDate) return
 
-        const startDateTime = new Date(`${selectedDate.toISOString().split('T')[0]}T${startTimeStr}`)
-        const endDateTime = new Date(`${selectedDate.toISOString().split('T')[0]}T${endTimeStr}`)
+        const year = selectedDate.getFullYear()
+        const month = String(selectedDate.getMonth() + 1).padStart(2, '0')
+        const day = String(selectedDate.getDate()).padStart(2, '0')
+        const dateStr = `${year}-${month}-${day}`
+
+        const startDateTime = new Date(`${dateStr}T${startTimeStr}`)
+        const endDateTime = new Date(`${dateStr}T${endTimeStr}`)
 
         const supabase = createClient()
         const { data: { user } } = await supabase.auth.getUser()
