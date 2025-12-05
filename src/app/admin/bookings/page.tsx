@@ -12,11 +12,15 @@ export default async function AdminBookingsPage() {
     }
 
     const supabase = await createClient()
-    const { data: bookings } = await supabase
+    const { data: bookings, error } = await supabase
         .from('bookings')
         .select('*, rooms(*), profiles(*)')
         .order('start_time', { ascending: false })
         .limit(100)
+
+    if (error) {
+        console.error('Error fetching bookings:', error)
+    }
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -36,52 +40,58 @@ export default async function AdminBookingsPage() {
                     </div>
 
                     <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-                        <table className="min-w-full divide-y divide-gray-300">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                                        Date & Time
-                                    </th>
-                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Room
-                                    </th>
-                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Title
-                                    </th>
-                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        User
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200 bg-white">
-                                {bookings?.map((booking: any) => {
-                                    const startTime = new Date(booking.start_time)
-                                    const endTime = new Date(booking.end_time)
+                        {(!bookings || bookings.length === 0) ? (
+                            <div className="text-center py-12 text-gray-500">
+                                No bookings found
+                            </div>
+                        ) : (
+                            <table className="min-w-full divide-y divide-gray-300">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                                            Date & Time
+                                        </th>
+                                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                            Room
+                                        </th>
+                                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                            Title
+                                        </th>
+                                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                            User
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-200 bg-white">
+                                    {bookings.map((booking: any) => {
+                                        const startTime = new Date(booking.start_time)
+                                        const endTime = new Date(booking.end_time)
 
-                                    return (
-                                        <tr key={booking.id}>
-                                            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                                                <div className="font-medium text-gray-900">
-                                                    {startTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                                </div>
-                                                <div className="text-gray-500">
-                                                    {startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} - {endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                                                </div>
-                                            </td>
-                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
-                                                {booking.rooms?.name}
-                                            </td>
-                                            <td className="px-3 py-4 text-sm text-gray-900">
-                                                {booking.title}
-                                            </td>
-                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                {booking.profiles?.full_name || 'N/A'}
-                                            </td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
+                                        return (
+                                            <tr key={booking.id}>
+                                                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
+                                                    <div className="font-medium text-gray-900">
+                                                        {startTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                    </div>
+                                                    <div className="text-gray-500">
+                                                        {startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} - {endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                                                    </div>
+                                                </td>
+                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
+                                                    {booking.rooms?.name || 'N/A'}
+                                                </td>
+                                                <td className="px-3 py-4 text-sm text-gray-900">
+                                                    {booking.title}
+                                                </td>
+                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                                    {booking.profiles?.full_name || 'N/A'}
+                                                </td>
+                                            </tr>
+                                        )
+                                    })}
+                                </tbody>
+                            </table>
+                        )}
                     </div>
                 </div>
             </main>
