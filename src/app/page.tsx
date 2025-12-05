@@ -2,6 +2,7 @@ import Navbar from '@/components/Navbar'
 import RoomCard from '@/components/RoomCard'
 import TodayBookings from '@/components/TodayBookings'
 import AllBookings from '@/components/AllBookings'
+import MyBookings from '@/components/MyBookings'
 import { createClient } from '@/utils/supabase/server'
 import { Room } from '@/types'
 
@@ -35,6 +36,16 @@ export default async function Home() {
     .order('start_time')
     .limit(50)
 
+  // Get current user's bookings
+  const { data: { user } } = await supabase.auth.getUser()
+  const { data: myBookings } = user ? await supabase
+    .from('bookings')
+    .select('*, rooms(*)')
+    .eq('user_id', user.id)
+    .gte('end_time', now.toISOString())
+    .order('start_time')
+    : { data: null }
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
@@ -49,6 +60,18 @@ export default async function Home() {
               <TodayBookings bookings={todayBookings || []} />
             </div>
           </div>
+
+          {/* My Bookings Section */}
+          {user && myBookings && myBookings.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                My Bookings
+              </h2>
+              <div className="bg-white rounded-lg">
+                <MyBookings bookings={myBookings} userId={user.id} />
+              </div>
+            </div>
+          )}
 
           {/* Available Meeting Rooms Section */}
           <div className="mb-8">
