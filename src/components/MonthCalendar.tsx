@@ -2,16 +2,16 @@
 
 import { useState, useMemo } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { Booking, Room } from '@/types'
+import { Booking, Room, BookingWithRoom } from '@/types'
 
 type CalendarProps = {
-    initialBookings: Booking[]
+    initialBookings: BookingWithRoom[]
 }
 
 export default function MonthCalendar({ initialBookings }: CalendarProps) {
     const [currentDate, setCurrentDate] = useState(new Date())
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
-    const [bookings, setBookings] = useState<Booking[]>(initialBookings)
+    const [bookings, setBookings] = useState<BookingWithRoom[]>(initialBookings)
     const [loading, setLoading] = useState(false)
 
     // Calendar logic helpers
@@ -55,7 +55,7 @@ export default function MonthCalendar({ initialBookings }: CalendarProps) {
             .lte('end_time', endOfMonth.toISOString())
 
         if (!error && data) {
-            setBookings(data as Booking[])
+            setBookings(data as unknown as BookingWithRoom[])
         }
         setLoading(false)
     }

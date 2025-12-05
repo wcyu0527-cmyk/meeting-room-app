@@ -4,7 +4,7 @@ import TodayBookings from '@/components/TodayBookings'
 import AllBookings from '@/components/AllBookings'
 import MonthCalendar from '@/components/MonthCalendar'
 import { createClient } from '@/utils/supabase/server'
-import { Room, Booking } from '@/types'
+import { Room, Booking, BookingWithRoom } from '@/types'
 
 export default async function Home() {
   const supabase = await createClient()
@@ -41,7 +41,7 @@ export default async function Home() {
     .limit(50)
 
   // Get current month bookings if user is logged in
-  let monthBookings: Booking[] = []
+  let monthBookings: BookingWithRoom[] = []
   if (user) {
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
     const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59)
@@ -52,7 +52,7 @@ export default async function Home() {
       .gte('start_time', startOfMonth.toISOString())
       .lte('end_time', endOfMonth.toISOString())
 
-    if (mb) monthBookings = mb as Booking[]
+    if (mb) monthBookings = mb as unknown as BookingWithRoom[]
   }
 
   return (

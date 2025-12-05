@@ -17,6 +17,10 @@ export type Booking = {
     created_at: string
 }
 
+export type BookingWithRoom = Booking & {
+    rooms: Room | null
+}
+
 export type Profile = {
     id: string
     full_name: string | null
