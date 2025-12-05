@@ -14,6 +14,7 @@ export type Booking = {
     title: string
     start_time: string
     end_time: string
+    notes?: string | null
     created_at: string
 }
 
