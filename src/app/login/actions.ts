@@ -7,8 +7,31 @@ import { createClient } from '@/utils/supabase/server'
 export async function login(formData: FormData) {
     const supabase = await createClient()
 
-    const email = formData.get('email') as string
+    const usernameOrEmail = formData.get('username') as string
     const password = formData.get('password') as string
+
+    let email = usernameOrEmail
+
+    // Check if input is a username (not an email)
+    if (!usernameOrEmail.includes('@')) {
+        // Look up email by username
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('username', usernameOrEmail.toLowerCase())
+            .single()
+
+        if (profile) {
+            // Get email from auth.users
+            const { data: { users } } = await supabase.auth.admin.listUsers()
+            const user = users?.find(u => u.id === profile.id)
+            if (user) {
+                email = user.email || usernameOrEmail
+            }
+        } else {
+            redirect(`/login?error=${encodeURIComponent('Invalid username or password')}`)
+        }
+    }
 
     const { error } = await supabase.auth.signInWithPassword({
         email,
@@ -16,34 +39,7 @@ export async function login(formData: FormData) {
     })
 
     if (error) {
-        redirect(`/login?error=${encodeURIComponent(error.message)}`)
-    }
-
-    revalidatePath('/', 'layout')
-    redirect('/')
-}
-
-export async function signup(formData: FormData) {
-    const supabase = await createClient()
-
-    const email = formData.get('email') as string
-    const password = formData.get('password') as string
-
-    const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-            emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
-        },
-    })
-
-    if (error) {
-        redirect(`/login?error=${encodeURIComponent(error.message)}`)
-    }
-
-    // Check if email confirmation is required
-    if (data?.user && !data.session) {
-        redirect('/login?message=Please check your email to confirm your account')
+        redirect(`/login?error=${encodeURIComponent('Invalid username or password')}`)
     }
 
     revalidatePath('/', 'layout')
