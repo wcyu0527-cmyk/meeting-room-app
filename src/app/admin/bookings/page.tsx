@@ -14,7 +14,7 @@ export default async function AdminBookingsPage() {
 
     const supabase = await createClient()
 
-    const { data: bookings, error } = await supabase
+    const { data: rawBookings, error } = await supabase
         .from('bookings')
         .select(`
       id,
@@ -23,12 +23,24 @@ export default async function AdminBookingsPage() {
       end_time,
       user_id,
       room_id,
-      rooms (
+      rooms!inner (
         name
       )
     `)
         .order('start_time', { ascending: false })
         .limit(100)
+
+    // Transform the data to match the expected type
+    const bookings = rawBookings?.map((booking: any) => ({
+        id: booking.id,
+        title: booking.title,
+        start_time: booking.start_time,
+        end_time: booking.end_time,
+        user_id: booking.user_id,
+        rooms: {
+            name: booking.rooms.name
+        }
+    })) || []
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -54,7 +66,7 @@ export default async function AdminBookingsPage() {
                     )}
 
                     <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-                        <AdminBookingsList bookings={bookings || []} />
+                        <AdminBookingsList bookings={bookings} />
                     </div>
                 </div>
             </main>
