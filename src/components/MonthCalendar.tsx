@@ -283,183 +283,168 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                                     key={booking.id}
                                                     onClick={(e) => {
                                                         if (isMyBooking) {
-                                                            e.stopPropagation()
-                                                            setEditingBooking(booking)
-                                                            setIsBookingModalOpen(true)
-                                                        }
-                                                    }}
-                                                    className={`text-[10px] px-1.5 py-0.5 rounded truncate border ${isMyBooking
-                                                        ? 'bg-primary text-primary-foreground border-primary cursor-pointer hover:opacity-90'
-                                                        : 'bg-primary/10 text-primary border-primary/20'
-                                                        }`}
-                                                >
-                                                    {new Date(booking.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                </div>
-                                            )
-                                        })}
-                                        {dayBookings.length > 3 && (
-                                            <div className="text-[10px] text-muted-foreground pl-1">
-                                                +{dayBookings.length - 3} 更多
                                             </div>
                                         )}
-                                    </div>
+                                </div>
                                 </button>
-                            )
+                    )
                         })}
-                    </div>
                 </div>
-
-                {/* Selected Day Details Panel */}
-                {selectedDate && (
-                    <div className="w-full md:w-80 border-l border-border bg-card p-4 overflow-y-auto max-h-[600px]">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-medium text-foreground">
-                                {selectedDate.toLocaleDateString('zh-TW', { weekday: 'long', month: 'long', day: 'numeric' })}
-                            </h3>
-                        </div>
-
-                        {selectedDayBookings.length > 0 ? (
-                            <div className="space-y-3">
-                                {selectedDayBookings.map(booking => (
-                                    <div key={booking.id} className="bg-card p-3 rounded-lg shadow-sm border border-border">
-                                        <div className="flex justify-between items-start mb-2">
-                                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
-                                                {(booking.rooms as unknown as Room)?.name || '會議室'}
-                                            </span>
-                                        </div>
-                                        <div className="text-sm font-medium text-foreground mb-1">
-                                            {booking.title}
-                                        </div>
-                                        <div className="text-xs text-muted-foreground flex items-center">
-                                            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            {new Date(booking.start_time).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })} -
-                                            {new Date(booking.end_time).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-8 text-muted-foreground">
-                                <p>本日無預約紀錄</p>
-                            </div>
-                        )}
-                    </div>
-                )}
             </div>
 
-            {/* Booking Modal */}
-            {isBookingModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-background rounded-lg shadow-lg w-full max-w-md p-6 border border-border">
-                        <h3 className="text-lg font-semibold text-foreground mb-4">
-                            {editingBooking ? '編輯預約' : '預約會議'} - {selectedDate?.toLocaleDateString('zh-TW')}
+            {/* Selected Day Details Panel */}
+            {selectedDate && (
+                <div className="w-full md:w-80 border-l border-border bg-card p-4 overflow-y-auto max-h-[600px]">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-medium text-foreground">
+                            {selectedDate.toLocaleDateString('zh-TW', { weekday: 'long', month: 'long', day: 'numeric' })}
                         </h3>
-                        <form onSubmit={handleBookRoom} className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-foreground mb-1">
-                                    會議室
-                                </label>
-                                <select
-                                    name="room_id"
-                                    required
-                                    defaultValue={editingBooking?.room_id}
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                >
-                                    {rooms.map(room => (
-                                        <option key={room.id} value={room.id}>
-                                            {room.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-foreground mb-1">
-                                    會議主題
-                                </label>
-                                <input
-                                    type="text"
-                                    name="title"
-                                    required
-                                    defaultValue={editingBooking?.title}
-                                    placeholder="例如：週會"
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                />
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-foreground mb-1">
-                                        開始時間
-                                    </label>
-                                    <input
-                                        type="time"
-                                        name="start_time"
-                                        required
-                                        defaultValue={editingBooking ? new Date(editingBooking.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : "09:00"}
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-foreground mb-1">
-                                        結束時間
-                                    </label>
-                                    <input
-                                        type="time"
-                                        name="end_time"
-                                        required
-                                        defaultValue={editingBooking ? new Date(editingBooking.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : "10:00"}
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-foreground mb-1">
-                                    備註 (選填)
-                                </label>
-                                <textarea
-                                    name="notes"
-                                    rows={3}
-                                    defaultValue={editingBooking?.notes || ''}
-                                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                />
-                            </div>
-
-                            <div className="flex justify-between space-x-2 pt-2">
-                                {editingBooking ? (
-                                    <button
-                                        type="button"
-                                        onClick={handleDeleteBooking}
-                                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2"
-                                    >
-                                        刪除
-                                    </button>
-                                ) : <div />}
-                                <div className="flex space-x-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setIsBookingModalOpen(false)
-                                            setEditingBooking(null)
-                                        }}
-                                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
-                                    >
-                                        取消
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        disabled={isSubmitting}
-                                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-                                    >
-                                        {isSubmitting ? (editingBooking ? '更新中...' : '預約中...') : (editingBooking ? '更新預約' : '確認預約')}
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
                     </div>
+
+                    {selectedDayBookings.length > 0 ? (
+                        <div className="space-y-3">
+                            {selectedDayBookings.map(booking => (
+                                <div key={booking.id} className="bg-card p-3 rounded-lg shadow-sm border border-border">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
+                                            {(booking.rooms as unknown as Room)?.name || '會議室'}
+                                        </span>
+                                    </div>
+                                    <div className="text-sm font-medium text-foreground mb-1">
+                                        {booking.title}
+                                    </div>
+                                    <div className="text-xs text-muted-foreground flex items-center">
+                                        <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        {new Date(booking.start_time).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })} -
+                                        {new Date(booking.end_time).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-8 text-muted-foreground">
+                            <p>本日無預約紀錄</p>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
+
+            {/* Booking Modal */ }
+    {
+        isBookingModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                <div className="bg-background rounded-lg shadow-lg w-full max-w-md p-6 border border-border">
+                    <h3 className="text-lg font-semibold text-foreground mb-4">
+                        {editingBooking ? '編輯預約' : '預約會議'} - {selectedDate?.toLocaleDateString('zh-TW')}
+                    </h3>
+                    <form onSubmit={handleBookRoom} className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-foreground mb-1">
+                                會議室
+                            </label>
+                            <select
+                                name="room_id"
+                                required
+                                defaultValue={editingBooking?.room_id}
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                                {rooms.map(room => (
+                                    <option key={room.id} value={room.id}>
+                                        {room.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-foreground mb-1">
+                                會議主題
+                            </label>
+                            <input
+                                type="text"
+                                name="title"
+                                required
+                                defaultValue={editingBooking?.title}
+                                placeholder="例如：週會"
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-foreground mb-1">
+                                    開始時間
+                                </label>
+                                <input
+                                    type="time"
+                                    name="start_time"
+                                    required
+                                    defaultValue={editingBooking ? new Date(editingBooking.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : "09:00"}
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-foreground mb-1">
+                                    結束時間
+                                </label>
+                                <input
+                                    type="time"
+                                    name="end_time"
+                                    required
+                                    defaultValue={editingBooking ? new Date(editingBooking.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : "10:00"}
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-foreground mb-1">
+                                備註 (選填)
+                            </label>
+                            <textarea
+                                name="notes"
+                                rows={3}
+                                defaultValue={editingBooking?.notes || ''}
+                                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            />
+                        </div>
+
+                        <div className="flex justify-between space-x-2 pt-2">
+                            {editingBooking ? (
+                                <button
+                                    type="button"
+                                    onClick={handleDeleteBooking}
+                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2"
+                                >
+                                    刪除
+                                </button>
+                            ) : <div />}
+                            <div className="flex space-x-2">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setIsBookingModalOpen(false)
+                                        setEditingBooking(null)
+                                    }}
+                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+                                >
+                                    取消
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                                >
+                                    {isSubmitting ? (editingBooking ? '更新中...' : '預約中...') : (editingBooking ? '更新預約' : '確認預約')}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        )
+    }
+        </div >
     )
 }
