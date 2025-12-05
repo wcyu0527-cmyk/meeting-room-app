@@ -37,24 +37,6 @@ export default function LoginPage({
 
                         <div>
                             <label
-                                htmlFor="fullName"
-                                className="block text-sm font-medium text-gray-700"
-                            >
-                                Full Name
-                            </label>
-                            <div className="mt-1">
-                                <input
-                                    id="fullName"
-                                    name="fullName"
-                                    type="text"
-                                    autoComplete="name"
-                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label
                                 htmlFor="password"
                                 className="block text-sm font-medium text-gray-700"
                             >
