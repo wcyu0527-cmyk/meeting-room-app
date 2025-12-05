@@ -31,15 +31,18 @@ export default async function RoomPage({
     return (
         <div className="min-h-screen bg-gray-100">
             <Navbar />
-            <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <main className="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
                 <div className="px-4 py-6 sm:px-0">
+                    {/* Room Info */}
                     <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
                         <div className="px-4 py-5 sm:px-6">
-                            <h3 className="text-lg leading-6 font-medium text-gray-900">
+                            <h3 className="text-2xl leading-6 font-bold text-gray-900">
                                 {room.name}
                             </h3>
-                            <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                                Capacity: {room.capacity} | Equipment: {room.equipment?.join(', ')}
+                            <p className="mt-2 text-sm text-gray-600">
+                                <span className="font-medium">Capacity:</span> {room.capacity} people
+                                {' | '}
+                                <span className="font-medium">Equipment:</span> {room.equipment?.join(', ') || 'None'}
                             </p>
                         </div>
                         {room.image_url && (
@@ -53,16 +56,17 @@ export default async function RoomPage({
                         )}
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div>
-                            <BookingForm roomId={room.id} />
-                        </div>
-                        <div>
-                            <BookingList
-                                initialBookings={(bookings as Booking[]) || []}
-                                roomId={room.id}
-                            />
-                        </div>
+                    {/* Booking Form - Full Width */}
+                    <div className="mb-6">
+                        <BookingForm roomId={room.id} />
+                    </div>
+
+                    {/* Current Bookings - Full Width */}
+                    <div>
+                        <BookingList
+                            initialBookings={(bookings as Booking[]) || []}
+                            roomId={room.id}
+                        />
                     </div>
                 </div>
             </main>
