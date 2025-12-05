@@ -3,6 +3,7 @@ import { createClient } from '@/utils/supabase/server'
 import { isAdmin } from '@/utils/admin'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import AdminBookingsList from './AdminBookingsList'
 
 export default async function AdminBookingsPage() {
     const admin = await isAdmin()
@@ -13,7 +14,6 @@ export default async function AdminBookingsPage() {
 
     const supabase = await createClient()
 
-    // Try simple query first
     const { data: bookings, error } = await supabase
         .from('bookings')
         .select(`
@@ -29,11 +29,6 @@ export default async function AdminBookingsPage() {
     `)
         .order('start_time', { ascending: false })
         .limit(100)
-
-    console.log('Admin bookings query:', {
-        count: bookings?.length || 0,
-        error: error?.message
-    })
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -59,58 +54,7 @@ export default async function AdminBookingsPage() {
                     )}
 
                     <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-                        {(!bookings || bookings.length === 0) ? (
-                            <div className="text-center py-12 text-gray-500">
-                                {error ? 'Error loading bookings' : 'No bookings found'}
-                            </div>
-                        ) : (
-                            <table className="min-w-full divide-y divide-gray-300">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                                            Date & Time
-                                        </th>
-                                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                            Room
-                                        </th>
-                                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                            Title
-                                        </th>
-                                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                            User ID
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-200 bg-white">
-                                    {bookings.map((booking: any) => {
-                                        const startTime = new Date(booking.start_time)
-                                        const endTime = new Date(booking.end_time)
-
-                                        return (
-                                            <tr key={booking.id}>
-                                                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                                                    <div className="font-medium text-gray-900">
-                                                        {startTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                                    </div>
-                                                    <div className="text-gray-500">
-                                                        {startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} - {endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                                                    </div>
-                                                </td>
-                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
-                                                    {booking.rooms?.name || 'N/A'}
-                                                </td>
-                                                <td className="px-3 py-4 text-sm text-gray-900">
-                                                    {booking.title}
-                                                </td>
-                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 font-mono text-xs">
-                                                    {booking.user_id.substring(0, 8)}...
-                                                </td>
-                                            </tr>
-                                        )
-                                    })}
-                                </tbody>
-                            </table>
-                        )}
+                        <AdminBookingsList bookings={bookings || []} />
                     </div>
                 </div>
             </main>
