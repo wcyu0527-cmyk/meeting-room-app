@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
+import { isAdmin } from '@/utils/admin'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -7,6 +8,8 @@ export default async function Navbar() {
     const {
         data: { user },
     } = await supabase.auth.getUser()
+
+    const admin = await isAdmin()
 
     const signOut = async () => {
         'use server'
@@ -38,6 +41,14 @@ export default async function Navbar() {
                                     className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 hover:text-indigo-600"
                                 >
                                     My Bookings
+                                </Link>
+                            )}
+                            {admin && (
+                                <Link
+                                    href="/admin"
+                                    className="inline-flex items-center px-1 pt-1 text-sm font-medium text-red-600 hover:text-red-700"
+                                >
+                                    Admin
                                 </Link>
                             )}
                         </div>
