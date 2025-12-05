@@ -25,6 +25,22 @@ export default async function Navbar() {
                                 Meeting Room App
                             </Link>
                         </div>
+                        <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                            <Link
+                                href="/"
+                                className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 hover:text-indigo-600"
+                            >
+                                Rooms
+                            </Link>
+                            {user && (
+                                <Link
+                                    href="/my-bookings"
+                                    className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 hover:text-indigo-600"
+                                >
+                                    My Bookings
+                                </Link>
+                            )}
+                        </div>
                     </div>
                     <div className="flex items-center">
                         {user ? (
