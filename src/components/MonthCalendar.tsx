@@ -262,11 +262,11 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     return (
         <div className="rounded-xl border bg-card text-card-foreground shadow">
             {/* Main Title & Filter Tags */}
-            <div className="flex flex-col sm:flex-row items-center px-6 py-4 border-b border-border gap-6">
+            <div className="flex flex-wrap items-center px-6 py-4 border-b border-border gap-x-6 gap-y-3">
                 <h2 className="text-xl font-bold tracking-tight text-foreground whitespace-nowrap">
                     本月會議
                 </h2>
-                <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+                <div className="flex flex-wrap gap-2 items-center">
                     {['所有', '大會議室', '小會議室', '舊辦會議室'].map(tag => (
                         <button
                             key={tag}
@@ -361,7 +361,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                         setIsBookingModalOpen(true)
                                     }}
                                     className={`
-                                        relative h-24 md:h-32 p-2 rounded-lg border transition-all text-left group
+                                        relative min-h-[3.5rem] md:h-32 p-1 md:p-2 rounded-lg border transition-all text-left group flex flex-col items-center md:items-start
                                         ${isSelected
                                             ? 'ring-2 ring-primary border-transparent bg-accent'
                                             : 'border-border hover:border-primary/50 hover:shadow-sm bg-card'
@@ -369,7 +369,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                     `}
                                 >
                                     <span className={`
-                                        inline-flex items-center justify-center w-7 h-7 rounded-full text-sm font-medium
+                                        inline-flex items-center justify-center w-6 h-6 md:w-7 md:h-7 rounded-full text-xs md:text-sm font-medium
                                         ${isToday
                                             ? 'bg-primary text-primary-foreground'
                                             : isSelected ? 'text-primary' : 'text-foreground'
@@ -378,8 +378,24 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                         {date.getDate()}
                                     </span>
 
-                                    {/* Booking Indicators */}
-                                    <div className="mt-2 space-y-1 overflow-y-auto max-h-[calc(100%-2rem)] scrollbar-hide">
+                                    {/* Mobile: Dots Indicators */}
+                                    <div className="md:hidden mt-1 flex flex-wrap gap-0.5 justify-center content-center w-full px-0.5">
+                                        {dayBookings.slice(0, 6).map(booking => {
+                                            const isMyBooking = user && booking.user_id === user.id
+                                            return (
+                                                <div
+                                                    key={booking.id}
+                                                    className={`w-1 h-1 rounded-full ${isMyBooking ? 'bg-primary' : 'bg-primary/40'}`}
+                                                />
+                                            )
+                                        })}
+                                        {dayBookings.length > 6 && (
+                                            <div className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+                                        )}
+                                    </div>
+
+                                    {/* Desktop: Booking Text List */}
+                                    <div className="hidden md:block mt-2 w-full space-y-1 overflow-y-auto max-h-[calc(100%-2rem)] scrollbar-hide">
                                         {dayBookings.slice(0, 3).map(booking => {
                                             const isMyBooking = user && booking.user_id === user.id
                                             return (
@@ -397,7 +413,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                                         : 'bg-primary/10 text-primary border-primary/20'
                                                         }`}
                                                 >
-                                                    <span className="font-semibold">
+                                                    <span className="font-semibold truncate">
                                                         {new Date(booking.start_time).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: true })}
                                                     </span>
                                                     <span className="truncate">
