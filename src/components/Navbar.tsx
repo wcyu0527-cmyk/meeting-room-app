@@ -73,7 +73,7 @@ export default function Navbar() {
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-primary">
                                     <path d="M3 7V5c0-1.1.9-2 2-2h2" /><path d="M17 3h2c1.1 0 2 .9 2 2v2" /><path d="M21 17v2c0 1.1-.9 2-2 2h-2" /><path d="M7 21H5c-1.1 0-2-.9-2-2v-2" /><rect width="10" height="8" x="7" y="8" rx="1" />
                                 </svg>
-                                <span>會議室預約</span>
+                                <span>中工段會議室</span>
                             </Link>
                         </div>
                         {/* Desktop Navigation */}
@@ -85,7 +85,7 @@ export default function Navbar() {
                                     : 'text-muted-foreground hover:text-foreground border-b-2 border-transparent'
                                     }`}
                             >
-                                會議室
+                                首頁
                             </Link>
                             {user && (
                                 <Link

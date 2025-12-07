@@ -83,9 +83,6 @@ export default async function Home() {
           {/* Month Calendar Section - Only for logged in users */}
           {user && (
             <div className="mb-8">
-              <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">
-                月曆總覽
-              </h2>
               <MonthCalendar initialBookings={monthBookings} rooms={rooms as Room[]} />
             </div>
           )}
@@ -93,7 +90,7 @@ export default async function Home() {
           {/* All Current Bookings Section (Renamed & Moved) */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">
-              已登記的會議
+              未來將進行的會議
             </h2>
             <div className="rounded-xl border bg-card text-card-foreground shadow">
               <AllBookings bookings={allBookings || []} />

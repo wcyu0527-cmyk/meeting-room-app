@@ -20,6 +20,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     const [user, setUser] = useState<any>(null)
     const [editingBooking, setEditingBooking] = useState<BookingWithRoom | null>(null)
     const [isAdmin, setIsAdmin] = useState(false)
+    const [filterTag, setFilterTag] = useState<string | null>(null)
     const router = useRouter()
 
     useEffect(() => {
@@ -114,7 +115,14 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     const getDayBookings = (date: Date) => {
         return bookings.filter(booking => {
             const bookingDate = new Date(booking.start_time)
-            return isSameDay(bookingDate, date)
+            const isSameDate = isSameDay(bookingDate, date)
+            if (!isSameDate) return false
+
+            if (filterTag) {
+                const roomName = (booking.rooms as unknown as Room)?.name || ''
+                return roomName.includes(filterTag)
+            }
+            return true
         })
     }
 
@@ -214,7 +222,28 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
 
     return (
         <div className="rounded-xl border bg-card text-card-foreground shadow">
-            {/* Header */}
+            {/* Main Title & Filter Tags */}
+            <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-4 border-b border-border gap-4">
+                <h2 className="text-xl font-bold tracking-tight text-foreground">
+                    本月會議
+                </h2>
+                <div className="flex flex-wrap gap-2 justify-center sm:justify-end">
+                    {['大會議室', '小會議室', '舊辦會議室'].map(tag => (
+                        <button
+                            key={tag}
+                            onClick={() => setFilterTag(filterTag === tag ? null : tag)}
+                            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors border ${filterTag === tag
+                                ? 'bg-primary text-primary-foreground border-primary'
+                                : 'bg-background text-muted-foreground border-border hover:border-primary/50'
+                                }`}
+                        >
+                            {tag}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Calendar Navigation Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-border">
                 <h2 className="text-lg font-semibold text-foreground">
                     {formatDate(currentDate)}
