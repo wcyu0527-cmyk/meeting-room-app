@@ -72,7 +72,12 @@ export default function TodayBookings({ initialBookings }: { initialBookings?: B
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
-                    <span>今日會議</span>
+                    <button
+                        onClick={() => setCurrentDate(new Date())}
+                        className="text-lg font-bold hover:text-primary transition-colors px-2"
+                    >
+                        今日
+                    </button>
                     <button
                         onClick={() => changeDate(1)}
                         className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8"
@@ -82,7 +87,7 @@ export default function TodayBookings({ initialBookings }: { initialBookings?: B
                         </svg>
                     </button>
                 </div>
-                <span className="text-lg font-normal text-muted-foreground">({simpleDateStr})</span>
+                <span className="text-lg font-normal text-muted-foreground">({dateStr})</span>
             </h2>
 
             <div className="rounded-xl border bg-card text-card-foreground shadow overflow-hidden">
