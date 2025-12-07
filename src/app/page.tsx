@@ -1,5 +1,5 @@
 import Navbar from '@/components/Navbar'
-import RoomCard from '@/components/RoomCard'
+
 import TodayBookings from '@/components/TodayBookings'
 import AllBookings from '@/components/AllBookings'
 import MonthCalendar from '@/components/MonthCalendar'
@@ -90,30 +90,33 @@ export default async function Home() {
             </div>
           )}
 
-          {/* Available Meeting Rooms Section */}
+          {/* All Current Bookings Section (Renamed & Moved) */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">
+              已登記的會議
+            </h2>
+            <div className="rounded-xl border bg-card text-card-foreground shadow">
+              <AllBookings bookings={allBookings || []} />
+            </div>
+          </div>
+
+          {/* Available Meeting Rooms Section (Modified) */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">
               可用會議室
             </h2>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {rooms?.map((room) => (
-                <RoomCard key={room.id} room={room as Room} />
-              ))}
-            </div>
-            {(!rooms || rooms.length === 0) && (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">找不到會議室。</p>
+            <div className="bg-card rounded-lg border border-border p-6">
+              <p className="text-muted-foreground text-lg mb-4">
+                我們提供多種會議室以滿足您的需求。請使用上方的「月曆總覽」功能來查看詳細可用時段並進行預約。
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {rooms?.map((room) => (
+                  <div key={room.id} className="flex items-center px-4 py-2 bg-secondary rounded-lg">
+                    <span className="font-medium text-foreground">{room.name}</span>
+                    <span className="ml-2 text-sm text-muted-foreground">({room.capacity}人)</span>
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
-
-          {/* All Current Bookings Section */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">
-              所有預約
-            </h2>
-            <div className="rounded-xl border bg-card text-card-foreground shadow">
-              <AllBookings bookings={allBookings || []} />
             </div>
           </div>
         </div>
