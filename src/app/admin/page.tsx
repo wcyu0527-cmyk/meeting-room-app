@@ -32,7 +32,7 @@ export default async function AdminPage() {
             <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                 <div className="px-4 py-6 sm:px-0">
                     <h1 className="text-3xl font-bold text-gray-900 mb-6">
-                        Admin Dashboard
+                        管理員儀表板
                     </h1>
 
                     {/* Statistics */}
@@ -40,7 +40,7 @@ export default async function AdminPage() {
                         <div className="bg-white overflow-hidden shadow rounded-lg">
                             <div className="px-4 py-5 sm:p-6">
                                 <dt className="text-sm font-medium text-gray-500 truncate">
-                                    Total Rooms
+                                    會議室總數
                                 </dt>
                                 <dd className="mt-1 text-3xl font-semibold text-gray-900">
                                     {totalRooms || 0}
@@ -50,7 +50,7 @@ export default async function AdminPage() {
                         <div className="bg-white overflow-hidden shadow rounded-lg">
                             <div className="px-4 py-5 sm:p-6">
                                 <dt className="text-sm font-medium text-gray-500 truncate">
-                                    Total Bookings
+                                    預約總數
                                 </dt>
                                 <dd className="mt-1 text-3xl font-semibold text-gray-900">
                                     {totalBookings || 0}
@@ -60,7 +60,7 @@ export default async function AdminPage() {
                         <div className="bg-white overflow-hidden shadow rounded-lg">
                             <div className="px-4 py-5 sm:p-6">
                                 <dt className="text-sm font-medium text-gray-500 truncate">
-                                    Total Users
+                                    使用者總數
                                 </dt>
                                 <dd className="mt-1 text-3xl font-semibold text-gray-900">
                                     {totalUsers || 0}
@@ -77,10 +77,10 @@ export default async function AdminPage() {
                         >
                             <div className="px-4 py-5 sm:p-6">
                                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                    Manage Rooms
+                                    管理會議室
                                 </h3>
                                 <p className="text-sm text-gray-500">
-                                    Add, edit, or delete meeting rooms
+                                    新增、編輯或刪除會議室
                                 </p>
                             </div>
                         </Link>
@@ -91,10 +91,10 @@ export default async function AdminPage() {
                         >
                             <div className="px-4 py-5 sm:p-6">
                                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                    Manage Bookings
+                                    管理預約
                                 </h3>
                                 <p className="text-sm text-gray-500">
-                                    View and manage all bookings
+                                    查看和管理所有預約
                                 </p>
                             </div>
                         </Link>
@@ -105,10 +105,10 @@ export default async function AdminPage() {
                         >
                             <div className="px-4 py-5 sm:p-6">
                                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                    Manage Users
+                                    管理使用者
                                 </h3>
                                 <p className="text-sm text-gray-500">
-                                    View and manage user accounts
+                                    查看和管理使用者帳號
                                 </p>
                             </div>
                         </Link>

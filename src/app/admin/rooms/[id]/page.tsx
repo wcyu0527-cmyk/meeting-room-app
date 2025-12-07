@@ -34,7 +34,7 @@ export default async function EditRoomPage({
             <main className="max-w-3xl mx-auto py-6 sm:px-6 lg:px-8">
                 <div className="px-4 py-6 sm:px-0">
                     <h1 className="text-3xl font-bold text-gray-900 mb-6">
-                        Edit Room: {room.name}
+                        編輯會議室: {room.name}
                     </h1>
 
                     <div className="bg-white shadow sm:rounded-lg p-6">

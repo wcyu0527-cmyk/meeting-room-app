@@ -49,19 +49,19 @@ export default async function AdminBookingsPage() {
                 <div className="px-4 py-6 sm:px-0">
                     <div className="flex justify-between items-center mb-6">
                         <h1 className="text-3xl font-bold text-gray-900">
-                            Manage Bookings
+                            管理預約
                         </h1>
                         <Link
                             href="/admin"
                             className="text-sm text-gray-600 hover:text-gray-900"
                         >
-                            ← Back to Admin
+                            ← 返回管理後台
                         </Link>
                     </div>
 
                     {error && (
                         <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                            Error: {error.message}
+                            錯誤: {error.message}
                         </div>
                     )}
 

@@ -43,12 +43,12 @@ export default function AdminBookingsList({ bookings }: { bookings: Booking[] })
             setEditingId(null)
             window.location.reload()
         } catch (error) {
-            alert('Failed to update booking: ' + (error as Error).message)
+            alert('更新預約失敗: ' + (error as Error).message)
         }
     }
 
     const handleDelete = async (bookingId: string) => {
-        if (!confirm('Are you sure you want to delete this booking?')) {
+        if (!confirm('確定要刪除此預約嗎？')) {
             return
         }
 
@@ -57,7 +57,7 @@ export default function AdminBookingsList({ bookings }: { bookings: Booking[] })
             await deleteBooking(bookingId)
             window.location.reload()
         } catch (error) {
-            alert('Failed to delete booking: ' + (error as Error).message)
+            alert('刪除預約失敗: ' + (error as Error).message)
         } finally {
             setIsDeleting(null)
         }
@@ -66,7 +66,7 @@ export default function AdminBookingsList({ bookings }: { bookings: Booking[] })
     if (!bookings || bookings.length === 0) {
         return (
             <div className="text-center py-12 text-gray-500">
-                No bookings found
+                找不到預約
             </div>
         )
     }
@@ -76,19 +76,19 @@ export default function AdminBookingsList({ bookings }: { bookings: Booking[] })
             <thead className="bg-gray-50">
                 <tr>
                     <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                        Date & Time
+                        日期與時間
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Room
+                        會議室
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Title
+                        會議名稱
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        User ID
+                        使用者 ID
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Actions
+                        操作
                     </th>
                 </tr>
             </thead>
@@ -119,16 +119,16 @@ export default function AdminBookingsList({ bookings }: { bookings: Booking[] })
                                 ) : (
                                     <>
                                         <div className="font-medium text-gray-900">
-                                            {startTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                            {startTime.toLocaleDateString('zh-TW', { month: 'long', day: 'numeric', year: 'numeric' })}
                                         </div>
                                         <div className="text-gray-500">
-                                            {startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} - {endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                                            {startTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: true })} - {endTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: true })}
                                         </div>
                                     </>
                                 )}
                             </td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
-                                {booking.rooms?.name || 'N/A'}
+                                {booking.rooms?.name || '未知'}
                             </td>
                             <td className="px-3 py-4 text-sm text-gray-900">
                                 {isEditing ? (
@@ -152,13 +152,13 @@ export default function AdminBookingsList({ bookings }: { bookings: Booking[] })
                                             onClick={() => handleSave(booking.id)}
                                             className="text-indigo-600 hover:text-indigo-900"
                                         >
-                                            Save
+                                            儲存
                                         </button>
                                         <button
                                             onClick={() => setEditingId(null)}
                                             className="text-gray-600 hover:text-gray-900"
                                         >
-                                            Cancel
+                                            取消
                                         </button>
                                     </div>
                                 ) : (
@@ -167,14 +167,14 @@ export default function AdminBookingsList({ bookings }: { bookings: Booking[] })
                                             onClick={() => handleEdit(booking)}
                                             className="text-indigo-600 hover:text-indigo-900"
                                         >
-                                            Edit
+                                            編輯
                                         </button>
                                         <button
                                             onClick={() => handleDelete(booking.id)}
                                             disabled={isDeleting === booking.id}
                                             className="text-red-600 hover:text-red-900 disabled:opacity-50"
                                         >
-                                            {isDeleting === booking.id ? 'Deleting...' : 'Delete'}
+                                            {isDeleting === booking.id ? '刪除中...' : '刪除'}
                                         </button>
                                     </div>
                                 )}

@@ -50,7 +50,7 @@ export default function EditRoomForm({ room }: { room: Room }) {
 
             <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                    Room Name
+                    會議室名稱
                 </label>
                 <input
                     type="text"
@@ -64,7 +64,7 @@ export default function EditRoomForm({ room }: { room: Room }) {
 
             <div>
                 <label htmlFor="capacity" className="block text-sm font-medium text-gray-700">
-                    Capacity
+                    容納人數
                 </label>
                 <input
                     type="number"
@@ -79,18 +79,18 @@ export default function EditRoomForm({ room }: { room: Room }) {
 
             <div>
                 <label htmlFor="equipment" className="block text-sm font-medium text-gray-700">
-                    Equipment (comma-separated)
+                    設備 (請用逗號分隔)
                 </label>
                 <input
                     type="text"
                     id="equipment"
                     value={equipment}
                     onChange={(e) => setEquipment(e.target.value)}
-                    placeholder="Projector, Whiteboard, TV"
+                    placeholder="投影機, 白板, 電視"
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
                 />
                 <p className="mt-1 text-sm text-gray-500">
-                    Separate items with commas
+                    請使用逗號分隔項目
                 </p>
             </div>
 
@@ -100,13 +100,13 @@ export default function EditRoomForm({ room }: { room: Room }) {
                     disabled={isSubmitting}
                     className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50"
                 >
-                    {isSubmitting ? 'Saving...' : 'Save Changes'}
+                    {isSubmitting ? '儲存中...' : '儲存變更'}
                 </button>
                 <a
                     href="/admin/rooms"
                     className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 text-center"
                 >
-                    Cancel
+                    取消
                 </a>
             </div>
         </form>

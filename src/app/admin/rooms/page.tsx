@@ -24,13 +24,13 @@ export default async function AdminRoomsPage() {
                 <div className="px-4 py-6 sm:px-0">
                     <div className="flex justify-between items-center mb-6">
                         <h1 className="text-3xl font-bold text-gray-900">
-                            Manage Rooms
+                            管理會議室
                         </h1>
                         <Link
                             href="/admin"
                             className="text-sm text-gray-600 hover:text-gray-900"
                         >
-                            ← Back to Admin
+                            ← 返回管理後台
                         </Link>
                     </div>
 
@@ -39,16 +39,16 @@ export default async function AdminRoomsPage() {
                             <thead className="bg-gray-50">
                                 <tr>
                                     <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                                        Name
+                                        會議室名稱
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Capacity
+                                        容納人數
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Equipment
+                                        設備
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Actions
+                                        操作
                                     </th>
                                 </tr>
                             </thead>
@@ -59,7 +59,7 @@ export default async function AdminRoomsPage() {
                                             {room.name}
                                         </td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                            {room.capacity} people
+                                            {room.capacity} 人
                                         </td>
                                         <td className="px-3 py-4 text-sm text-gray-500">
                                             {room.equipment?.join(', ')}
@@ -69,7 +69,7 @@ export default async function AdminRoomsPage() {
                                                 href={`/admin/rooms/${room.id}`}
                                                 className="text-indigo-600 hover:text-indigo-900"
                                             >
-                                                Edit
+                                                編輯
                                             </Link>
                                         </td>
                                     </tr>
