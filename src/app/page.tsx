@@ -100,23 +100,59 @@ export default async function Home() {
             </div>
           </div>
 
-          {/* Available Meeting Rooms Section (Modified) */}
+          {/* Room Introduction Section */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">
-              可用會議室
+              會議室簡介
             </h2>
-            <div className="bg-card rounded-lg border border-border p-6">
-              <p className="text-muted-foreground text-lg mb-4">
-                我們提供多種會議室以滿足您的需求。請使用上方的「月曆總覽」功能來查看詳細可用時段並進行預約。
-              </p>
-              <div className="flex flex-wrap gap-3">
-                {rooms?.map((room) => (
-                  <div key={room.id} className="flex items-center px-4 py-2 bg-secondary rounded-lg">
-                    <span className="font-medium text-foreground">{room.name}</span>
-                    <span className="ml-2 text-sm text-muted-foreground">({room.capacity}人)</span>
-                  </div>
-                ))}
-              </div>
+            <div className="rounded-xl border bg-card text-card-foreground shadow overflow-hidden">
+              <table className="min-w-full divide-y divide-border">
+                <thead className="bg-muted/50">
+                  <tr>
+                    <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6">
+                      會議室名稱
+                    </th>
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
+                      容納人數
+                    </th>
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
+                      設備
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border bg-card">
+                  {rooms?.map((room) => (
+                    <tr key={room.id} className="hover:bg-muted/30 transition-colors">
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-foreground sm:pl-6">
+                        {room.name}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
+                        {room.capacity} 人
+                      </td>
+                      <td className="px-3 py-4 text-sm text-muted-foreground">
+                        {room.equipment && room.equipment.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {room.equipment.map((item: string, index: number) => (
+                              <span key={index} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-secondary text-secondary-foreground">
+                                {item}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground italic">無設備</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                  {(!rooms || rooms.length === 0) && (
+                    <tr>
+                      <td colSpan={3} className="px-3 py-4 text-sm text-center text-muted-foreground">
+                        無會議室資料
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
