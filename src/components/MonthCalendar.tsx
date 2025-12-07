@@ -445,25 +445,45 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
 
                         {selectedDayBookings.length > 0 ? (
                             <div className="space-y-3">
-                                {selectedDayBookings.map(booking => (
-                                    <div key={booking.id} className="bg-card p-3 rounded-lg shadow-sm border border-border">
-                                        <div className="flex justify-between items-start mb-2">
-                                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
-                                                {(booking.rooms as unknown as Room)?.name || '會議室'}
-                                            </span>
+                                {selectedDayBookings.map(booking => {
+                                    const isMyBooking = user && booking.user_id === user.id
+                                    return (
+                                        <div
+                                            key={booking.id}
+                                            onClick={() => {
+                                                if (isMyBooking) {
+                                                    setEditingBooking(booking)
+                                                    setIsBookingModalOpen(true)
+                                                }
+                                            }}
+                                            className={`bg-card p-3 rounded-lg shadow-sm border transition-colors ${isMyBooking
+                                                ? 'border-primary/50 cursor-pointer hover:bg-muted/50'
+                                                : 'border-border'
+                                                }`}
+                                        >
+                                            <div className="flex justify-between items-start mb-2">
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
+                                                    {(booking.rooms as unknown as Room)?.name || '會議室'}
+                                                </span>
+                                                {isMyBooking && (
+                                                    <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                                                        您的預約
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="text-sm font-medium text-foreground mb-1">
+                                                {booking.title}
+                                            </div>
+                                            <div className="text-xs text-muted-foreground flex items-center">
+                                                <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                {new Date(booking.start_time).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })} -
+                                                {new Date(booking.end_time).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                                            </div>
                                         </div>
-                                        <div className="text-sm font-medium text-foreground mb-1">
-                                            {booking.title}
-                                        </div>
-                                        <div className="text-xs text-muted-foreground flex items-center">
-                                            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            {new Date(booking.start_time).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })} -
-                                            {new Date(booking.end_time).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })}
-                                        </div>
-                                    </div>
-                                ))}
+                                    )
+                                })}
                             </div>
                         ) : (
                             <div className="text-center py-8 text-muted-foreground">
