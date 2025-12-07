@@ -163,7 +163,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                     title,
                     start_time: startDateTime.toISOString(),
                     end_time: endDateTime.toISOString(),
-                    // notes: notes || null, // Temporarily disabled due to missing DB column
+                    notes: notes || null,
                 })
                 .eq('id', editingBooking.id)
             error = updateError
@@ -176,7 +176,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                     title,
                     start_time: startDateTime.toISOString(),
                     end_time: endDateTime.toISOString(),
-                    // notes: notes || null, // Temporarily disabled due to missing DB column
+                    notes: notes || null,
                 })
             error = insertError
         }
