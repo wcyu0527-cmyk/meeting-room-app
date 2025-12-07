@@ -82,10 +82,10 @@ export default function TodayBookings({ initialBookings }: { initialBookings?: B
                     <table className="min-w-full divide-y divide-border">
                         <thead className="bg-muted/50">
                             <tr>
-                                <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6 w-[220px]">
+                                <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6 w-[85px] sm:w-[220px]">
                                     時間
                                 </th>
-                                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground w-[150px]">
+                                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground w-[100px] sm:w-[150px]">
                                     會議室
                                 </th>
                                 <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
@@ -100,10 +100,15 @@ export default function TodayBookings({ initialBookings }: { initialBookings?: B
 
                                 return (
                                     <tr key={booking.id} className="hover:bg-muted/30 transition-colors">
-                                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                                            <div className="font-medium text-foreground">
-                                                {startTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: true })} -
-                                                {endTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                                        <td className="py-4 pl-4 pr-3 text-sm sm:pl-6 align-top sm:align-middle">
+                                            <div className="flex flex-col sm:flex-row sm:gap-1 font-medium text-foreground">
+                                                <span className="whitespace-nowrap">
+                                                    {startTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                                                </span>
+                                                <span className="hidden sm:inline">-</span>
+                                                <span className="whitespace-nowrap text-muted-foreground sm:text-foreground mt-0.5 sm:mt-0">
+                                                    {endTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                                                </span>
                                             </div>
                                         </td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-foreground">

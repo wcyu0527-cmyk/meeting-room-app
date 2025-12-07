@@ -347,7 +347,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                     </div>
                     <div className="grid grid-cols-7 gap-2">
                         {days.map((date, index) => {
-                            if (!date) return <div key={`empty-${index}`} className="h-24 md:h-32 bg-muted/20 rounded-lg" />
+                            if (!date) return <div key={`empty-${index}`} className="min-h-[3.5rem] md:h-32 bg-muted/20 rounded-lg" />
 
                             const dayBookings = getDayBookings(date)
                             const isSelected = selectedDate && isSameDay(date, selectedDate)
