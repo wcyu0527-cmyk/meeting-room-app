@@ -55,6 +55,15 @@ export default async function Home() {
     if (mb) monthBookings = mb as unknown as BookingWithRoom[]
   }
 
+  // Format today's date for display
+  const todayDateStr = new Date().toLocaleDateString('zh-TW', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    weekday: 'long',
+    timeZone: 'Asia/Taipei'
+  })
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -63,8 +72,8 @@ export default async function Home() {
 
           {/* Today's Meetings Section */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">
-              今日會議
+            <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4 flex items-center">
+              今日會議 <span className="text-lg font-normal text-muted-foreground ml-3">({todayDateStr})</span>
             </h2>
             <div className="rounded-xl border bg-card text-card-foreground shadow">
               <TodayBookings bookings={todayBookings || []} />

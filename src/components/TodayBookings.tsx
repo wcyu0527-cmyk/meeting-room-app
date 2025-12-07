@@ -20,14 +20,14 @@ export default function TodayBookings({ bookings }: { bookings: BookingWithRoom[
             <table className="min-w-full divide-y divide-border">
                 <thead className="bg-muted/50">
                     <tr>
-                        <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6">
+                        <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6 w-[220px]">
                             時間
                         </th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
+                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground w-[150px]">
                             會議室
                         </th>
                         <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
-                            主題
+                            會議名稱
                         </th>
                     </tr>
                 </thead>
