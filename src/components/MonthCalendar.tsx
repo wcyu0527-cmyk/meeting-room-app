@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { Booking, Room, BookingWithRoom } from '@/types'
+import { useRouter } from 'next/navigation'
 
 type CalendarProps = {
     initialBookings: BookingWithRoom[]
@@ -18,6 +19,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [user, setUser] = useState<any>(null)
     const [editingBooking, setEditingBooking] = useState<BookingWithRoom | null>(null)
+    const router = useRouter()
 
     useMemo(() => {
         const supabase = createClient()
@@ -119,6 +121,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
             setIsBookingModalOpen(false)
             setEditingBooking(null)
             fetchMonthBookings(currentDate)
+            router.refresh()
         }
         setIsSubmitting(false)
     }
@@ -188,6 +191,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
             setIsBookingModalOpen(false)
             setEditingBooking(null)
             fetchMonthBookings(currentDate) // Refresh bookings
+            router.refresh()
         }
         setIsSubmitting(false)
     }
