@@ -61,16 +61,6 @@ export default async function Home() {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
 
-          {/* Month Calendar Section - Only for logged in users */}
-          {user && (
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">
-                月曆總覽
-              </h2>
-              <MonthCalendar initialBookings={monthBookings} rooms={rooms as Room[]} />
-            </div>
-          )}
-
           {/* Today's Meetings Section */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">
@@ -80,6 +70,16 @@ export default async function Home() {
               <TodayBookings bookings={todayBookings || []} />
             </div>
           </div>
+
+          {/* Month Calendar Section - Only for logged in users */}
+          {user && (
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">
+                月曆總覽
+              </h2>
+              <MonthCalendar initialBookings={monthBookings} rooms={rooms as Room[]} />
+            </div>
+          )}
 
           {/* Available Meeting Rooms Section */}
           <div className="mb-8">

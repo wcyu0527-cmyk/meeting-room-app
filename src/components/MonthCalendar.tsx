@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { Booking, Room, BookingWithRoom } from '@/types'
 import { useRouter } from 'next/navigation'
@@ -19,14 +19,28 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [user, setUser] = useState<any>(null)
     const [editingBooking, setEditingBooking] = useState<BookingWithRoom | null>(null)
+    const [isAdmin, setIsAdmin] = useState(false)
     const router = useRouter()
 
-    useMemo(() => {
+    useEffect(() => {
         const supabase = createClient()
         supabase.auth.getUser().then(({ data: { user } }) => {
             setUser(user)
+            if (user) {
+                checkAdmin(user.id)
+            }
         })
     }, [])
+
+    const checkAdmin = async (userId: string) => {
+        const supabase = createClient()
+        const { data } = await supabase
+            .from('users')
+            .select('is_admin')
+            .eq('id', userId)
+            .single()
+        setIsAdmin(data?.is_admin ?? false)
+    }
 
     // Calendar logic helpers
     const getDaysInMonth = (date: Date) => {
