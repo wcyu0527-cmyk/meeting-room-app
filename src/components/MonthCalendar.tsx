@@ -20,7 +20,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     const [user, setUser] = useState<any>(null)
     const [editingBooking, setEditingBooking] = useState<BookingWithRoom | null>(null)
     const [isAdmin, setIsAdmin] = useState(false)
-    const [filterTag, setFilterTag] = useState<string | null>(null)
+    const [filterTags, setFilterTags] = useState<string[]>(['所有'])
     const router = useRouter()
 
     useEffect(() => {
@@ -131,12 +131,38 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
             const isSameDate = isSameDay(bookingDate, date)
             if (!isSameDate) return false
 
-            if (filterTag) {
+            if (!isSameDate) return false
+
+            if (!filterTags.includes('所有')) {
                 const roomName = (booking.rooms as unknown as Room)?.name || ''
-                return roomName.includes(filterTag)
+                if (!filterTags.some(tag => roomName.includes(tag))) return false
             }
             return true
         })
+    }
+
+    const toggleTag = (tag: string) => {
+        if (tag === '所有') {
+            setFilterTags(['所有'])
+            return
+        }
+
+        let newTags: string[]
+        if (filterTags.includes('所有')) {
+            newTags = [tag]
+        } else {
+            if (filterTags.includes(tag)) {
+                newTags = filterTags.filter(t => t !== tag)
+            } else {
+                newTags = [...filterTags, tag]
+            }
+        }
+
+        if (newTags.length === 0) {
+            setFilterTags(['所有'])
+        } else {
+            setFilterTags(newTags)
+        }
     }
 
     const handleDeleteBooking = async () => {
@@ -236,16 +262,16 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     return (
         <div className="rounded-xl border bg-card text-card-foreground shadow">
             {/* Main Title & Filter Tags */}
-            <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-4 border-b border-border gap-4">
-                <h2 className="text-xl font-bold tracking-tight text-foreground">
+            <div className="flex flex-col sm:flex-row items-center px-6 py-4 border-b border-border gap-6">
+                <h2 className="text-xl font-bold tracking-tight text-foreground whitespace-nowrap">
                     本月會議
                 </h2>
-                <div className="flex flex-wrap gap-2 justify-center sm:justify-end">
-                    {['大會議室', '小會議室', '舊辦會議室'].map(tag => (
+                <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+                    {['所有', '大會議室', '小會議室', '舊辦會議室'].map(tag => (
                         <button
                             key={tag}
-                            onClick={() => setFilterTag(filterTag === tag ? null : tag)}
-                            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors border ${filterTag === tag
+                            onClick={() => toggleTag(tag)}
+                            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors border ${filterTags.includes(tag)
                                 ? 'bg-primary text-primary-foreground border-primary'
                                 : 'bg-background text-muted-foreground border-border hover:border-primary/50'
                                 }`}
