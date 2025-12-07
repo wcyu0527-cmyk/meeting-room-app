@@ -96,6 +96,19 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
         setSelectedDate(null)
     }
 
+    const changeSelectedDate = (offset: number) => {
+        const newDate = new Date(selectedDate || new Date())
+        newDate.setDate(newDate.getDate() + offset)
+        setSelectedDate(newDate)
+
+        // If the new date is in a different month, switch the calendar view
+        if (newDate.getMonth() !== currentDate.getMonth() || newDate.getFullYear() !== currentDate.getFullYear()) {
+            const newMonthDate = new Date(newDate.getFullYear(), newDate.getMonth(), 1)
+            setCurrentDate(newMonthDate)
+            fetchMonthBookings(newMonthDate)
+        }
+    }
+
     // Generate calendar grid
     const daysInMonth = getDaysInMonth(currentDate)
     const firstDay = getFirstDayOfMonth(currentDate)
@@ -266,16 +279,34 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                         </svg>
                     </button>
                 </div>
-                <button
-                    onClick={() => {
-                        const today = new Date()
-                        setCurrentDate(today)
-                        setSelectedDate(today)
-                    }}
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3"
-                >
-                    回到今日
-                </button>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => changeSelectedDate(-1)}
+                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8"
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <button
+                        onClick={() => {
+                            const today = new Date()
+                            setCurrentDate(today)
+                            setSelectedDate(today)
+                        }}
+                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3"
+                    >
+                        回到今日
+                    </button>
+                    <button
+                        onClick={() => changeSelectedDate(1)}
+                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8"
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             <div className="flex flex-col md:flex-row">

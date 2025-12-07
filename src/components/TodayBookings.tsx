@@ -64,28 +64,9 @@ export default function TodayBookings({ initialBookings }: { initialBookings?: B
         <div>
             <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4 flex items-center">
                 <div className="flex items-center gap-2 mr-3">
-                    <button
-                        onClick={() => changeDate(-1)}
-                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8"
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                    </button>
-                    <button
-                        onClick={() => setCurrentDate(new Date())}
-                        className="text-lg font-bold hover:text-primary transition-colors px-2"
-                    >
-                        今日
-                    </button>
-                    <button
-                        onClick={() => changeDate(1)}
-                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8"
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                    </button>
+                    <span className="text-2xl font-bold tracking-tight text-foreground">
+                        今日會議
+                    </span>
                 </div>
                 <span className="text-lg font-normal text-muted-foreground">({dateStr})</span>
             </h2>
