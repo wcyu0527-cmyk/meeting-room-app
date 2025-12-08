@@ -33,12 +33,29 @@ export default async function Home() {
 
   // Get all current bookings (future bookings)
   const now = new Date()
-  const { data: allBookings } = await supabase
+  const { data: allBookingsData } = await supabase
     .from('bookings')
     .select('*, rooms(*)')
     .gte('end_time', now.toISOString())
     .order('start_time')
     .limit(50)
+
+  // Fetch profiles for these bookings
+  let allBookingsWithProfile = []
+  if (allBookingsData && allBookingsData.length > 0) {
+    const userIds = Array.from(new Set(allBookingsData.map(b => b.user_id)))
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, full_name')
+      .in('id', userIds)
+
+    const profileMap = new Map(profiles?.map(p => [p.id, p]) || [])
+
+    allBookingsWithProfile = allBookingsData.map(booking => ({
+      ...booking,
+      profile: profileMap.get(booking.user_id)
+    }))
+  }
 
   // Get current month bookings if user is logged in
   let monthBookings: BookingWithRoom[] = []
@@ -88,7 +105,7 @@ export default async function Home() {
               未來將進行的會議
             </h2>
             <div className="rounded-xl border bg-card text-card-foreground shadow">
-              <AllBookings bookings={allBookings || []} />
+              <AllBookings bookings={allBookingsWithProfile} />
             </div>
           </div>
 

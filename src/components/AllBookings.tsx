@@ -6,7 +6,7 @@ type BookingWithRoom = Booking & {
     rooms: Room
 }
 
-export default function AllBookings({ bookings }: { bookings: BookingWithRoom[] }) {
+export default function AllBookings({ bookings }: { bookings: any[] }) {
     if (!bookings || bookings.length === 0) {
         return (
             <div className="text-center py-8 text-muted-foreground">
@@ -20,17 +20,20 @@ export default function AllBookings({ bookings }: { bookings: BookingWithRoom[] 
             <table className="min-w-full divide-y divide-border">
                 <thead className="bg-muted/50">
                     <tr>
-                        <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6 w-[220px]">
-                            日期與時間
+                        <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6 w-[100px] sm:w-[220px]">
+                            <span className="hidden sm:inline">日期與時間</span>
+                            <span className="sm:hidden">日期</span>
                         </th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground w-[150px]">
+                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground w-[100px] sm:w-[150px]">
                             會議室
                         </th>
                         <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
-                            會議名稱
+                            <span className="hidden sm:inline">會議名稱</span>
+                            <span className="sm:hidden whitespace-pre-line">會議{"\n"}名稱</span>
                         </th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground w-[100px]">
-                            持續時間
+                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground w-[80px] sm:w-[100px]">
+                            <span className="hidden sm:inline">持續時間</span>
+                            <span className="sm:hidden">登記人</span>
                         </th>
                     </tr>
                 </thead>
@@ -44,9 +47,9 @@ export default function AllBookings({ bookings }: { bookings: BookingWithRoom[] 
                             <tr key={booking.id}>
                                 <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                                     <div className="font-medium text-foreground">
-                                        {startTime.toLocaleDateString('zh-TW', { month: 'long', day: 'numeric' })}
+                                        {startTime.toLocaleDateString('zh-TW', { month: '2-digit', day: '2-digit' })}
                                     </div>
-                                    <div className="text-muted-foreground">
+                                    <div className="text-muted-foreground hidden sm:block">
                                         {startTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: true })} - {endTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: true })}
                                     </div>
                                 </td>
@@ -57,7 +60,8 @@ export default function AllBookings({ bookings }: { bookings: BookingWithRoom[] 
                                     {booking.title}
                                 </td>
                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
-                                    {duration} 分鐘
+                                    <span className="hidden sm:inline">{duration} 分鐘</span>
+                                    <span className="sm:hidden text-foreground font-medium">{booking.profile?.full_name || '未知'}</span>
                                 </td>
                             </tr>
                         )
