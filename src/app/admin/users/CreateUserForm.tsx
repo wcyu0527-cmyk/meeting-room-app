@@ -11,7 +11,15 @@ export default function CreateUserForm() {
         setIsPending(true)
         setMessage('')
 
-        const res = await createUser(formData)
+        const id = formData.get('id') as string
+        const password = formData.get('password') as string
+        const name = formData.get('name') as string
+        // Alias is optional in the logic, but let's assume it's same as name if not provided or just use name for now as the form only has name.
+        // Wait, the action expects `alias` but the form in view_file earlier didn't show an input for alias.
+        // Let's check the form again in previous turn... it has id, password, name.
+        // I'll use name as alias for now or add an empty string. The action signature is (username, password, full_name, alias).
+
+        const res = await createUser(id, password, name, name)
         setIsPending(false)
 
         if (res?.error) {
