@@ -15,7 +15,7 @@ export default async function AdminUsersPage() {
     const supabase = await createClient()
     const { data: profiles, error } = await supabase
         .from('profiles')
-        .select('id, full_name, role')
+        .select('id, full_name, role, alias')
         .order('full_name', { ascending: true, nullsFirst: false })
 
     if (error) {
