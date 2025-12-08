@@ -14,25 +14,41 @@ export default async function AdminUsersPage() {
     }
 
     const supabase = await createClient()
-    const supabaseAdmin = createAdminClient()
 
-    // Fetch profiles
-    const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, full_name, role, alias')
-        .order('full_name', { ascending: true, nullsFirst: false })
+    let profiles: any[] | null = []
+    let users: any[] | null = []
+    let fetchError: string | null = null
 
-    if (profilesError) {
-        console.error('Error fetching profiles:', profilesError)
-    }
+    try {
+        // Fetch profiles
+        const { data: profilesData, error: profilesError } = await supabase
+            .from('profiles')
+            .select('id, full_name, role, alias')
+            .order('full_name', { ascending: true, nullsFirst: false })
 
-    // Fetch auth users to get emails
-    const { data: { users }, error: usersError } = await supabaseAdmin.auth.admin.listUsers({
-        perPage: 1000
-    })
+        if (profilesError) throw profilesError
+        profiles = profilesData
 
-    if (usersError) {
-        console.error('Error fetching users:', usersError)
+        // Try to fetch auth users
+        try {
+            const supabaseAdmin = createAdminClient()
+            const { data: usersData, error: usersError } = await supabaseAdmin.auth.admin.listUsers({
+                perPage: 1000
+            })
+            if (usersError) {
+                console.error('Error fetching users:', usersError)
+                // Don't throw here, just log it. We can still show profiles.
+            } else {
+                users = usersData.users
+            }
+        } catch (adminError) {
+            console.error('Error creating admin client or fetching users:', adminError)
+            // Likely missing env var, but we want to show the page anyway
+        }
+
+    } catch (error) {
+        console.error('Error loading admin users page:', error)
+        fetchError = (error as Error).message
     }
 
     // Merge profiles with user emails
@@ -61,9 +77,9 @@ export default async function AdminUsersPage() {
                         </Link>
                     </div>
 
-                    {(profilesError || usersError) && (
+                    {fetchError && (
                         <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                            錯誤: {profilesError?.message || usersError?.message}
+                            錯誤: {fetchError}
                         </div>
                     )}
 
