@@ -191,7 +191,7 @@ export default function Navbar() {
                             : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                             }`}
                     >
-                        會議室
+                        首頁
                     </Link>
                     {user && (
                         <Link

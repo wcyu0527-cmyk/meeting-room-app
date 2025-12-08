@@ -57,7 +57,7 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                         角色
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th scope="col" className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sm:table-cell">
                         ID
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
@@ -101,7 +101,7 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                                     </span>
                                 )}
                             </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 font-mono text-xs">
+                            <td className="hidden whitespace-nowrap px-3 py-4 text-sm text-gray-500 font-mono text-xs sm:table-cell">
                                 {profile.id.substring(0, 8)}...
                             </td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm">

@@ -3,6 +3,7 @@ import { createClient } from '@/utils/supabase/server'
 import { isAdmin } from '@/utils/admin'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import AdminRoomsList from './AdminRoomsList'
 
 export default async function AdminRoomsPage() {
     const admin = await isAdmin()
@@ -35,47 +36,7 @@ export default async function AdminRoomsPage() {
                     </div>
 
                     <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-                        <table className="min-w-full divide-y divide-gray-300">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                                        會議室名稱
-                                    </th>
-                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        容納人數
-                                    </th>
-                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        設備
-                                    </th>
-                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        操作
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200 bg-white">
-                                {rooms?.map((room) => (
-                                    <tr key={room.id}>
-                                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                            {room.name}
-                                        </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                            {room.capacity} 人
-                                        </td>
-                                        <td className="px-3 py-4 text-sm text-gray-500">
-                                            {room.equipment?.join(', ')}
-                                        </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm">
-                                            <Link
-                                                href={`/admin/rooms/${room.id}`}
-                                                className="text-indigo-600 hover:text-indigo-900"
-                                            >
-                                                編輯
-                                            </Link>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                        <AdminRoomsList rooms={rooms || []} />
                     </div>
                 </div>
             </main>

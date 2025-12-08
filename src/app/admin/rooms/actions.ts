@@ -31,3 +31,20 @@ export async function updateRoom(
     revalidatePath('/admin/rooms')
     redirect('/admin/rooms')
 }
+
+export async function deleteRoom(roomId: string) {
+    await requireAdmin()
+
+    const supabase = await createClient()
+
+    const { error } = await supabase
+        .from('rooms')
+        .delete()
+        .eq('id', roomId)
+
+    if (error) {
+        throw new Error(error.message)
+    }
+
+    revalidatePath('/admin/rooms')
+}

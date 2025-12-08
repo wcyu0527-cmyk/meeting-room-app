@@ -84,7 +84,7 @@ export default function AdminBookingsList({ bookings }: { bookings: Booking[] })
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                         會議名稱
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th scope="col" className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sm:table-cell">
                         使用者 ID
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
@@ -142,7 +142,7 @@ export default function AdminBookingsList({ bookings }: { bookings: Booking[] })
                                     booking.title
                                 )}
                             </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 font-mono text-xs">
+                            <td className="hidden whitespace-nowrap px-3 py-4 text-sm text-gray-500 font-mono text-xs sm:table-cell">
                                 {booking.user_id.substring(0, 8)}...
                             </td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm">
