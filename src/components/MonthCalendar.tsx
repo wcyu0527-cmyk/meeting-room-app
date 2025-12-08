@@ -303,6 +303,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     }
 
     const selectedDayBookings = selectedDate ? getDayBookings(selectedDate) : []
+    const isReadOnly = editingBooking && user && editingBooking.user_id !== user.id
 
     return (
         <div className="rounded-xl border bg-card text-card-foreground shadow">
@@ -447,15 +448,13 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                                 <div
                                                     key={booking.id}
                                                     onClick={(e) => {
-                                                        if (isMyBooking) {
-                                                            e.stopPropagation()
-                                                            setEditingBooking(booking)
-                                                            setIsBookingModalOpen(true)
-                                                        }
+                                                        e.stopPropagation()
+                                                        setEditingBooking(booking)
+                                                        setIsBookingModalOpen(true)
                                                     }}
-                                                    className={`text-[10px] px-1.5 py-1 rounded border flex flex-col leading-tight ${isMyBooking
-                                                        ? 'bg-primary text-primary-foreground border-primary cursor-pointer hover:opacity-90'
-                                                        : 'bg-primary/10 text-primary border-primary/20'
+                                                    className={`text-[10px] px-1.5 py-1 rounded border flex flex-col leading-tight cursor-pointer ${isMyBooking
+                                                        ? 'bg-primary text-primary-foreground border-primary hover:opacity-90'
+                                                        : 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20'
                                                         }`}
                                                 >
                                                     <span className="font-semibold truncate">
@@ -496,14 +495,12 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                         <div
                                             key={booking.id}
                                             onClick={() => {
-                                                if (isMyBooking) {
-                                                    setEditingBooking(booking)
-                                                    setIsBookingModalOpen(true)
-                                                }
+                                                setEditingBooking(booking)
+                                                setIsBookingModalOpen(true)
                                             }}
-                                            className={`bg-card p-3 rounded-lg shadow-sm border transition-colors ${isMyBooking
-                                                ? 'border-primary/50 cursor-pointer hover:bg-muted/50'
-                                                : 'border-border'
+                                            className={`bg-card p-3 rounded-lg shadow-sm border transition-colors cursor-pointer ${isMyBooking
+                                                ? 'border-primary/50 hover:bg-muted/50'
+                                                : 'border-border hover:bg-muted/30'
                                                 }`}
                                         >
                                             <div className="flex justify-between items-start mb-2">
@@ -545,7 +542,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                         <div className="bg-background rounded-lg shadow-lg w-full max-w-md p-6 border border-border">
                             <h3 className="text-lg font-semibold text-foreground mb-4">
-                                {editingBooking ? '編輯預約' : '預約會議'} - {selectedDate?.toLocaleDateString('zh-TW')}
+                                {editingBooking ? (isReadOnly ? '預約詳情' : '編輯預約') : '預約會議'} - {selectedDate?.toLocaleDateString('zh-TW')}
                             </h3>
                             <form onSubmit={handleBookRoom} className="space-y-4">
                                 <div>
@@ -555,6 +552,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                     <select
                                         name="room_id"
                                         required
+                                        disabled={isReadOnly}
                                         defaultValue={editingBooking?.room_id}
                                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
@@ -573,6 +571,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                         type="text"
                                         name="title"
                                         required
+                                        disabled={isReadOnly}
                                         defaultValue={editingBooking?.title}
                                         placeholder="例如：週會"
                                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -586,11 +585,12 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                         </label>
                                         <select
                                             value={selectedUnitId}
+                                            disabled={isReadOnly}
                                             onChange={(e) => {
                                                 setSelectedUnitId(e.target.value)
                                                 setSelectedMemberId('')
                                             }}
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                         >
                                             <option value="">請選擇單位</option>
                                             {units.map(unit => (
@@ -605,7 +605,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                         <select
                                             value={selectedMemberId}
                                             onChange={(e) => setSelectedMemberId(e.target.value)}
-                                            disabled={!selectedUnitId}
+                                            disabled={!selectedUnitId || isReadOnly}
                                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
                                         >
                                             <option value="">{selectedUnitId ? '請選擇同仁' : '請先選擇單位'}</option>
@@ -624,6 +624,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                             type="time"
                                             name="start_time"
                                             required
+                                            disabled={isReadOnly}
                                             defaultValue={editingBooking ? new Date(editingBooking.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : "09:00"}
                                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                         />
@@ -636,6 +637,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                             type="time"
                                             name="end_time"
                                             required
+                                            disabled={isReadOnly}
                                             defaultValue={editingBooking ? new Date(editingBooking.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : "10:00"}
                                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                         />
@@ -649,13 +651,14 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                     <textarea
                                         name="notes"
                                         rows={3}
+                                        disabled={isReadOnly}
                                         defaultValue={editingBooking?.notes || ''}
                                         className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     />
                                 </div>
 
                                 <div className="flex justify-between space-x-2 pt-2">
-                                    {editingBooking ? (
+                                    {editingBooking && !isReadOnly ? (
                                         <button
                                             type="button"
                                             onClick={handleDeleteBooking}
@@ -673,15 +676,17 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                             }}
                                             className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
                                         >
-                                            取消
+                                            {isReadOnly ? '關閉' : '取消'}
                                         </button>
-                                        <button
-                                            type="submit"
-                                            disabled={isSubmitting}
-                                            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-                                        >
-                                            {isSubmitting ? (editingBooking ? '更新中...' : '預約中...') : (editingBooking ? '更新預約' : '確認預約')}
-                                        </button>
+                                        {!isReadOnly && (
+                                            <button
+                                                type="submit"
+                                                disabled={isSubmitting}
+                                                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                                            >
+                                                {isSubmitting ? (editingBooking ? '更新中...' : '預約中...') : (editingBooking ? '更新預約' : '確認預約')}
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             </form>
