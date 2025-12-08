@@ -1,5 +1,6 @@
 import Navbar from '@/components/Navbar'
 import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { isAdmin } from '@/utils/admin'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
@@ -13,14 +14,35 @@ export default async function AdminUsersPage() {
     }
 
     const supabase = await createClient()
-    const { data: profiles, error } = await supabase
+    const supabaseAdmin = createAdminClient()
+
+    // Fetch profiles
+    const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('id, full_name, role, alias')
         .order('full_name', { ascending: true, nullsFirst: false })
 
-    if (error) {
-        console.error('Error fetching profiles:', error)
+    if (profilesError) {
+        console.error('Error fetching profiles:', profilesError)
     }
+
+    // Fetch auth users to get emails
+    const { data: { users }, error: usersError } = await supabaseAdmin.auth.admin.listUsers({
+        perPage: 1000
+    })
+
+    if (usersError) {
+        console.error('Error fetching users:', usersError)
+    }
+
+    // Merge profiles with user emails
+    const profilesWithEmail = profiles?.map(profile => {
+        const user = users?.find(u => u.id === profile.id)
+        return {
+            ...profile,
+            email: user?.email || ''
+        }
+    }) || []
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -39,14 +61,14 @@ export default async function AdminUsersPage() {
                         </Link>
                     </div>
 
-                    {error && (
+                    {(profilesError || usersError) && (
                         <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                            錯誤: {error.message}
+                            錯誤: {profilesError?.message || usersError?.message}
                         </div>
                     )}
 
                     <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-                        <AdminUsersList profiles={profiles || []} />
+                        <AdminUsersList profiles={profilesWithEmail} />
                     </div>
                 </div>
             </main>

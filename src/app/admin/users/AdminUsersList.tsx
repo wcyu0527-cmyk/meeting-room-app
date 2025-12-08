@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { updateUserRole, updateUserProfile, createUser, deleteUser } from './actions'
+import { updateUserRole, updateUserProfile, createUser, deleteUser, updateUserPassword } from './actions'
 
 type Profile = {
     id: string
     full_name: string | null
     alias: string | null
     role: string | null
+    email: string
 }
 
 export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
@@ -16,6 +17,7 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
         full_name: '',
         alias: '',
         role: 'user',
+        password: '',
     })
     const [isUpdating, setIsUpdating] = useState(false)
     const [isDeleting, setIsDeleting] = useState<string | null>(null)
@@ -36,6 +38,7 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
             full_name: profile.full_name || '',
             alias: profile.alias || '',
             role: profile.role || 'user',
+            password: '',
         })
     }
 
@@ -44,6 +47,11 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
         try {
             await updateUserProfile(userId, editForm.full_name, editForm.alias)
             await updateUserRole(userId, editForm.role as 'user' | 'admin')
+
+            if (editForm.password) {
+                await updateUserPassword(userId, editForm.password)
+            }
+
             setEditingId(null)
             window.location.reload()
         } catch (error) {
@@ -82,6 +90,10 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
         } finally {
             setIsCreating(false)
         }
+    }
+
+    const formatUsername = (email: string) => {
+        return email ? email.replace('@meeting.local', '') : '未知'
     }
 
     return (
@@ -159,6 +171,9 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                     <thead className="bg-gray-50">
                         <tr>
                             <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                                帳號
+                            </th>
+                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                 姓名
                             </th>
                             <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
@@ -167,8 +182,8 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                             <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                 角色
                             </th>
-                            <th scope="col" className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sm:table-cell">
-                                ID
+                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                密碼
                             </th>
                             <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                 操作
@@ -182,6 +197,9 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                             return (
                                 <tr key={profile.id}>
                                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                        {formatUsername(profile.email)}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         {isEditing ? (
                                             <input
                                                 type="text"
@@ -224,8 +242,18 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                                             </span>
                                         )}
                                     </td>
-                                    <td className="hidden whitespace-nowrap px-3 py-4 text-sm text-gray-500 font-mono text-xs sm:table-cell">
-                                        {profile.id.substring(0, 8)}...
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                        {isEditing ? (
+                                            <input
+                                                type="password"
+                                                value={editForm.password}
+                                                onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
+                                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-2 py-1 border"
+                                                placeholder="重設密碼"
+                                            />
+                                        ) : (
+                                            '********'
+                                        )}
                                     </td>
                                     <td className="whitespace-nowrap px-3 py-4 text-sm">
                                         {isEditing ? (
