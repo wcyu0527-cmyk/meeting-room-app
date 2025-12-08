@@ -112,6 +112,20 @@ export default async function AdminPage() {
                                 </p>
                             </div>
                         </Link>
+
+                        <Link
+                            href="/admin/units"
+                            className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow"
+                        >
+                            <div className="px-4 py-5 sm:p-6">
+                                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                                    管理單位與人員
+                                </h3>
+                                <p className="text-sm text-gray-500">
+                                    編輯單位名稱與同仁名單
+                                </p>
+                            </div>
+                        </Link>
                     </div>
                 </div>
             </main>

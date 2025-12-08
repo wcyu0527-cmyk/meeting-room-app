@@ -2,12 +2,51 @@
 
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+
+type Unit = {
+    id: string
+    name: string
+    unit_members: { id: string; name: string }[]
+}
 
 export default function BookingForm({ roomId }: { roomId: string }) {
     const router = useRouter()
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [units, setUnits] = useState<Unit[]>([])
+
+    // Form state
+    const [selectedUnitId, setSelectedUnitId] = useState('')
+    const [selectedMemberId, setSelectedMemberId] = useState('')
+
+    useEffect(() => {
+        const fetchUnits = async () => {
+            const supabase = createClient()
+            const { data, error } = await supabase
+                .from('units')
+                .select(`
+                    id, 
+                    name, 
+                    unit_members (
+                        id, 
+                        name
+                    )
+                `)
+                .order('name')
+
+            if (data) {
+                // Sort members by name
+                const sortedUnits = data.map((unit: any) => ({
+                    ...unit,
+                    unit_members: unit.unit_members.sort((a: any, b: any) => a.name.localeCompare(b.name))
+                }))
+                setUnits(sortedUnits)
+            }
+        }
+
+        fetchUnits()
+    }, [])
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -37,6 +76,8 @@ export default function BookingForm({ roomId }: { roomId: string }) {
             start_time: new Date(startTime).toISOString(),
             end_time: new Date(endTime).toISOString(),
             notes: notes || null,
+            unit_id: selectedUnitId || null,
+            unit_member_id: selectedMemberId || null
         })
 
         if (error) {
@@ -44,10 +85,16 @@ export default function BookingForm({ roomId }: { roomId: string }) {
         } else {
             // Reset form
             (e.target as HTMLFormElement).reset()
+            setSelectedUnitId('')
+            setSelectedMemberId('')
+            router.refresh()
+            router.push('/my-bookings')
         }
 
         setIsSubmitting(false)
     }
+
+    const selectedUnit = units.find(u => u.id === selectedUnitId)
 
     return (
         <div className="bg-white shadow sm:rounded-lg">
@@ -74,6 +121,52 @@ export default function BookingForm({ roomId }: { roomId: string }) {
                             placeholder="e.g., Team Standup Meeting"
                             className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2.5 border text-gray-900"
                         />
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                        <div>
+                            <label
+                                htmlFor="unit"
+                                className="block text-sm font-medium text-gray-900 mb-1"
+                            >
+                                單位 (Unit)
+                            </label>
+                            <select
+                                id="unit"
+                                value={selectedUnitId}
+                                onChange={(e) => {
+                                    setSelectedUnitId(e.target.value)
+                                    setSelectedMemberId('')
+                                }}
+                                className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2.5 border text-gray-900 bg-white"
+                            >
+                                <option value="">請選擇單位</option>
+                                {units.map(unit => (
+                                    <option key={unit.id} value={unit.id}>{unit.name}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label
+                                htmlFor="member"
+                                className="block text-sm font-medium text-gray-900 mb-1"
+                            >
+                                同仁 (Colleague)
+                            </label>
+                            <select
+                                id="member"
+                                value={selectedMemberId}
+                                onChange={(e) => setSelectedMemberId(e.target.value)}
+                                disabled={!selectedUnitId}
+                                className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2.5 border text-gray-900 bg-white disabled:bg-gray-100 disabled:text-gray-500"
+                            >
+                                <option value="">{selectedUnitId ? '請選擇同仁' : '請先選擇單位'}</option>
+                                {selectedUnit?.unit_members.map(member => (
+                                    <option key={member.id} value={member.id}>{member.name}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
