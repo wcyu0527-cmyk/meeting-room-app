@@ -11,6 +11,7 @@ type Unit = {
 
 export default function UnitList({ units }: { units: Unit[] }) {
     const [isCreating, setIsCreating] = useState(false)
+    const [isCreatingMember, setIsCreatingMember] = useState(false)
     const [newUnitName, setNewUnitName] = useState('')
     const [editingUnitId, setEditingUnitId] = useState<string | null>(null)
     const [editUnitName, setEditUnitName] = useState('')
@@ -80,16 +81,42 @@ export default function UnitList({ units }: { units: Unit[] }) {
                 <h3 className="text-lg leading-6 font-medium text-gray-900">
                     單位列表
                 </h3>
-                <button
-                    onClick={() => setIsCreating(!isCreating)}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    {isCreating ? '取消' : '新增單位'}
-                </button>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => {
+                            setIsCreating(true)
+                            setIsCreatingMember(false)
+                        }}
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                        新增單位
+                    </button>
+                    <button
+                        onClick={() => {
+                            setIsCreatingMember(true)
+                            setIsCreating(false)
+                        }}
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                    >
+                        新增人員
+                    </button>
+                    {(isCreating || isCreatingMember) && (
+                        <button
+                            onClick={() => {
+                                setIsCreating(false)
+                                setIsCreatingMember(false)
+                            }}
+                            className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        >
+                            取消
+                        </button>
+                    )}
+                </div>
             </div>
 
             {isCreating && (
                 <div className="bg-white px-4 py-5 border-b border-gray-200 sm:px-6 shadow sm:rounded-lg">
+                    <h4 className="text-md font-bold mb-3">新增單位</h4>
                     <form onSubmit={handleCreateUnit} className="flex gap-4">
                         <input
                             type="text"
@@ -101,6 +128,42 @@ export default function UnitList({ units }: { units: Unit[] }) {
                         <button
                             type="submit"
                             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+                        >
+                            確認新增
+                        </button>
+                    </form>
+                </div>
+            )}
+
+            {isCreatingMember && (
+                <div className="bg-white px-4 py-5 border-b border-gray-200 sm:px-6 shadow sm:rounded-lg">
+                    <h4 className="text-md font-bold mb-3">新增人員</h4>
+                    <form onSubmit={(e) => handleAddMember(e, selectedUnitId || '')} className="flex gap-4">
+                        <div className="w-1/3">
+                            <select
+                                value={selectedUnitId || ''}
+                                onChange={(e) => setSelectedUnitId(e.target.value)}
+                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2 text-gray-900 bg-white"
+                                required
+                            >
+                                <option value="">請選擇單位</option>
+                                {units.map(unit => (
+                                    <option key={unit.id} value={unit.id}>{unit.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <input
+                            type="text"
+                            value={newMemberName}
+                            onChange={(e) => setNewMemberName(e.target.value)}
+                            placeholder="輸入同仁姓名"
+                            required
+                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border text-gray-900 bg-white"
+                        />
+                        <button
+                            type="submit"
+                            disabled={!selectedUnitId}
+                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 disabled:opacity-50"
                         >
                             確認新增
                         </button>
