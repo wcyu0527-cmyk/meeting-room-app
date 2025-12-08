@@ -28,7 +28,8 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
         username: '',
         password: '',
         full_name: '',
-        alias: ''
+        alias: '',
+        role: 'user'
     })
     const [isCreating, setIsCreating] = useState(false)
 
@@ -85,9 +86,9 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
         e.preventDefault()
         setIsCreating(true)
         try {
-            await createUser(createForm.username, createForm.password, createForm.full_name, createForm.alias)
+            await createUser(createForm.username, createForm.password, createForm.full_name, createForm.role as 'user' | 'admin')
             setShowCreateForm(false)
-            setCreateForm({ username: '', password: '', full_name: '', alias: '' })
+            setCreateForm({ username: '', password: '', full_name: '', alias: '', role: 'user' })
             window.location.reload()
         } catch (error) {
             alert('建立使用者失敗: ' + (error as Error).message)
@@ -145,6 +146,17 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                                 onChange={e => setCreateForm({ ...createForm, full_name: e.target.value })}
                                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border px-3 py-2"
                             />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">角色</label>
+                            <select
+                                value={createForm.role}
+                                onChange={e => setCreateForm({ ...createForm, role: e.target.value })}
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border px-3 py-2"
+                            >
+                                <option value="user">一般使用者</option>
+                                <option value="admin">管理員</option>
+                            </select>
                         </div>
                         <button
                             type="submit"

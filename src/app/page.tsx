@@ -6,8 +6,10 @@ import MonthCalendar from '@/components/MonthCalendar'
 import { createClient } from '@/utils/supabase/server'
 import { Room, Booking, BookingWithRoom } from '@/types'
 
-export default async function Home() {
+export default async function Home({ searchParams }: { searchParams: { error?: string } }) {
   const supabase = await createClient()
+  const params = await searchParams
+  const errorMsg = params?.error
 
   // Get user session
   const { data: { user } } = await supabase.auth.getUser()
@@ -86,6 +88,23 @@ export default async function Home() {
       <Navbar />
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
+
+          {errorMsg === 'permission_denied' && (
+            <div className="mb-6 bg-red-50 border-l-4 border-red-400 p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-red-700">
+                    您的帳號無相關權限
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Today's Meetings Section */}
           <div className="mb-8">

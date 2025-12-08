@@ -1,22 +1,14 @@
 import Navbar from '@/components/Navbar'
 import { createClient } from '@/utils/supabase/server'
 import { createAdminClient } from '@/utils/supabase/admin'
-import { isAdmin } from '@/utils/admin'
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import AdminUsersList from './AdminUsersList'
 
 export default async function AdminUsersPage() {
-    const admin = await isAdmin()
-
-    if (!admin) {
-        redirect('/')
-    }
-
     const supabase = await createClient()
 
-    let profiles: any[] | null = []
-    let users: any[] | null = []
+    let profiles: any[] = []
+    let users: any[] = []
     let fetchError: string | null = null
 
     try {
@@ -27,7 +19,7 @@ export default async function AdminUsersPage() {
             .order('full_name', { ascending: true, nullsFirst: false })
 
         if (profilesError) throw profilesError
-        profiles = profilesData
+        if (profilesData) profiles = profilesData
 
         // Try to fetch auth users
         try {
@@ -37,13 +29,11 @@ export default async function AdminUsersPage() {
             })
             if (usersError) {
                 console.error('Error fetching users:', usersError)
-                // Don't throw here, just log it. We can still show profiles.
             } else {
                 users = usersData.users
             }
         } catch (adminError) {
             console.error('Error creating admin client or fetching users:', adminError)
-            // Likely missing env var, but we want to show the page anyway
         }
 
     } catch (error) {
@@ -52,13 +42,13 @@ export default async function AdminUsersPage() {
     }
 
     // Merge profiles with user emails
-    const profilesWithEmail = profiles?.map(profile => {
-        const user = users?.find(u => u.id === profile.id)
+    const profilesWithEmail = profiles.map(profile => {
+        const user = users.find(u => u.id === profile.id)
         return {
             ...profile,
             email: user?.email || ''
         }
-    }) || []
+    })
 
     return (
         <div className="min-h-screen bg-gray-100">

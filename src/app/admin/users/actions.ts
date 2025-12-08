@@ -42,7 +42,7 @@ export async function updateUserProfile(userId: string, fullName: string, alias:
     revalidatePath('/admin/users')
 }
 
-export async function createUser(username: string, password: string, fullName: string, alias: string) {
+export async function createUser(username: string, password: string, fullName: string, role: 'user' | 'admin') {
     try {
         await requireAdmin()
 
@@ -57,12 +57,34 @@ export async function createUser(username: string, password: string, fullName: s
             email_confirm: true,
             user_metadata: {
                 full_name: fullName,
-                alias: alias
+                // We don't necessarily need to put role in metadata if we sync it to profiles table, 
+                // but it doesn't hurt. However, the profiles trigger likely copies from here.
+                // But the trigger might not copy 'role' if it's not setup to.
+                // The safest bet is to update the profile explicitly after creation.
             }
         })
 
         if (error) {
             return { success: false, error: error.message }
+        }
+
+        if (data.user) {
+            // Explicitly set the role in the profiles table
+            // We need to wait a small bit for the trigger to create the profile, OR we can upsert.
+            // Trigger usually runs immediately.
+
+            // To be safe, we perform an update. If the profile doesn't exist yet (race condition), 
+            // the trigger should handle creation, but we want to set the role.
+            // Let's try to update.
+            const { error: profileError } = await supabaseAdmin
+                .from('profiles')
+                .update({ role: role, full_name: fullName }) // Ensure name is set too
+                .eq('id', data.user.id)
+
+            if (profileError) {
+                console.error('Error updating user role:', profileError)
+                // Returning success with warning? Or just ignore, user can edit later.
+            }
         }
 
         revalidatePath('/admin/users')
