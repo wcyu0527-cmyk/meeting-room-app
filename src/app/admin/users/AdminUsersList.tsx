@@ -125,7 +125,7 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                                 required
                                 value={createForm.username}
                                 onChange={e => setCreateForm({ ...createForm, username: e.target.value })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border px-3 py-2"
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border px-3 py-2 text-gray-900 bg-white"
                             />
                         </div>
                         <div>
@@ -135,7 +135,7 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                                 required
                                 value={createForm.password}
                                 onChange={e => setCreateForm({ ...createForm, password: e.target.value })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border px-3 py-2"
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border px-3 py-2 text-gray-900 bg-white"
                             />
                         </div>
                         <div>
@@ -144,7 +144,7 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                                 type="text"
                                 value={createForm.full_name}
                                 onChange={e => setCreateForm({ ...createForm, full_name: e.target.value })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border px-3 py-2"
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border px-3 py-2 text-gray-900 bg-white"
                             />
                         </div>
                         <div>
@@ -152,7 +152,7 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                             <select
                                 value={createForm.role}
                                 onChange={e => setCreateForm({ ...createForm, role: e.target.value })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border px-3 py-2"
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border px-3 py-2 text-gray-900 bg-white"
                             >
                                 <option value="user">一般使用者</option>
                                 <option value="admin">管理員</option>
@@ -209,7 +209,7 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                                                 type="text"
                                                 value={editForm.full_name}
                                                 onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
-                                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-2 py-1 border"
+                                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-2 py-1 border text-gray-900 bg-white"
                                                 placeholder="姓名"
                                             />
                                         ) : (
@@ -222,7 +222,7 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                                             <select
                                                 value={editForm.role}
                                                 onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
-                                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-2 py-1 border"
+                                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-2 py-1 border text-gray-900 bg-white"
                                             >
                                                 <option value="user">一般使用者</option>
                                                 <option value="admin">管理員</option>
@@ -240,7 +240,7 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                                                 type="password"
                                                 value={editForm.password}
                                                 onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
-                                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-2 py-1 border"
+                                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-2 py-1 border text-gray-900 bg-white"
                                                 placeholder="重設密碼"
                                             />
                                         ) : (
