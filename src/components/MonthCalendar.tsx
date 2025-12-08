@@ -21,7 +21,48 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     const [editingBooking, setEditingBooking] = useState<BookingWithRoom | null>(null)
     const [isAdmin, setIsAdmin] = useState(false)
     const [filterTags, setFilterTags] = useState<string[]>(['所有'])
+    const [units, setUnits] = useState<{ id: string, name: string, unit_members: { id: string, name: string }[] }[]>([])
+    const [selectedUnitId, setSelectedUnitId] = useState('')
+    const [selectedMemberId, setSelectedMemberId] = useState('')
     const router = useRouter()
+
+    useEffect(() => {
+        const fetchUnits = async () => {
+            const supabase = createClient()
+            const { data } = await supabase
+                .from('units')
+                .select(`
+                    id, 
+                    name, 
+                    unit_members (
+                        id, 
+                        name
+                    )
+                `)
+                .order('name')
+
+            if (data) {
+                const sortedUnits = data.map((unit: any) => ({
+                    ...unit,
+                    unit_members: unit.unit_members.sort((a: any, b: any) => a.name.localeCompare(b.name))
+                }))
+                setUnits(sortedUnits)
+            }
+        }
+        fetchUnits()
+    }, [])
+
+    useEffect(() => {
+        if (editingBooking) {
+            setSelectedUnitId((editingBooking as any).unit_id || '')
+            setSelectedMemberId((editingBooking as any).unit_member_id || '')
+        } else {
+            setSelectedUnitId('')
+            setSelectedMemberId('')
+        }
+    }, [editingBooking])
+
+    const selectedUnit = units.find(u => u.id === selectedUnitId)
 
     useEffect(() => {
         const supabase = createClient()
@@ -228,6 +269,8 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                     start_time: startDateTime.toISOString(),
                     end_time: endDateTime.toISOString(),
                     notes: notes || null,
+                    unit_id: selectedUnitId || null,
+                    unit_member_id: selectedMemberId || null
                 })
                 .eq('id', editingBooking.id)
             error = updateError
@@ -241,6 +284,8 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                     start_time: startDateTime.toISOString(),
                     end_time: endDateTime.toISOString(),
                     notes: notes || null,
+                    unit_id: selectedUnitId || null,
+                    unit_member_id: selectedMemberId || null
                 })
             error = insertError
         }
@@ -532,6 +577,43 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                         placeholder="例如：週會"
                                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-foreground mb-1">
+                                            登記單位
+                                        </label>
+                                        <select
+                                            value={selectedUnitId}
+                                            onChange={(e) => {
+                                                setSelectedUnitId(e.target.value)
+                                                setSelectedMemberId('')
+                                            }}
+                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                        >
+                                            <option value="">請選擇單位</option>
+                                            {units.map(unit => (
+                                                <option key={unit.id} value={unit.id}>{unit.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-foreground mb-1">
+                                            同仁姓名
+                                        </label>
+                                        <select
+                                            value={selectedMemberId}
+                                            onChange={(e) => setSelectedMemberId(e.target.value)}
+                                            disabled={!selectedUnitId}
+                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
+                                        >
+                                            <option value="">{selectedUnitId ? '請選擇同仁' : '請先選擇單位'}</option>
+                                            {selectedUnit?.unit_members.map(member => (
+                                                <option key={member.id} value={member.id}>{member.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
