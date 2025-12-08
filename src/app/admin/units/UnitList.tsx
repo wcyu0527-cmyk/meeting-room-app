@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { createUnit, updateUnit, deleteUnit, createUnitMember, deleteUnitMember } from './actions'
 
@@ -10,6 +11,7 @@ type Unit = {
 }
 
 export default function UnitList({ units }: { units: Unit[] }) {
+    const router = useRouter()
     const [isCreating, setIsCreating] = useState(false)
     const [isCreatingMember, setIsCreatingMember] = useState(false)
     const [newUnitName, setNewUnitName] = useState('')
@@ -28,6 +30,7 @@ export default function UnitList({ units }: { units: Unit[] }) {
         if (res.success) {
             setNewUnitName('')
             setIsCreating(false)
+            router.refresh()
         } else {
             alert('建立單位失敗: ' + res.error)
         }
@@ -40,6 +43,7 @@ export default function UnitList({ units }: { units: Unit[] }) {
         if (res.success) {
             setEditingUnitId(null)
             setEditUnitName('')
+            router.refresh()
         } else {
             alert('更新單位失敗: ' + res.error)
         }
@@ -51,6 +55,8 @@ export default function UnitList({ units }: { units: Unit[] }) {
         const res = await deleteUnit(id)
         if (!res.success) {
             alert('刪除單位失敗: ' + res.error)
+        } else {
+            router.refresh()
         }
     }
 
@@ -61,6 +67,7 @@ export default function UnitList({ units }: { units: Unit[] }) {
         const res = await createUnitMember(unitId, newMemberName)
         if (res.success) {
             setNewMemberName('')
+            router.refresh()
         } else {
             alert('新增成員失敗: ' + res.error)
         }
@@ -72,6 +79,8 @@ export default function UnitList({ units }: { units: Unit[] }) {
         const res = await deleteUnitMember(id)
         if (!res.success) {
             alert('刪除成員失敗: ' + res.error)
+        } else {
+            router.refresh()
         }
     }
 
