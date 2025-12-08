@@ -146,15 +146,6 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border px-3 py-2"
                             />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">別名 (Alias)</label>
-                            <input
-                                type="text"
-                                value={createForm.alias}
-                                onChange={e => setCreateForm({ ...createForm, alias: e.target.value })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border px-3 py-2"
-                            />
-                        </div>
                         <button
                             type="submit"
                             disabled={isCreating}
@@ -179,9 +170,6 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                             </th>
                             <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                 姓名
-                            </th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                別名
                             </th>
                             <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                 角色
@@ -216,19 +204,7 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                                             profile.full_name || '未設定'
                                         )}
                                     </td>
-                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        {isEditing ? (
-                                            <input
-                                                type="text"
-                                                value={editForm.alias}
-                                                onChange={(e) => setEditForm({ ...editForm, alias: e.target.value })}
-                                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-2 py-1 border"
-                                                placeholder="別名"
-                                            />
-                                        ) : (
-                                            profile.alias || '-'
-                                        )}
-                                    </td>
+                                    {/* Alias column removed */}
                                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         {isEditing ? (
                                             <select
