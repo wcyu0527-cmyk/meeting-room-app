@@ -43,12 +43,12 @@ export default function Navbar() {
     const checkAdmin = async (userId: string) => {
         const supabase = createClient()
         const { data } = await supabase
-            .from('users')
-            .select('is_admin')
+            .from('profiles')
+            .select('role')
             .eq('id', userId)
             .single()
 
-        setIsAdmin(data?.is_admin ?? false)
+        setIsAdmin(data?.role === 'admin')
     }
 
     const signOut = async () => {

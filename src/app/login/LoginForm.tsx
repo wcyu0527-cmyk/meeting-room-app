@@ -23,17 +23,17 @@ export default function LoginForm({
         <form className="space-y-6">
             <div>
                 <label
-                    htmlFor="email"
+                    htmlFor="username"
                     className="block text-sm font-medium text-gray-700"
                 >
-                    Email address
+                    使用者帳號
                 </label>
                 <div className="mt-1">
                     <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        autoComplete="email"
+                        id="username"
+                        name="username"
+                        type="text"
+                        autoComplete="username"
                         required
                         disabled={isPending}
                         className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
@@ -46,7 +46,7 @@ export default function LoginForm({
                     htmlFor="password"
                     className="block text-sm font-medium text-gray-700"
                 >
-                    Password
+                    使用者密碼
                 </label>
                 <div className="mt-1">
                     <input
@@ -65,7 +65,7 @@ export default function LoginForm({
                 <button
                     formAction={handleLogin}
                     disabled={isPending}
-                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed"
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed"
                 >
                     {isPending ? (
                         <span className="flex items-center">
@@ -76,15 +76,9 @@ export default function LoginForm({
                             登入中...
                         </span>
                     ) : (
-                        'Sign in'
+                        '登入'
                     )}
                 </button>
-            </div>
-
-            <div className="text-center">
-                <Link href="/signup" className="text-sm text-indigo-600 hover:text-indigo-500">
-                    Don't have an account? Sign up
-                </Link>
             </div>
 
             {error && (
