@@ -68,8 +68,12 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
 
         setIsDeleting(userId)
         try {
-            await deleteUser(userId)
-            window.location.reload()
+            const result = await deleteUser(userId)
+            if (result.success) {
+                window.location.reload()
+            } else {
+                alert('刪除使用者失敗: ' + result.error)
+            }
         } catch (error) {
             alert('刪除使用者失敗: ' + (error as Error).message)
         } finally {
