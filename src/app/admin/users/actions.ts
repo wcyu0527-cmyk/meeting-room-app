@@ -95,10 +95,26 @@ export async function deleteUser(userId: string) {
 
         const supabaseAdmin = createAdminClient()
 
+        // 1. Delete user's bookings first to prevent Foreign Key constraint violations
+        const { error: bookingsError } = await supabaseAdmin
+            .from('bookings')
+            .delete()
+            .eq('user_id', userId)
+
+        if (bookingsError) {
+            console.error('Error deleting user bookings:', bookingsError)
+            return { success: false, error: `刪除使用者預約記錄失敗: ${bookingsError.message}` }
+        }
+
+        // 2. Delete the user from Auth (this will cascade to public.profiles if configured, otherwise we might need to delete profile too)
         const { error } = await supabaseAdmin.auth.admin.deleteUser(userId)
 
         if (error) {
             console.error('Error deleting user:', error)
+            // Handle specific "Database error" message which is vague
+            if (error.message.includes('Database error')) {
+                return { success: false, error: '資料庫刪除錯誤，該使用者可能仍有其他關聯資料（如個人檔案）導致無法刪除。' }
+            }
             return { success: false, error: error.message }
         }
 
