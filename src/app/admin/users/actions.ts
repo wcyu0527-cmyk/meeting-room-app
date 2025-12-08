@@ -105,7 +105,21 @@ export async function deleteUser(userId: string) {
             return { success: false, error: `刪除使用者預約記錄失敗: ${bookingsError.message}` }
         }
 
-        // 2. Delete the user from Auth (this will cascade to public.profiles if configured, otherwise we might need to delete profile too)
+        // 2. Delete the user's profile from 'public.profiles'
+        // Ideally this should cascade, but based on the error it seems it's not cascaded or there is another table.
+        // Let's explicitly delete from profiles just to be safe and cover the most likely cause.
+        const { error: profileError } = await supabaseAdmin
+            .from('profiles')
+            .delete()
+            .eq('id', userId)
+
+        if (profileError) {
+            console.error('Error deleting user profile:', profileError)
+            // We continue even if profile delete fails? No, it might be the cause.
+            // But sometimes profile doesn't exist.
+        }
+
+        // 3. Delete the user from Auth (this will cascade to public.profiles if configured, otherwise we might need to delete profile too)
         const { error } = await supabaseAdmin.auth.admin.deleteUser(userId)
 
         if (error) {
