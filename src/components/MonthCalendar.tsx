@@ -349,14 +349,14 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
 
     const selectedDayBookings = selectedDate ? getDayBookings(selectedDate) : []
 
-    // Check if booking is read-only
-    // 1. If it's someone else's booking
-    // 2. If it's expired and user is not admin
+    // Check if booking is read-only or eco-only editable
+    // 1. If it's someone else's booking -> fully read-only
+    // 2. If it's expired and user's own booking -> can edit eco fields only
+    // 3. If it's expired and user is admin -> can edit everything
     const isExpired = editingBooking ? new Date(editingBooking.end_time) < new Date() : false
-    const isReadOnly = editingBooking && user && (
-        editingBooking.user_id !== user.id ||
-        (isExpired && !isAdmin)
-    )
+    const isOwnBooking = editingBooking && user && editingBooking.user_id === user.id
+    const isReadOnly = editingBooking && user && editingBooking.user_id !== user.id
+    const isEcoOnlyEditable = isOwnBooking && isExpired && !isAdmin
 
     return (
         <div ref={containerRef} className="rounded-xl border bg-card text-card-foreground shadow">
@@ -596,9 +596,9 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                         <div className="bg-background rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 border border-border">
                             <h3 className="text-lg font-semibold text-foreground mb-4">
                                 {editingBooking ? (
-                                    isReadOnly ? (
-                                        isExpired && !isAdmin ? '預約詳情（已過期）' : '預約詳情'
-                                    ) : '編輯預約'
+                                    isReadOnly ? '預約詳情' :
+                                        isEcoOnlyEditable ? '編輯預約（僅限環保資訊）' :
+                                            '編輯預約'
                                 ) : '預約會議'} - {selectedDate?.toLocaleDateString('zh-TW')}
                             </h3>
                             <form onSubmit={handleBookRoom} className="space-y-4">
@@ -609,7 +609,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                     <select
                                         name="room_id"
                                         required
-                                        disabled={isReadOnly}
+                                        disabled={isReadOnly || isEcoOnlyEditable}
                                         defaultValue={editingBooking?.room_id}
                                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
@@ -628,7 +628,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                         type="text"
                                         name="title"
                                         required
-                                        disabled={isReadOnly}
+                                        disabled={isReadOnly || isEcoOnlyEditable}
                                         defaultValue={editingBooking?.title}
                                         placeholder="例如：週會"
                                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -642,7 +642,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                         </label>
                                         <select
                                             value={selectedUnitId}
-                                            disabled={isReadOnly}
+                                            disabled={isReadOnly || isEcoOnlyEditable}
                                             onChange={(e) => {
                                                 setSelectedUnitId(e.target.value)
                                                 setSelectedMemberId('')
@@ -662,7 +662,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                         <select
                                             value={selectedMemberId}
                                             onChange={(e) => setSelectedMemberId(e.target.value)}
-                                            disabled={!selectedUnitId || isReadOnly}
+                                            disabled={!selectedUnitId || isReadOnly || isEcoOnlyEditable}
                                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
                                         >
                                             <option value="">{selectedUnitId ? '請選擇同仁' : '請先選擇單位'}</option>
@@ -681,7 +681,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                             type="time"
                                             name="start_time"
                                             required
-                                            disabled={isReadOnly}
+                                            disabled={isReadOnly || isEcoOnlyEditable}
                                             defaultValue={editingBooking ? new Date(editingBooking.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : "09:00"}
                                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                         />
@@ -694,7 +694,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                             type="time"
                                             name="end_time"
                                             required
-                                            disabled={isReadOnly}
+                                            disabled={isReadOnly || isEcoOnlyEditable}
                                             defaultValue={editingBooking ? new Date(editingBooking.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : "10:00"}
                                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                         />
@@ -708,15 +708,15 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                     <textarea
                                         name="notes"
                                         rows={3}
-                                        disabled={isReadOnly}
+                                        disabled={isReadOnly || isEcoOnlyEditable}
                                         defaultValue={editingBooking?.notes || ''}
                                         className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     />
                                 </div>
 
-                                {/* 環保相關欄位區塊 */}
+                                {/* 免洗餐具及包裝飲用水減量 */}
                                 <div className="border-t border-border pt-4 mt-4">
-                                    <h4 className="text-sm font-semibold text-foreground mb-3">環保相關資訊</h4>
+                                    <h4 className="text-sm font-semibold text-foreground mb-3">免洗餐具及包裝飲用水減量</h4>
 
                                     <div className="grid grid-cols-2 gap-4">
                                         {/* 類別 */}
@@ -736,10 +736,10 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                             </select>
                                         </div>
 
-                                        {/* 使用環保餐盒數量 */}
+                                        {/* 本次使用環保餐盒數量 */}
                                         <div>
                                             <label className="block text-sm font-medium text-foreground mb-1">
-                                                使用環保餐盒數量
+                                                本次使用環保餐盒數量
                                             </label>
                                             <input
                                                 type="number"
@@ -751,10 +751,10 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                             />
                                         </div>
 
-                                        {/* 不使用包裝水、紙杯人數 */}
+                                        {/* 本次不使用包裝水、紙杯人數 */}
                                         <div>
                                             <label className="block text-sm font-medium text-foreground mb-1">
-                                                不使用包裝水、紙杯人數
+                                                本次不使用包裝水、紙杯人數
                                             </label>
                                             <input
                                                 type="number"
@@ -766,10 +766,10 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                             />
                                         </div>
 
-                                        {/* 外帶 */}
+                                        {/* 外帶數量 */}
                                         <div>
                                             <label className="block text-sm font-medium text-foreground mb-1">
-                                                外帶
+                                                外帶數量
                                                 <span className="text-xs text-muted-foreground ml-1">(便當以外，提供非塑膠包裝之餐點個數)</span>
                                             </label>
                                             <input
@@ -784,10 +784,10 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4 mt-4">
-                                        {/* 無法配合之主要原因 */}
+                                        {/* 本次無法配合之主要原因 */}
                                         <div>
                                             <label className="block text-sm font-medium text-foreground mb-1">
-                                                無法配合之主要原因
+                                                本次無法配合之主要原因
                                             </label>
                                             <select
                                                 name="cannot_comply_reason"
@@ -809,10 +809,10 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                             )}
                                         </div>
 
-                                        {/* 報准使用免洗餐盒數量 */}
+                                        {/* 本次報准使用免洗餐盒數量 */}
                                         <div>
                                             <label className="block text-sm font-medium text-foreground mb-1">
-                                                報准使用免洗餐盒數量
+                                                本次報准使用免洗餐盒數量
                                             </label>
                                             <input
                                                 type="number"
@@ -827,7 +827,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                 </div>
 
                                 <div className="flex justify-between space-x-2 pt-2">
-                                    {editingBooking && !isReadOnly ? (
+                                    {editingBooking && !isReadOnly && !isEcoOnlyEditable ? (
                                         <button
                                             type="button"
                                             onClick={handleDeleteBooking}
