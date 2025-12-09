@@ -2,6 +2,7 @@
 
 import { createClient } from '@/utils/supabase/client'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { useMobileView } from '@/components/MobileViewProvider'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -10,7 +11,9 @@ import { User } from '@supabase/supabase-js'
 export default function Navbar() {
     const [user, setUser] = useState<User | null>(null)
     const [isAdmin, setIsAdmin] = useState(false)
+    const [fullName, setFullName] = useState<string | null>(null)
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const { isMobileView, toggleMobileView } = useMobileView()
     const router = useRouter()
     const pathname = usePathname()
 
@@ -21,7 +24,7 @@ export default function Navbar() {
         supabase.auth.getUser().then(({ data: { user } }) => {
             setUser(user)
             if (user) {
-                checkAdmin(user.id)
+                getUserProfile(user.id)
             }
         })
 
@@ -31,24 +34,26 @@ export default function Navbar() {
         } = supabase.auth.onAuthStateChange((_event, session) => {
             setUser(session?.user ?? null)
             if (session?.user) {
-                checkAdmin(session.user.id)
+                getUserProfile(session.user.id)
             } else {
                 setIsAdmin(false)
+                setFullName(null)
             }
         })
 
         return () => subscription.unsubscribe()
     }, [])
 
-    const checkAdmin = async (userId: string) => {
+    const getUserProfile = async (userId: string) => {
         const supabase = createClient()
         const { data } = await supabase
             .from('profiles')
-            .select('role')
+            .select('role, full_name')
             .eq('id', userId)
             .single()
 
         setIsAdmin(data?.role === 'admin')
+        setFullName(data?.full_name || null)
     }
 
     const signOut = async () => {
@@ -61,6 +66,12 @@ export default function Navbar() {
 
     const isActive = (path: string) => {
         return pathname === path
+    }
+
+    const getDisplayName = () => {
+        if (!user?.email) return ''
+        const username = user.email.replace('@meeting.local', '')
+        return fullName ? `${username}(${fullName})` : username
     }
 
     return (
@@ -77,7 +88,7 @@ export default function Navbar() {
                             </Link>
                         </div>
                         {/* Desktop Navigation */}
-                        <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <div className={`${isMobileView ? 'hidden' : 'hidden sm:ml-6 sm:flex'} sm:space-x-8`}>
                             <Link
                                 href="/"
                                 className={`inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors ${isActive('/')
@@ -112,12 +123,24 @@ export default function Navbar() {
                         </div>
                     </div>
                     {/* Desktop User Menu */}
-                    <div className="hidden sm:flex sm:items-center gap-4">
+                    <div className={`${isMobileView ? 'hidden' : 'hidden sm:flex'} sm:items-center gap-4`}>
+                        {user && (
+                            <button
+                                onClick={toggleMobileView}
+                                className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-9 w-9"
+                                title="切換至行動裝置"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+                                    <path d="M12 18h.01" />
+                                </svg>
+                            </button>
+                        )}
                         <ThemeToggle />
                         {user ? (
                             <div className="flex items-center gap-4">
                                 <span className="text-sm text-muted-foreground">
-                                    {user.email}
+                                    {getDisplayName()}
                                 </span>
                                 <button
                                     onClick={signOut}
@@ -136,7 +159,7 @@ export default function Navbar() {
                         )}
                     </div>
                     {/* Mobile menu button */}
-                    <div className="flex items-center sm:hidden">
+                    <div className={`flex items-center ${isMobileView ? '' : 'sm:hidden'}`}>
                         <button
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                             className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
@@ -181,7 +204,7 @@ export default function Navbar() {
             </div>
 
             {/* Mobile menu */}
-            <div className={`${mobileMenuOpen ? 'block' : 'hidden'} sm:hidden border-t border-border`}>
+            <div className={`${mobileMenuOpen ? 'block' : 'hidden'} ${isMobileView ? '' : 'sm:hidden'} border-t border-border`}>
                 <div className="pt-2 pb-3 space-y-1 px-2">
                     <Link
                         href="/"
@@ -223,10 +246,28 @@ export default function Navbar() {
                         <span className="text-sm font-medium text-muted-foreground">切換主題</span>
                         <ThemeToggle />
                     </div>
+                    {isMobileView && (
+                        <div className="px-4 mb-4">
+                            <button
+                                onClick={() => {
+                                    toggleMobileView()
+                                    setMobileMenuOpen(false)
+                                }}
+                                className="flex w-full items-center justify-between text-sm font-medium text-muted-foreground hover:text-foreground"
+                            >
+                                <span>切換至桌面版</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <rect width="20" height="14" x="2" y="3" rx="2" />
+                                    <line x1="8" y1="21" x2="16" y2="21" />
+                                    <line x1="12" y1="17" x2="12" y2="21" />
+                                </svg>
+                            </button>
+                        </div>
+                    )}
                     {user ? (
                         <div className="space-y-3 px-4">
                             <div className="text-base font-medium text-foreground">
-                                {user.email}
+                                {getDisplayName()}
                             </div>
                             <button
                                 onClick={signOut}
