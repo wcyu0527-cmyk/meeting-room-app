@@ -318,7 +318,15 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     }
 
     const selectedDayBookings = selectedDate ? getDayBookings(selectedDate) : []
-    const isReadOnly = editingBooking && user && editingBooking.user_id !== user.id
+
+    // Check if booking is read-only
+    // 1. If it's someone else's booking
+    // 2. If it's expired and user is not admin
+    const isExpired = editingBooking ? new Date(editingBooking.end_time) < new Date() : false
+    const isReadOnly = editingBooking && user && (
+        editingBooking.user_id !== user.id ||
+        (isExpired && !isAdmin)
+    )
 
     return (
         <div ref={containerRef} className="rounded-xl border bg-card text-card-foreground shadow">
@@ -495,7 +503,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
 
                 {/* Selected Day Details Panel */}
                 {selectedDate && (
-                    <div className="w-full md:w-80 border-l border-border bg-card p-4 overflow-y-auto max-h-[600px]">
+                    <div className="w-full md:w-80 border-t md:border-t-0 md:border-l border-border bg-card p-4 overflow-y-auto max-h-[600px] rounded-b-xl md:rounded-b-none md:rounded-r-xl">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-medium text-foreground">
                                 {selectedDate.toLocaleDateString('zh-TW', { weekday: 'long', month: 'long', day: 'numeric' })}
@@ -557,7 +565,11 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                         <div className="bg-background rounded-lg shadow-lg w-full max-w-md p-6 border border-border">
                             <h3 className="text-lg font-semibold text-foreground mb-4">
-                                {editingBooking ? (isReadOnly ? '預約詳情' : '編輯預約') : '預約會議'} - {selectedDate?.toLocaleDateString('zh-TW')}
+                                {editingBooking ? (
+                                    isReadOnly ? (
+                                        isExpired && !isAdmin ? '預約詳情（已過期）' : '預約詳情'
+                                    ) : '編輯預約'
+                                ) : '預約會議'} - {selectedDate?.toLocaleDateString('zh-TW')}
                             </h3>
                             <form onSubmit={handleBookRoom} className="space-y-4">
                                 <div>
