@@ -24,6 +24,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     const [units, setUnits] = useState<{ id: string, name: string, unit_members: { id: string, name: string }[] }[]>([])
     const [selectedUnitId, setSelectedUnitId] = useState('')
     const [selectedMemberId, setSelectedMemberId] = useState('')
+    const [cannotComplyReason, setCannotComplyReason] = useState('無提供便當')
 
     const router = useRouter()
     const containerRef = useRef<HTMLDivElement>(null)
@@ -71,9 +72,11 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
         if (editingBooking) {
             setSelectedUnitId((editingBooking as any).unit_id || '')
             setSelectedMemberId((editingBooking as any).unit_member_id || '')
+            setCannotComplyReason((editingBooking as any).cannot_comply_reason || '無提供便當')
         } else {
             setSelectedUnitId('')
             setSelectedMemberId('')
+            setCannotComplyReason('無提供便當')
         }
     }, [editingBooking])
 
@@ -254,6 +257,21 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
         const endTimeStr = formData.get('end_time') as string
         const notes = formData.get('notes') as string
 
+        // 環保相關欄位
+        const category = formData.get('category') as string
+        const ecoBoxCount = parseInt(formData.get('eco_box_count') as string) || 0
+        const noPackagingCount = parseInt(formData.get('no_packaging_count') as string) || 0
+        const takeoutCount = parseInt(formData.get('takeout_count') as string) || 0
+        const cannotComplyReasonValue = formData.get('cannot_comply_reason') as string
+        const approvedDisposableCount = parseInt(formData.get('approved_disposable_count') as string) || 0
+
+        // 驗證：如果選擇"因其他原因無法配合"，備註必填
+        if (cannotComplyReasonValue === '因其他原因無法配合' && !notes.trim()) {
+            alert('選擇「因其他原因無法配合」時，請在備註中說明原因')
+            setIsSubmitting(false)
+            return
+        }
+
         // Combine date and time
         if (!selectedDate) return
 
@@ -285,7 +303,13 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                     end_time: endDateTime.toISOString(),
                     notes: notes || null,
                     unit_id: selectedUnitId || null,
-                    unit_member_id: selectedMemberId || null
+                    unit_member_id: selectedMemberId || null,
+                    category: category || '會議',
+                    eco_box_count: ecoBoxCount,
+                    no_packaging_count: noPackagingCount,
+                    takeout_count: takeoutCount,
+                    cannot_comply_reason: cannotComplyReasonValue || '無提供便當',
+                    approved_disposable_count: approvedDisposableCount
                 })
                 .eq('id', editingBooking.id)
             error = updateError
@@ -300,7 +324,13 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                     end_time: endDateTime.toISOString(),
                     notes: notes || null,
                     unit_id: selectedUnitId || null,
-                    unit_member_id: selectedMemberId || null
+                    unit_member_id: selectedMemberId || null,
+                    category: category || '會議',
+                    eco_box_count: ecoBoxCount,
+                    no_packaging_count: noPackagingCount,
+                    takeout_count: takeoutCount,
+                    cannot_comply_reason: cannotComplyReasonValue || '無提供便當',
+                    approved_disposable_count: approvedDisposableCount
                 })
             error = insertError
         }
@@ -563,7 +593,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
             {
                 isBookingModalOpen && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                        <div className="bg-background rounded-lg shadow-lg w-full max-w-md p-6 border border-border">
+                        <div className="bg-background rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 border border-border">
                             <h3 className="text-lg font-semibold text-foreground mb-4">
                                 {editingBooking ? (
                                     isReadOnly ? (
@@ -682,6 +712,118 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                         defaultValue={editingBooking?.notes || ''}
                                         className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     />
+                                </div>
+
+                                {/* 環保相關欄位區塊 */}
+                                <div className="border-t border-border pt-4 mt-4">
+                                    <h4 className="text-sm font-semibold text-foreground mb-3">環保相關資訊</h4>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {/* 類別 */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-foreground mb-1">
+                                                類別
+                                            </label>
+                                            <select
+                                                name="category"
+                                                disabled={isReadOnly}
+                                                defaultValue={(editingBooking as any)?.category || '會議'}
+                                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                            >
+                                                <option value="會議">會議</option>
+                                                <option value="訓練">訓練</option>
+                                                <option value="活動">活動</option>
+                                            </select>
+                                        </div>
+
+                                        {/* 使用環保餐盒數量 */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-foreground mb-1">
+                                                使用環保餐盒數量
+                                            </label>
+                                            <input
+                                                type="number"
+                                                name="eco_box_count"
+                                                min="0"
+                                                disabled={isReadOnly}
+                                                defaultValue={(editingBooking as any)?.eco_box_count || 0}
+                                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                            />
+                                        </div>
+
+                                        {/* 不使用包裝水、紙杯人數 */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-foreground mb-1">
+                                                不使用包裝水、紙杯人數
+                                            </label>
+                                            <input
+                                                type="number"
+                                                name="no_packaging_count"
+                                                min="0"
+                                                disabled={isReadOnly}
+                                                defaultValue={(editingBooking as any)?.no_packaging_count || 0}
+                                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                            />
+                                        </div>
+
+                                        {/* 外帶 */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-foreground mb-1">
+                                                外帶
+                                                <span className="text-xs text-muted-foreground ml-1">(便當以外，提供非塑膠包裝之餐點個數)</span>
+                                            </label>
+                                            <input
+                                                type="number"
+                                                name="takeout_count"
+                                                min="0"
+                                                disabled={isReadOnly}
+                                                defaultValue={(editingBooking as any)?.takeout_count || 0}
+                                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4 mt-4">
+                                        {/* 無法配合之主要原因 */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-foreground mb-1">
+                                                無法配合之主要原因
+                                            </label>
+                                            <select
+                                                name="cannot_comply_reason"
+                                                disabled={isReadOnly}
+                                                value={cannotComplyReason}
+                                                onChange={(e) => setCannotComplyReason(e.target.value)}
+                                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                            >
+                                                <option value="無提供便當">無提供便當</option>
+                                                <option value="因訂購數量無法配合">因訂購數量無法配合</option>
+                                                <option value="因收送時間無法配合">因收送時間無法配合</option>
+                                                <option value="因辦理地點無法配合">因辦理地點無法配合</option>
+                                                <option value="因其他原因無法配合">因其他原因無法配合</option>
+                                            </select>
+                                            {cannotComplyReason === '因其他原因無法配合' && (
+                                                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                                                    ⚠️ 請在備註欄位說明原因
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        {/* 報准使用免洗餐盒數量 */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-foreground mb-1">
+                                                報准使用免洗餐盒數量
+                                            </label>
+                                            <input
+                                                type="number"
+                                                name="approved_disposable_count"
+                                                min="0"
+                                                disabled={isReadOnly}
+                                                defaultValue={(editingBooking as any)?.approved_disposable_count || 0}
+                                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div className="flex justify-between space-x-2 pt-2">
