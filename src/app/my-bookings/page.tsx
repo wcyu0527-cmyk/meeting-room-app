@@ -24,14 +24,14 @@ export default async function MyBookingsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen bg-background">
             <Navbar />
             <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                 <div className="px-4 py-6 sm:px-0">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-6">
+                    <h1 className="text-3xl font-bold text-foreground mb-6">
                         我的預約
                     </h1>
-                    <div className="bg-white rounded-lg">
+                    <div className="bg-card text-card-foreground rounded-lg border border-border">
                         <MyBookings bookings={myBookings || []} userId={user.id} />
                     </div>
                 </div>
