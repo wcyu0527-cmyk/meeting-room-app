@@ -10,6 +10,7 @@ import { User } from '@supabase/supabase-js'
 export default function Navbar() {
     const [user, setUser] = useState<User | null>(null)
     const [isAdmin, setIsAdmin] = useState(false)
+    const [userName, setUserName] = useState<string>('')
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const router = useRouter()
     const pathname = usePathname()
@@ -21,7 +22,7 @@ export default function Navbar() {
         supabase.auth.getUser().then(({ data: { user } }) => {
             setUser(user)
             if (user) {
-                checkAdmin(user.id)
+                fetchUserProfile(user.id)
             }
         })
 
@@ -31,24 +32,28 @@ export default function Navbar() {
         } = supabase.auth.onAuthStateChange((_event, session) => {
             setUser(session?.user ?? null)
             if (session?.user) {
-                checkAdmin(session.user.id)
+                fetchUserProfile(session.user.id)
             } else {
                 setIsAdmin(false)
+                setUserName('')
             }
         })
 
         return () => subscription.unsubscribe()
     }, [])
 
-    const checkAdmin = async (userId: string) => {
+    const fetchUserProfile = async (userId: string) => {
         const supabase = createClient()
         const { data } = await supabase
             .from('profiles')
-            .select('role')
+            .select('role, full_name')
             .eq('id', userId)
             .single()
 
-        setIsAdmin(data?.role === 'admin')
+        if (data) {
+            setIsAdmin(data.role === 'admin')
+            setUserName(data.full_name || '')
+        }
     }
 
     const signOut = async () => {
@@ -117,7 +122,7 @@ export default function Navbar() {
                         {user ? (
                             <div className="flex items-center gap-4">
                                 <span className="text-sm text-muted-foreground">
-                                    {user.email}
+                                    {user.email?.split('@')[0]}{userName ? `(${userName})` : ''}
                                 </span>
                                 <button
                                     onClick={signOut}
@@ -226,7 +231,7 @@ export default function Navbar() {
                     {user ? (
                         <div className="space-y-3 px-4">
                             <div className="text-base font-medium text-foreground">
-                                {user.email}
+                                {user.email?.split('@')[0]}{userName ? `(${userName})` : ''}
                             </div>
                             <button
                                 onClick={signOut}
