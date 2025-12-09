@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { Booking, Room, BookingWithRoom } from '@/types'
 import { useRouter } from 'next/navigation'
@@ -24,7 +24,22 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     const [units, setUnits] = useState<{ id: string, name: string, unit_members: { id: string, name: string }[] }[]>([])
     const [selectedUnitId, setSelectedUnitId] = useState('')
     const [selectedMemberId, setSelectedMemberId] = useState('')
+
     const router = useRouter()
+    const containerRef = useRef<HTMLDivElement>(null)
+    const [isCompact, setIsCompact] = useState(false)
+
+    useEffect(() => {
+        const observer = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+                setIsCompact(entry.contentRect.width < 768)
+            }
+        })
+        if (containerRef.current) {
+            observer.observe(containerRef.current)
+        }
+        return () => observer.disconnect()
+    }, [])
 
     useEffect(() => {
         const fetchUnits = async () => {
@@ -306,7 +321,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     const isReadOnly = editingBooking && user && editingBooking.user_id !== user.id
 
     return (
-        <div className="rounded-xl border bg-card text-card-foreground shadow">
+        <div ref={containerRef} className="rounded-xl border bg-card text-card-foreground shadow">
             {/* Main Title & Filter Tags */}
             <div className="flex flex-wrap items-center px-6 py-4 border-b border-border gap-x-6 gap-y-3">
                 <h2 className="text-xl font-bold tracking-tight text-foreground whitespace-nowrap">
@@ -407,7 +422,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                         setIsBookingModalOpen(true)
                                     }}
                                     className={`
-                                        relative min-h-[3.5rem] md:h-32 p-1 md:p-2 rounded-lg border transition-all text-left group flex flex-col items-center md:items-start
+                                        relative min-h-[3.5rem] ${isCompact ? '' : 'h-32'} p-1 ${isCompact ? '' : 'p-2'} rounded-lg border transition-all text-left group flex flex-col ${isCompact ? 'items-center' : 'items-start'}
                                         ${isSelected
                                             ? 'ring-2 ring-primary border-transparent bg-accent'
                                             : 'border-border hover:border-primary/50 hover:shadow-sm bg-card'
@@ -425,7 +440,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                     </span>
 
                                     {/* Mobile: Dots Indicators */}
-                                    <div className="md:hidden mt-1 flex flex-wrap gap-0.5 justify-center content-center w-full px-0.5">
+                                    <div className={`mt-1 flex flex-wrap gap-0.5 justify-center content-center w-full px-0.5 ${isCompact ? 'flex' : 'hidden'}`}>
                                         {dayBookings.slice(0, 6).map(booking => {
                                             const isMyBooking = user && booking.user_id === user.id
                                             return (
@@ -441,7 +456,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                     </div>
 
                                     {/* Desktop: Booking Text List */}
-                                    <div className="hidden md:block mt-2 w-full space-y-1 overflow-y-auto max-h-[calc(100%-2rem)] scrollbar-hide">
+                                    <div className={`mt-2 w-full space-y-1 overflow-y-auto max-h-[calc(100%-2rem)] scrollbar-hide ${isCompact ? 'hidden' : 'block'}`}>
                                         {dayBookings.slice(0, 3).map(booking => {
                                             const isMyBooking = user && booking.user_id === user.id
                                             return (
