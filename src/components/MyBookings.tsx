@@ -10,10 +10,11 @@ type BookingWithRoom = Booking & {
 
 export default function MyBookings({
     bookings,
-    userId
+    isAdmin
 }: {
     bookings: BookingWithRoom[]
     userId: string
+    isAdmin?: boolean
 }) {
     const [editingId, setEditingId] = useState<string | null>(null)
     const [editForm, setEditForm] = useState({
@@ -158,21 +159,23 @@ export default function MyBookings({
                                         </div>
                                     ) : (
                                         <div className="flex gap-2">
-                                            {!isPast && (
-                                                <button
-                                                    onClick={() => handleEdit(booking)}
-                                                    className="text-primary hover:text-primary/80"
-                                                >
-                                                    編輯
-                                                </button>
+                                            {(isAdmin || !isPast) && (
+                                                <>
+                                                    <button
+                                                        onClick={() => handleEdit(booking)}
+                                                        className="text-primary hover:text-primary/80"
+                                                    >
+                                                        編輯
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(booking.id)}
+                                                        disabled={isDeleting === booking.id}
+                                                        className="text-destructive hover:text-destructive/80 disabled:opacity-50"
+                                                    >
+                                                        {isDeleting === booking.id ? '刪除中...' : '刪除'}
+                                                    </button>
+                                                </>
                                             )}
-                                            <button
-                                                onClick={() => handleDelete(booking.id)}
-                                                disabled={isDeleting === booking.id}
-                                                className="text-destructive hover:text-destructive/80 disabled:opacity-50"
-                                            >
-                                                {isDeleting === booking.id ? '刪除中...' : '刪除'}
-                                            </button>
                                         </div>
                                     )}
                                 </td>

@@ -16,12 +16,29 @@ export async function deleteBooking(bookingId: string) {
     // Check if the booking belongs to the user
     const { data: booking } = await supabase
         .from('bookings')
-        .select('user_id')
+        .select('user_id, end_time')
         .eq('id', bookingId)
         .single()
 
-    if (!booking || booking.user_id !== user.id) {
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+    const isAdmin = profile?.role === 'admin'
+
+    if (!booking) {
+        throw new Error('Booking not found')
+    }
+
+    if (booking.user_id !== user.id && !isAdmin) {
         throw new Error('Unauthorized')
+    }
+
+    const isExpired = new Date(booking.end_time) < new Date()
+    if (isExpired && !isAdmin) {
+        throw new Error('無法刪除已過期的預約')
     }
 
     const { error } = await supabase
@@ -53,12 +70,29 @@ export async function updateBooking(
     // Check if the booking belongs to the user
     const { data: booking } = await supabase
         .from('bookings')
-        .select('user_id')
+        .select('user_id, end_time')
         .eq('id', bookingId)
         .single()
 
-    if (!booking || booking.user_id !== user.id) {
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+    const isAdmin = profile?.role === 'admin'
+
+    if (!booking) {
+        throw new Error('Booking not found')
+    }
+
+    if (booking.user_id !== user.id && !isAdmin) {
         throw new Error('Unauthorized')
+    }
+
+    const isExpired = new Date(booking.end_time) < new Date()
+    if (isExpired && !isAdmin) {
+        throw new Error('無法修改已過期的預約')
     }
 
     const { error } = await supabase
