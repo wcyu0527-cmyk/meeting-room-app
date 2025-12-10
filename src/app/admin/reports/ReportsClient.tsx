@@ -61,7 +61,7 @@ export default function ReportsClient() {
             console.error('Error fetching reports:', error)
             alert('查詢失敗: ' + error.message)
         } else {
-            setBookings(data as any as ReportBooking[])
+            setBookings(data as unknown as ReportBooking[])
         }
         setLoading(false)
     }

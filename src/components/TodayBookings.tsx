@@ -1,12 +1,9 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Booking, Room } from '@/types'
 import { createClient } from '@/utils/supabase/client'
 
-type BookingWithRoom = Booking & {
-    rooms: Room
-}
+import { BookingWithRoom } from '@/types'
 
 export default function TodayBookings({ initialBookings }: { initialBookings?: BookingWithRoom[] }) {
     const [currentDate] = useState(new Date())

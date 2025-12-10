@@ -10,6 +10,7 @@ import { User } from '@supabase/supabase-js'
 export default function Navbar() {
     const [user, setUser] = useState<User | null>(null)
     const [userName, setUserName] = useState<string>('')
+    const [isAdmin, setIsAdmin] = useState(false)
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const router = useRouter()
     const pathname = usePathname()
@@ -24,6 +25,7 @@ export default function Navbar() {
 
         if (data) {
             setUserName(data.full_name || '')
+            setIsAdmin(data.role === 'admin')
         }
     }
 
@@ -98,6 +100,17 @@ export default function Navbar() {
                                         }`}
                                 >
                                     我的預約
+                                </Link>
+                            )}
+                            {user && isAdmin && (
+                                <Link
+                                    href="/admin/reports"
+                                    className={`inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors ${isActive('/admin/reports')
+                                        ? 'text-primary border-b-2 border-primary'
+                                        : 'text-muted-foreground hover:text-foreground border-b-2 border-transparent'
+                                        }`}
+                                >
+                                    管理報表
                                 </Link>
                             )}
                             {user && (
@@ -205,6 +218,18 @@ export default function Navbar() {
                                 }`}
                         >
                             我的預約
+                        </Link>
+                    )}
+                    {user && isAdmin && (
+                        <Link
+                            href="/admin/reports"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive('/admin/reports')
+                                ? 'bg-accent text-accent-foreground'
+                                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                                }`}
+                        >
+                            管理報表
                         </Link>
                     )}
                     {user && (

@@ -1,12 +1,12 @@
 'use client'
 
-import { Booking, Room } from '@/types'
+import { BookingWithRoom } from '@/types'
 
-type BookingWithRoom = Booking & {
-    rooms: Room
-}
 
-export default function AllBookings({ bookings }: { bookings: any[] }) {
+
+
+
+export default function AllBookings({ bookings }: { bookings: BookingWithRoom[] }) {
     if (!bookings || bookings.length === 0) {
         return (
             <div className="text-center py-8 text-muted-foreground">
@@ -54,7 +54,7 @@ export default function AllBookings({ bookings }: { bookings: any[] }) {
                                     </div>
                                 </td>
                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-foreground">
-                                    {booking.rooms.name}
+                                    {booking.rooms?.name || '未知會議室'}
                                 </td>
                                 <td className="px-3 py-4 text-sm text-foreground">
                                     {booking.title}

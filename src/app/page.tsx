@@ -4,7 +4,7 @@ import TodayBookings from '@/components/TodayBookings'
 import AllBookings from '@/components/AllBookings'
 import MonthCalendar from '@/components/MonthCalendar'
 import { createClient } from '@/utils/supabase/server'
-import { Room, Booking, BookingWithRoom } from '@/types'
+import { Room, BookingWithRoom } from '@/types'
 
 export default async function Home({ searchParams }: { searchParams: { error?: string } }) {
   const supabase = await createClient()
@@ -74,14 +74,7 @@ export default async function Home({ searchParams }: { searchParams: { error?: s
     if (mb) monthBookings = mb as unknown as BookingWithRoom[]
   }
 
-  // Format today's date for display
-  const todayDateStr = new Date().toLocaleDateString('zh-TW', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    weekday: 'long',
-    timeZone: 'Asia/Taipei'
-  })
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -108,7 +101,7 @@ export default async function Home({ searchParams }: { searchParams: { error?: s
 
           {/* Today's Meetings Section */}
           <div className="mb-8">
-            <TodayBookings initialBookings={todayBookings as any} />
+            <TodayBookings initialBookings={todayBookings as unknown as BookingWithRoom[]} />
           </div>
 
           {/* Month Calendar Section - Only for logged in users */}

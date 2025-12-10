@@ -23,7 +23,7 @@ export default function BookingForm({ roomId }: { roomId: string }) {
     useEffect(() => {
         const fetchUnits = async () => {
             const supabase = createClient()
-            const { data, error } = await supabase
+            const { data } = await supabase
                 .from('units')
                 .select(`
                     id, 
@@ -37,9 +37,9 @@ export default function BookingForm({ roomId }: { roomId: string }) {
 
             if (data) {
                 // Sort members by name
-                const sortedUnits = data.map((unit: any) => ({
-                    ...unit,
-                    unit_members: unit.unit_members.sort((a: any, b: any) => a.name.localeCompare(b.name))
+                const sortedUnits = data.map((unit: unknown) => ({
+                    ...(unit as Unit),
+                    unit_members: (unit as Unit).unit_members.sort((a, b) => a.name.localeCompare(b.name))
                 }))
                 setUnits(sortedUnits)
             }

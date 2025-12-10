@@ -2,7 +2,7 @@ import Navbar from '@/components/Navbar'
 import BookingForm from '@/components/BookingForm'
 import BookingList from '@/components/BookingList'
 import { createClient } from '@/utils/supabase/server'
-import { Room, Booking } from '@/types'
+import { Booking } from '@/types'
 import { notFound } from 'next/navigation'
 
 export default async function RoomPage({

@@ -11,7 +11,7 @@ export default async function MyBookingsPage() {
         redirect('/login')
     }
 
-    const now = new Date()
+
     const { data: myBookings, error } = await supabase
         .from('bookings')
         .select('*, rooms(*)')

@@ -7,8 +7,8 @@ import AdminUsersList from './AdminUsersList'
 export default async function AdminUsersPage() {
     const supabase = await createClient()
 
-    let profiles: any[] = []
-    let users: any[] = []
+    let profiles: { id: string, full_name: string | null, role: string, alias: string | null }[] = []
+    let users: { id: string, email?: string }[] = []
     let fetchError: string | null = null
 
     try {

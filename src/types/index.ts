@@ -22,11 +22,13 @@ export type Booking = {
     cannot_comply_reason?: string
     approved_disposable_count?: number
     unit_id?: string
+    unit_member_id?: string
     created_at: string
 }
 
 export type BookingWithRoom = Booking & {
     rooms: Room | null
+    profile?: { full_name: string | null }
 }
 
 export type Profile = {

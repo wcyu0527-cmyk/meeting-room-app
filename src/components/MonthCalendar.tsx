@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { Booking, Room, BookingWithRoom } from '@/types'
+import { Room, BookingWithRoom } from '@/types'
+import { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 
 type CalendarProps = {
@@ -14,10 +15,9 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     const [currentDate, setCurrentDate] = useState(new Date())
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
     const [bookings, setBookings] = useState<BookingWithRoom[]>(initialBookings)
-    const [loading, setLoading] = useState(false)
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [user, setUser] = useState<any>(null)
+    const [user, setUser] = useState<User | null>(null)
     const [editingBooking, setEditingBooking] = useState<BookingWithRoom | null>(null)
     const [isAdmin, setIsAdmin] = useState(false)
     const [filterTags, setFilterTags] = useState<string[]>(['所有'])
@@ -58,9 +58,9 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                 .order('name')
 
             if (data) {
-                const sortedUnits = data.map((unit: any) => ({
-                    ...unit,
-                    unit_members: unit.unit_members.sort((a: any, b: any) => a.name.localeCompare(b.name))
+                const sortedUnits = data.map((unit: unknown) => ({
+                    ...(unit as { id: string, name: string, unit_members: { id: string, name: string }[] }),
+                    unit_members: (unit as { unit_members: { id: string, name: string }[] }).unit_members.sort((a, b) => a.name.localeCompare(b.name))
                 }))
                 setUnits(sortedUnits)
             }
@@ -70,9 +70,10 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
 
     useEffect(() => {
         if (editingBooking) {
-            setSelectedUnitId((editingBooking as any).unit_id || '')
-            setSelectedMemberId((editingBooking as any).unit_member_id || '')
-            setCannotComplyReason((editingBooking as any).cannot_comply_reason || '無提供便當')
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setSelectedUnitId(editingBooking.unit_id || '')
+            setSelectedMemberId(editingBooking.unit_member_id || '')
+            setCannotComplyReason(editingBooking.cannot_comply_reason || '無提供便當')
         } else {
             setSelectedUnitId('')
             setSelectedMemberId('')
@@ -81,16 +82,6 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     }, [editingBooking])
 
     const selectedUnit = units.find(u => u.id === selectedUnitId)
-
-    useEffect(() => {
-        const supabase = createClient()
-        supabase.auth.getUser().then(({ data: { user } }) => {
-            setUser(user)
-            if (user) {
-                checkAdmin(user.id)
-            }
-        })
-    }, [])
 
     const checkAdmin = async (userId: string) => {
         const supabase = createClient()
@@ -101,6 +92,16 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
             .single()
         setIsAdmin(data?.role === 'admin')
     }
+
+    useEffect(() => {
+        const supabase = createClient()
+        supabase.auth.getUser().then(({ data: { user } }) => {
+            setUser(user)
+            if (user) {
+                checkAdmin(user.id)
+            }
+        })
+    }, [])
 
     // Calendar logic helpers
     const getDaysInMonth = (date: Date) => {
@@ -125,7 +126,6 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
 
     // Fetch bookings when month changes
     const fetchMonthBookings = async (date: Date) => {
-        setLoading(true)
         const supabase = createClient()
 
         const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
@@ -140,7 +140,6 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
         if (!error && data) {
             setBookings(data as unknown as BookingWithRoom[])
         }
-        setLoading(false)
     }
 
     const changeMonth = (offset: number) => {
@@ -354,9 +353,8 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     // 1. If it's someone else's booking -> fully read-only
     // 2. If it's expired and user's own booking -> can edit eco fields only
     // 3. If it's expired and user is admin -> can edit everything
-    const isExpired = editingBooking ? new Date(editingBooking.end_time) < new Date() : false
-    const isOwnBooking = editingBooking && user && editingBooking.user_id === user.id
-    const isReadOnly = editingBooking && user && editingBooking.user_id !== user.id && !isAdmin
+    // 3. If it's expired and user is admin -> can edit everything
+    const isReadOnly = Boolean(editingBooking && user && editingBooking.user_id !== user.id && !isAdmin)
     const isEcoOnlyEditable = false
 
     return (
@@ -594,9 +592,9 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                                         您的預約
                                                     </span>
                                                 ) : (
-                                                    (booking as any).unit_id && (
+                                                    booking.unit_id && (
                                                         <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
-                                                            {units.find(u => u.id === (booking as any).unit_id)?.name || '未知單位'}
+                                                            {units.find(u => u.id === booking.unit_id)?.name || '未知單位'}
                                                         </span>
                                                     )
                                                 )}

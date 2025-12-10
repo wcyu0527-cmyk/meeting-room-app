@@ -25,7 +25,7 @@ export default async function AdminUnitsPage() {
     // Sort members by name for each unit
     const sortedUnits = units?.map(unit => ({
         ...unit,
-        unit_members: unit.unit_members.sort((a: any, b: any) => a.name.localeCompare(b.name))
+        unit_members: unit.unit_members.sort((a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name))
     })) || []
 
     return (
