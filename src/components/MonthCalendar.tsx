@@ -566,10 +566,16 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                                 <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
                                                     {(booking.rooms as unknown as Room)?.name || '會議室'}
                                                 </span>
-                                                {isMyBooking && (
+                                                {isMyBooking ? (
                                                     <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
                                                         您的預約
                                                     </span>
+                                                ) : (
+                                                    (booking as any).unit_id && (
+                                                        <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                                                            {units.find(u => u.id === (booking as any).unit_id)?.name || '未知單位'}
+                                                        </span>
+                                                    )
                                                 )}
                                             </div>
                                             <div className="text-sm font-medium text-foreground mb-1">
