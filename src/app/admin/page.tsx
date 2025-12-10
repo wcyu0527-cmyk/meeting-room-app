@@ -126,6 +126,20 @@ export default async function AdminPage() {
                                 </p>
                             </div>
                         </Link>
+
+                        <Link
+                            href="/admin/reports"
+                            className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow"
+                        >
+                            <div className="px-4 py-5 sm:p-6">
+                                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                                    管理報表
+                                </h3>
+                                <p className="text-sm text-gray-500">
+                                    查詢登記紀錄與減量填報
+                                </p>
+                            </div>
+                        </Link>
                     </div>
                 </div>
             </main>

@@ -165,14 +165,14 @@ export default function MyBookings({
                         <div className="space-y-4">
                             <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
                                 <span className="w-2 h-8 bg-gray-400 rounded-full"></span>
-                                已進行
+                                已結束
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {pastBookings.map(booking => (
                                     <BookingCard
                                         key={booking.id}
                                         booking={booking}
-                                        statusLabel="已進行"
+                                        statusLabel="已結束"
                                         statusColor="bg-gray-100 text-gray-600 border-gray-200"
                                         isExpired={true}
                                         onEdit={() => setEditingBooking(booking)}
