@@ -82,71 +82,70 @@ export default function MyBookings({
 
     return (
         <>
-            <div className="overflow-hidden shadow border border-border sm:rounded-lg">
-                <table className="min-w-full divide-y divide-border">
-                    <thead className="bg-muted/50">
-                        <tr>
-                            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6">
-                                日期與時間
-                            </th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
-                                會議室
-                            </th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
-                                會議名稱
-                            </th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
-                                選項
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border bg-card">
-                        {bookings.map((booking) => {
-                            const startTime = new Date(booking.start_time)
-                            const endTime = new Date(booking.end_time)
-                            const isExpired = isPast(booking)
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {bookings.map((booking) => {
+                    const startTime = new Date(booking.start_time)
+                    const endTime = new Date(booking.end_time)
+                    const isExpired = isPast(booking)
 
-                            return (
-                                <tr key={booking.id} className={isExpired ? 'bg-muted/50 opacity-75' : ''}>
-                                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                                        <div className="font-medium text-foreground">
-                                            {startTime.toLocaleDateString('zh-TW', { month: 'long', day: 'numeric', year: 'numeric' })}
-                                            {isExpired && <span className="ml-2 text-xs text-muted-foreground">(已過期)</span>}
+                    return (
+                        <div
+                            key={booking.id}
+                            className={`
+                                relative flex flex-col justify-between rounded-lg border p-4 shadow-sm transition-all hover:shadow-md
+                                ${isExpired ? 'bg-muted/50 opacity-75' : 'bg-card text-card-foreground'}
+                            `}
+                        >
+                            <div className="space-y-3">
+                                <div className="flex items-start justify-between">
+                                    <div className="space-y-1">
+                                        <div className="font-semibold text-lg">
+                                            {startTime.toLocaleDateString('zh-TW', { month: 'long', day: 'numeric' })}
                                         </div>
-                                        <div className="text-muted-foreground">
+                                        <div className="text-sm text-muted-foreground flex items-center gap-1">
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
                                             {startTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })} - {endTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })}
                                         </div>
-                                    </td>
-                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-foreground">
-                                        {booking.rooms.name}
-                                    </td>
-                                    <td className="px-3 py-4 text-sm text-foreground">
+                                    </div>
+                                    {isExpired && (
+                                        <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                                            已過期
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2 text-sm font-medium">
+                                        <span className="inline-flex items-center justify-center rounded bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+                                            {booking.rooms.name}
+                                        </span>
+                                    </div>
+                                    <h3 className="font-medium leading-none tracking-tight">
                                         {booking.title}
-                                    </td>
-                                    <td className="whitespace-nowrap px-3 py-4 text-sm">
-                                        <div className="flex gap-2">
-                                            <>
-                                                <button
-                                                    onClick={() => setEditingBooking(booking)}
-                                                    className="text-primary hover:text-primary/80"
-                                                >
-                                                    編輯
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(booking.id)}
-                                                    disabled={isDeleting === booking.id}
-                                                    className="text-destructive hover:text-destructive/80 disabled:opacity-50"
-                                                >
-                                                    {isDeleting === booking.id ? '刪除中...' : '刪除'}
-                                                </button>
-                                            </>
-                                        </div>
-                                    </td>
-                                </tr>
-                            )
-                        })}
-                    </tbody>
-                </table>
+                                    </h3>
+                                </div>
+                            </div>
+
+                            <div className="mt-4 flex items-center justify-end gap-2 pt-4 border-t border-border">
+                                <button
+                                    onClick={() => setEditingBooking(booking)}
+                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3"
+                                >
+                                    編輯
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(booking.id)}
+                                    disabled={isDeleting === booking.id}
+                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-8 px-3"
+                                >
+                                    {isDeleting === booking.id ? '刪除中...' : '刪除'}
+                                </button>
+                            </div>
+                        </div>
+                    )
+                })}
             </div>
 
             {/* Edit Modal */}
