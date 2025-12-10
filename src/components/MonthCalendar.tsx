@@ -95,7 +95,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     const checkAdmin = async (userId: string) => {
         const supabase = createClient()
         const { data } = await supabase
-            .from('users')
+            .from('profiles')
             .select('is_admin')
             .eq('id', userId)
             .single()
