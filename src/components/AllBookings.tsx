@@ -21,7 +21,8 @@ export default function AllBookings({ bookings }: { bookings: BookingWithRoom[] 
                 <thead className="bg-muted/50">
                     <tr>
                         <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6 w-[100px] sm:w-[220px]">
-                            時間
+                            <span className="hidden sm:inline">日期與時間</span>
+                            <span className="sm:hidden">日期</span>
                         </th>
                         <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground w-[100px] sm:w-[150px]">
                             會議室
@@ -31,7 +32,8 @@ export default function AllBookings({ bookings }: { bookings: BookingWithRoom[] 
                             <span className="sm:hidden whitespace-pre-line">會議{"\n"}名稱</span>
                         </th>
                         <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground w-[80px] sm:w-[100px]">
-                            登記人
+                            <span className="hidden sm:inline">持續時間</span>
+                            <span className="sm:hidden">登記人</span>
                         </th>
                     </tr>
                 </thead>
@@ -39,14 +41,15 @@ export default function AllBookings({ bookings }: { bookings: BookingWithRoom[] 
                     {bookings.map((booking) => {
                         const startTime = new Date(booking.start_time)
                         const endTime = new Date(booking.end_time)
+                        const duration = Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60))
 
                         return (
                             <tr key={booking.id}>
-                                <td className="py-4 pl-4 pr-3 text-sm sm:pl-6">
+                                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                                     <div className="font-medium text-foreground">
                                         {startTime.toLocaleDateString('zh-TW', { month: '2-digit', day: '2-digit' })}
                                     </div>
-                                    <div className="text-muted-foreground">
+                                    <div className="text-muted-foreground hidden sm:block">
                                         {startTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: true })} - {endTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: true })}
                                     </div>
                                 </td>
@@ -57,7 +60,8 @@ export default function AllBookings({ bookings }: { bookings: BookingWithRoom[] 
                                     {booking.title}
                                 </td>
                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
-                                    {booking.profile?.full_name || '未知'}
+                                    <span className="hidden sm:inline">{duration} 分鐘</span>
+                                    <span className="sm:hidden text-foreground font-medium">{booking.profile?.full_name || '未知'}</span>
                                 </td>
                             </tr>
                         )
