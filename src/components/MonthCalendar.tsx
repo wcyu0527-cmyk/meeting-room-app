@@ -381,7 +381,8 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
             </div>
 
             {/* Calendar Navigation Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-6 py-4 border-b border-border gap-3">
+            {/* Calendar Navigation Header */}
+            <div className="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-6 py-4 border-b border-border gap-3 sm:gap-0">
                 <div className="flex items-center gap-2 sm:gap-4">
                     <button
                         onClick={() => changeMonth(-1)}
@@ -446,7 +447,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                             setCurrentDate(today)
                             setSelectedDate(today)
                         }}
-                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 whitespace-nowrap flex-shrink-0"
+                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-4 w-auto min-w-[3.5rem] whitespace-nowrap flex-shrink-0"
                     >
                         今日
                     </button>
