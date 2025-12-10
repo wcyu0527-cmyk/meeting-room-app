@@ -689,27 +689,41 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                         <label className="block text-sm font-medium text-foreground mb-1">
                                             開始時間
                                         </label>
-                                        <input
-                                            type="time"
+                                        <select
                                             name="start_time"
                                             required
                                             disabled={isReadOnly || isEcoOnlyEditable}
                                             defaultValue={editingBooking ? new Date(editingBooking.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : "09:00"}
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                        />
+                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+                                            {Array.from({ length: 31 }).map((_, i) => {
+                                                const totalMinutes = i * 30;
+                                                const hour = 7 + Math.floor(totalMinutes / 60);
+                                                const minute = totalMinutes % 60;
+                                                const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                                                return <option key={time} value={time}>{time}</option>
+                                            })}
+                                        </select>
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-foreground mb-1">
                                             結束時間
                                         </label>
-                                        <input
-                                            type="time"
+                                        <select
                                             name="end_time"
                                             required
                                             disabled={isReadOnly || isEcoOnlyEditable}
                                             defaultValue={editingBooking ? new Date(editingBooking.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : "10:00"}
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                        />
+                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+                                            {Array.from({ length: 31 }).map((_, i) => {
+                                                const totalMinutes = i * 30;
+                                                const hour = 7 + Math.floor(totalMinutes / 60);
+                                                const minute = totalMinutes % 60;
+                                                const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                                                return <option key={time} value={time}>{time}</option>
+                                            })}
+                                        </select>
                                     </div>
                                 </div>
 
