@@ -292,6 +292,13 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
             return
         }
 
+        // 驗證：結束時間必須大於開始時間
+        if (endDateTime <= startDateTime) {
+            alert('結束時間必須晚於開始時間')
+            setIsSubmitting(false)
+            return
+        }
+
         // 驗證：一般使用者不能新增過去日期的預約（編輯模式除外）
         if (!editingBooking && !isAdmin) {
             const now = new Date()

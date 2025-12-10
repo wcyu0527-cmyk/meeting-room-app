@@ -91,10 +91,10 @@ export default function MyBookings({
                                 會議室
                             </th>
                             <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
-                                會議主題
+                                會議名稱
                             </th>
                             <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
-                                操作
+                                選項
                             </th>
                         </tr>
                     </thead>
@@ -287,10 +287,10 @@ export default function MyBookings({
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4 mt-4">
-                                    {/* 無法配合減少使用免洗餐具及包裝飲用水之原因(無則免填) */}
+                                    {/* 無法配合減少使用免洗餐具及包裝飲用水的原因 */}
                                     <div>
                                         <label className="block text-sm font-medium text-foreground mb-1">
-                                            無法配合減少使用免洗餐具及包裝飲用水之原因(無則免填)
+                                            無法配合減少使用免洗餐具及包裝飲用水的原因
                                         </label>
                                         <select
                                             name="cannot_comply_reason"
