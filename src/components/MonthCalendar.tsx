@@ -314,33 +314,6 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                 .eq('id', editingBooking.id)
             error = updateError
         } else {
-            // Check for conflicting bookings only when creating new booking
-            const { data: conflicts } = await supabase
-                .from('bookings')
-                .select('id, title, start_time, end_time')
-                .eq('room_id', roomId)
-                .lt('start_time', endDateTime.toISOString())
-                .gt('end_time', startDateTime.toISOString())
-
-            if (conflicts && conflicts.length > 0) {
-                const conflict = conflicts[0]
-                const conflictStart = new Date(conflict.start_time).toLocaleString('zh-TW', {
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                })
-                const conflictEnd = new Date(conflict.end_time).toLocaleString('zh-TW', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                })
-                const confirmMsg = `此時段已有預約「${conflict.title}」(${conflictStart} - ${conflictEnd})，確定要繼續嗎？`
-                if (!window.confirm(confirmMsg)) {
-                    setIsSubmitting(false)
-                    return
-                }
-            }
-
             const { error: insertError } = await supabase
                 .from('bookings')
                 .insert({
