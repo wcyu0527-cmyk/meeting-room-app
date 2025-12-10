@@ -114,7 +114,7 @@ export default async function Home({ searchParams }: { searchParams: { error?: s
           {/* All Current Bookings Section (Renamed & Moved) */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">
-              未來將進行的會議
+              尚未進行
             </h2>
             <div className="rounded-xl border bg-card text-card-foreground shadow">
               <AllBookings bookings={allBookingsWithProfile} />
@@ -131,7 +131,7 @@ export default async function Home({ searchParams }: { searchParams: { error?: s
                 <thead className="bg-muted/50">
                   <tr>
                     <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6">
-                      會議室名稱
+                      名稱
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
                       容納人數
