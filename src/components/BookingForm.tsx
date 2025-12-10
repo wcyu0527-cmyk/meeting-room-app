@@ -129,11 +129,12 @@ export default function BookingForm({ roomId }: { roomId: string }) {
                                 htmlFor="unit"
                                 className="block text-sm font-medium text-gray-900 mb-1"
                             >
-                                單位 (Unit)
+                                登記單位(必填)
                             </label>
                             <select
                                 id="unit"
                                 value={selectedUnitId}
+                                required
                                 onChange={(e) => {
                                     setSelectedUnitId(e.target.value)
                                     setSelectedMemberId('')
@@ -152,16 +153,17 @@ export default function BookingForm({ roomId }: { roomId: string }) {
                                 htmlFor="member"
                                 className="block text-sm font-medium text-gray-900 mb-1"
                             >
-                                同仁 (Colleague)
+                                聯絡人(必填)
                             </label>
                             <select
                                 id="member"
                                 value={selectedMemberId}
+                                required
                                 onChange={(e) => setSelectedMemberId(e.target.value)}
                                 disabled={!selectedUnitId}
                                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2.5 border text-gray-900 bg-white disabled:bg-gray-100 disabled:text-gray-500"
                             >
-                                <option value="">{selectedUnitId ? '請選擇同仁' : '請先選擇單位'}</option>
+                                <option value="">{selectedUnitId ? '請選擇聯絡人' : '請先選擇單位'}</option>
                                 {selectedUnit?.unit_members.map(member => (
                                     <option key={member.id} value={member.id}>{member.name}</option>
                                 ))}

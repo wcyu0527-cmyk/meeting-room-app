@@ -655,7 +655,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-foreground mb-1">
-                                        會議名稱
+                                        會議名稱(必填)
                                     </label>
                                     <input
                                         type="text"
@@ -663,7 +663,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                         required
                                         disabled={isReadOnly || isEcoOnlyEditable}
                                         defaultValue={editingBooking?.title}
-                                        placeholder="例如：週會"
+                                        placeholder="例如：施工會議"
                                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     />
                                 </div>
@@ -671,10 +671,11 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-foreground mb-1">
-                                            登記單位
+                                            登記單位(必填)
                                         </label>
                                         <select
                                             value={selectedUnitId}
+                                            required
                                             disabled={isReadOnly || isEcoOnlyEditable}
                                             onChange={(e) => {
                                                 setSelectedUnitId(e.target.value)
@@ -690,10 +691,11 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-foreground mb-1">
-                                            同仁姓名
+                                            聯絡人(必填)
                                         </label>
                                         <select
                                             value={selectedMemberId}
+                                            required
                                             onChange={(e) => setSelectedMemberId(e.target.value)}
                                             disabled={!selectedUnitId || isReadOnly || isEcoOnlyEditable}
                                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
