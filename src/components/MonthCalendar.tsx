@@ -292,6 +292,16 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
             return
         }
 
+        // 驗證：一般使用者不能新增過去日期的預約（編輯模式除外）
+        if (!editingBooking && !isAdmin) {
+            const now = new Date()
+            if (endDateTime < now) {
+                alert('一般使用者無法新增已過去日期的預約紀錄')
+                setIsSubmitting(false)
+                return
+            }
+        }
+
         let error
         if (editingBooking) {
             const { error: updateError } = await supabase
