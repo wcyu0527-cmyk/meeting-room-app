@@ -96,10 +96,10 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
         const supabase = createClient()
         const { data } = await supabase
             .from('profiles')
-            .select('is_admin')
+            .select('role')
             .eq('id', userId)
             .single()
-        setIsAdmin(data?.is_admin ?? false)
+        setIsAdmin(data?.role === 'admin')
     }
 
     // Calendar logic helpers
