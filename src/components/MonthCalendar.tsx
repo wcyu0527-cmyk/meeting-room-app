@@ -827,7 +827,10 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                 </div>
 
                                 <div className="flex justify-between space-x-2 pt-2">
-                                    {editingBooking && !isReadOnly && (isAdmin || !isExpired) ? (
+                                    {editingBooking && (
+                                        (isAdmin && !isReadOnly) ||
+                                        (!isAdmin && isOwnBooking && !isExpired)
+                                    ) ? (
                                         <button
                                             type="button"
                                             onClick={handleDeleteBooking}
