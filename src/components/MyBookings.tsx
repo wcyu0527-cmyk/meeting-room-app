@@ -50,14 +50,7 @@ export default function MyBookings({
         setIsSubmitting(true)
         const formData = new FormData(e.currentTarget)
 
-        const startTime = new Date(formData.get('start_time') as string)
-        const endTime = new Date(formData.get('end_time') as string)
 
-        if (endTime <= startTime) {
-            alert('結束時間必須晚於開始時間')
-            setIsSubmitting(false)
-            return
-        }
 
         try {
             const updateData = {
