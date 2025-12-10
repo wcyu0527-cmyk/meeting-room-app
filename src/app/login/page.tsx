@@ -9,7 +9,7 @@ export default function LoginPage({
         <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <h1 className="text-center text-4xl font-bold text-indigo-600 mb-8">
-                    中工段會議室系統
+                    臺中工務段會議室
                 </h1>
             </div>
 

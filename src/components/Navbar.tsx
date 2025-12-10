@@ -121,7 +121,7 @@ export default function Navbar() {
                                         : 'text-destructive/80 hover:text-destructive border-b-2 border-transparent'
                                         }`}
                                 >
-                                    管理後台
+                                    後台管理
                                 </Link>
                             )}
                         </div>
@@ -241,7 +241,7 @@ export default function Navbar() {
                                 : 'text-destructive/80 hover:bg-destructive/10 hover:text-destructive'
                                 }`}
                         >
-                            管理後台
+                            後台管理
                         </Link>
                     )}
                 </div>

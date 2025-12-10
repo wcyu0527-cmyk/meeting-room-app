@@ -26,7 +26,7 @@ export default function LoginForm({
                     htmlFor="username"
                     className="block text-sm font-medium text-gray-700"
                 >
-                    使用者帳號
+                    帳號
                 </label>
                 <div className="mt-1">
                     <input
@@ -46,7 +46,7 @@ export default function LoginForm({
                     htmlFor="password"
                     className="block text-sm font-medium text-gray-700"
                 >
-                    使用者密碼
+                    密碼
                 </label>
                 <div className="mt-1">
                     <input
