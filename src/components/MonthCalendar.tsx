@@ -776,7 +776,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                             <select
                                                 name="category"
                                                 disabled={isReadOnly}
-                                                defaultValue={(editingBooking as any)?.category || '會議'}
+                                                defaultValue={editingBooking?.category || '會議'}
                                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                             >
                                                 <option value="會議">會議</option>
@@ -795,7 +795,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                                 name="eco_box_count"
                                                 min="0"
                                                 disabled={isReadOnly}
-                                                defaultValue={(editingBooking as any)?.eco_box_count || 0}
+                                                defaultValue={editingBooking?.eco_box_count || 0}
                                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                             />
                                         </div>
@@ -810,7 +810,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                                 name="no_packaging_count"
                                                 min="0"
                                                 disabled={isReadOnly}
-                                                defaultValue={(editingBooking as any)?.no_packaging_count || 0}
+                                                defaultValue={editingBooking?.no_packaging_count || 0}
                                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                             />
                                         </div>
@@ -826,7 +826,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                                 name="takeout_count"
                                                 min="0"
                                                 disabled={isReadOnly}
-                                                defaultValue={(editingBooking as any)?.takeout_count || 0}
+                                                defaultValue={editingBooking?.takeout_count || 0}
                                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                             />
                                         </div>
@@ -868,7 +868,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                                 name="approved_disposable_count"
                                                 min="0"
                                                 disabled={isReadOnly}
-                                                defaultValue={(editingBooking as any)?.approved_disposable_count || 0}
+                                                defaultValue={editingBooking?.approved_disposable_count || 0}
                                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                             />
                                         </div>

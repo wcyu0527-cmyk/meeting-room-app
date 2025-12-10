@@ -9,11 +9,23 @@ import { User } from '@supabase/supabase-js'
 
 export default function Navbar() {
     const [user, setUser] = useState<User | null>(null)
-    const [isAdmin, setIsAdmin] = useState(false)
     const [userName, setUserName] = useState<string>('')
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const router = useRouter()
     const pathname = usePathname()
+
+    async function fetchUserProfile(userId: string) {
+        const supabase = createClient()
+        const { data } = await supabase
+            .from('profiles')
+            .select('role, full_name')
+            .eq('id', userId)
+            .single()
+
+        if (data) {
+            setUserName(data.full_name || '')
+        }
+    }
 
     useEffect(() => {
         const supabase = createClient()
@@ -34,27 +46,12 @@ export default function Navbar() {
             if (session?.user) {
                 fetchUserProfile(session.user.id)
             } else {
-                setIsAdmin(false)
                 setUserName('')
             }
         })
 
         return () => subscription.unsubscribe()
     }, [])
-
-    const fetchUserProfile = async (userId: string) => {
-        const supabase = createClient()
-        const { data } = await supabase
-            .from('profiles')
-            .select('role, full_name')
-            .eq('id', userId)
-            .single()
-
-        if (data) {
-            setIsAdmin(data.role === 'admin')
-            setUserName(data.full_name || '')
-        }
-    }
 
     const signOut = async () => {
         const supabase = createClient()

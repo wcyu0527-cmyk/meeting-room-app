@@ -19,14 +19,6 @@ export default async function MyBookingsPage() {
         .order('start_time', { ascending: false })
         .limit(50)
 
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single()
-
-    const isAdmin = profile?.role === 'admin'
-
     if (error) {
         console.error('Error fetching my bookings:', error)
     }
@@ -40,7 +32,7 @@ export default async function MyBookingsPage() {
                         我的預約
                     </h1>
                     <div className="bg-card text-card-foreground rounded-lg border border-border">
-                        <MyBookings bookings={myBookings || []} userId={user.id} isAdmin={isAdmin} />
+                        <MyBookings bookings={myBookings || []} userId={user.id} />
                     </div>
                 </div>
             </main>

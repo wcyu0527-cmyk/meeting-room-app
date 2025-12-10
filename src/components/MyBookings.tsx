@@ -10,11 +10,9 @@ type BookingWithRoom = Booking & {
 
 export default function MyBookings({
     bookings,
-    isAdmin
 }: {
     bookings: BookingWithRoom[]
     userId: string
-    isAdmin?: boolean
 }) {
     const [editingBooking, setEditingBooking] = useState<BookingWithRoom | null>(null)
     const [isDeleting, setIsDeleting] = useState<string | null>(null)
@@ -74,10 +72,6 @@ export default function MyBookings({
         } finally {
             setIsSubmitting(false)
         }
-    }
-
-    const isPast = (booking: BookingWithRoom) => {
-        return new Date(booking.end_time) < new Date()
     }
 
     return (
@@ -259,7 +253,7 @@ export default function MyBookings({
                                 <textarea
                                     name="notes"
                                     rows={3}
-                                    defaultValue={(editingBooking as any).notes || ''}
+                                    defaultValue={editingBooking.notes || ''}
                                     className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                 />
                             </div>
@@ -276,7 +270,7 @@ export default function MyBookings({
                                         </label>
                                         <select
                                             name="category"
-                                            defaultValue={(editingBooking as any).category || '會議'}
+                                            defaultValue={editingBooking.category || '會議'}
                                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                         >
                                             <option value="會議">會議</option>
@@ -294,7 +288,7 @@ export default function MyBookings({
                                             type="number"
                                             name="eco_box_count"
                                             min="0"
-                                            defaultValue={(editingBooking as any).eco_box_count || 0}
+                                            defaultValue={editingBooking.eco_box_count || 0}
                                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                         />
                                     </div>
@@ -308,7 +302,7 @@ export default function MyBookings({
                                             type="number"
                                             name="no_packaging_count"
                                             min="0"
-                                            defaultValue={(editingBooking as any).no_packaging_count || 0}
+                                            defaultValue={editingBooking.no_packaging_count || 0}
                                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                         />
                                     </div>
@@ -323,7 +317,7 @@ export default function MyBookings({
                                             type="number"
                                             name="takeout_count"
                                             min="0"
-                                            defaultValue={(editingBooking as any).takeout_count || 0}
+                                            defaultValue={editingBooking.takeout_count || 0}
                                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                         />
                                     </div>
@@ -337,7 +331,7 @@ export default function MyBookings({
                                         </label>
                                         <select
                                             name="cannot_comply_reason"
-                                            defaultValue={(editingBooking as any).cannot_comply_reason || '無提供便當'}
+                                            defaultValue={editingBooking.cannot_comply_reason || '無提供便當'}
                                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                         >
                                             <option value="無提供便當">無提供便當</option>
@@ -357,7 +351,7 @@ export default function MyBookings({
                                             type="number"
                                             name="approved_disposable_count"
                                             min="0"
-                                            defaultValue={(editingBooking as any).approved_disposable_count || 0}
+                                            defaultValue={editingBooking.approved_disposable_count || 0}
                                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                         />
                                     </div>

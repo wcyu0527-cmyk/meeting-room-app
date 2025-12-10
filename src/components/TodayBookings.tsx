@@ -9,7 +9,7 @@ type BookingWithRoom = Booking & {
 }
 
 export default function TodayBookings({ initialBookings }: { initialBookings?: BookingWithRoom[] }) {
-    const [currentDate, setCurrentDate] = useState(new Date())
+    const [currentDate] = useState(new Date())
     const [bookings, setBookings] = useState<BookingWithRoom[]>(initialBookings || [])
     const [loading, setLoading] = useState(false)
     const isFirstRun = useRef(true)
@@ -17,48 +17,38 @@ export default function TodayBookings({ initialBookings }: { initialBookings?: B
     // Format date string similar to page.tsx
     // e.g. 2025年12月8日 星期一
     const dateStr = currentDate.toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'long' })
-    const simpleDateStr = currentDate.toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' })
-
-    const fetchBookings = async (date: Date) => {
-        setLoading(true)
-        const supabase = createClient()
-
-        const startOfDay = new Date(date)
-        startOfDay.setHours(0, 0, 0, 0)
-
-        const endOfDay = new Date(date)
-        endOfDay.setHours(23, 59, 59, 999)
-
-        const { data, error } = await supabase
-            .from('bookings')
-            .select('*, rooms(*)')
-            .gte('start_time', startOfDay.toISOString())
-            .lte('end_time', endOfDay.toISOString())
-            .order('start_time')
-
-        if (data) {
-            setBookings(data as unknown as BookingWithRoom[])
-        }
-        setLoading(false)
-    }
 
     useEffect(() => {
+        const fetchBookings = async (date: Date) => {
+            setLoading(true)
+            const supabase = createClient()
+
+            const startOfDay = new Date(date)
+            startOfDay.setHours(0, 0, 0, 0)
+
+            const endOfDay = new Date(date)
+            endOfDay.setHours(23, 59, 59, 999)
+
+            const { data } = await supabase
+                .from('bookings')
+                .select('*, rooms(*)')
+                .gte('start_time', startOfDay.toISOString())
+                .lte('end_time', endOfDay.toISOString())
+                .order('start_time')
+
+            if (data) {
+                setBookings(data as unknown as BookingWithRoom[])
+            }
+            setLoading(false)
+        }
+
         // Skip the first fetch if we have initial data and the date hasn't changed from "today"
-        // However, currentDate is new Date() which might differ slightly from server time, 
-        // but for "day" comparison it is fine.
-        // To be safe, if initialBookings is provided, we skip first run.
         if (initialBookings && isFirstRun.current) {
             isFirstRun.current = false
             return
         }
         fetchBookings(currentDate)
     }, [currentDate, initialBookings])
-
-    const changeDate = (offset: number) => {
-        const newDate = new Date(currentDate)
-        newDate.setDate(newDate.getDate() + offset)
-        setCurrentDate(newDate)
-    }
 
     return (
         <div>

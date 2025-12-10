@@ -15,6 +15,13 @@ export type Booking = {
     start_time: string
     end_time: string
     notes?: string | null
+    category?: string
+    eco_box_count?: number
+    no_packaging_count?: number
+    takeout_count?: number
+    cannot_comply_reason?: string
+    approved_disposable_count?: number
+    unit_id?: string
     created_at: string
 }
 
