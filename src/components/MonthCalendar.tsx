@@ -381,18 +381,17 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
             </div>
 
             {/* Calendar Navigation Header */}
-            {/* Calendar Navigation Header */}
-            <div className="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-6 py-4 border-b border-border gap-2 sm:gap-0">
-                <div className="flex items-center gap-1 sm:gap-4">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+                <div className="flex items-center gap-4">
                     <button
                         onClick={() => changeMonth(-1)}
-                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8 flex-shrink-0"
+                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
-                    <div className="flex items-center gap-0.5 sm:gap-1">
+                    <div className="flex items-center gap-1">
                         <select
                             value={currentDate.getFullYear()}
                             onChange={(e) => {
@@ -402,7 +401,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                 setCurrentDate(newDate)
                                 fetchMonthBookings(newDate)
                             }}
-                            className="h-8 rounded-md border border-input bg-background px-1 sm:px-2 text-xs sm:text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
+                            className="h-8 rounded-md border border-input bg-background px-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
                         >
                             {Array.from({ length: 11 }, (_, i) => new Date().getFullYear() - 5 + i).map(year => (
                                 <option key={year} value={year}>{year}年</option>
@@ -416,7 +415,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                 setCurrentDate(newDate)
                                 fetchMonthBookings(newDate)
                             }}
-                            className="h-8 rounded-md border border-input bg-background px-1 sm:px-2 text-xs sm:text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
+                            className="h-8 rounded-md border border-input bg-background px-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
                         >
                             {Array.from({ length: 12 }, (_, i) => i).map(month => (
                                 <option key={month} value={month}>{month + 1}月</option>
@@ -425,7 +424,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                     </div>
                     <button
                         onClick={() => changeMonth(1)}
-                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8 flex-shrink-0"
+                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -435,7 +434,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => changeSelectedDate(-1)}
-                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8 flex-shrink-0"
+                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -447,13 +446,13 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                             setCurrentDate(today)
                             setSelectedDate(today)
                         }}
-                        className="inline-flex items-center justify-center rounded-md text-xs sm:text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-2 sm:px-3 text-center whitespace-nowrap flex-shrink-0 min-w-[3rem]"
+                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3"
                     >
                         今日
                     </button>
                     <button
                         onClick={() => changeSelectedDate(1)}
-                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8 flex-shrink-0"
+                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
