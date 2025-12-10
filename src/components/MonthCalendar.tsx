@@ -273,11 +273,13 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
         }
 
         // Combine date and time
-        if (!selectedDate) return
+        // 編輯模式：使用原始預約的日期；新增模式：使用選擇的日期
+        const dateToUse = editingBooking ? new Date(editingBooking.start_time) : selectedDate
+        if (!dateToUse) return
 
-        const year = selectedDate.getFullYear()
-        const month = String(selectedDate.getMonth() + 1).padStart(2, '0')
-        const day = String(selectedDate.getDate()).padStart(2, '0')
+        const year = dateToUse.getFullYear()
+        const month = String(dateToUse.getMonth() + 1).padStart(2, '0')
+        const day = String(dateToUse.getDate()).padStart(2, '0')
         const dateStr = `${year}-${month}-${day}`
 
         const startDateTime = new Date(`${dateStr}T${startTimeStr}`)
