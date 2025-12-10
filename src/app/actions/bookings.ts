@@ -36,10 +36,7 @@ export async function deleteBooking(bookingId: string) {
         throw new Error('Unauthorized')
     }
 
-    const isExpired = new Date(booking.end_time) < new Date()
-    if (isExpired && !isAdmin) {
-        throw new Error('無法刪除已過期的預約')
-    }
+
 
     const { error } = await supabase
         .from('bookings')
@@ -100,10 +97,7 @@ export async function updateBooking(
         throw new Error('Unauthorized')
     }
 
-    const isExpired = new Date(booking.end_time) < new Date()
-    if (isExpired && !isAdmin) {
-        throw new Error('無法修改已過期的預約')
-    }
+
 
     const { error } = await supabase
         .from('bookings')

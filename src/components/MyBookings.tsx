@@ -50,6 +50,15 @@ export default function MyBookings({
         setIsSubmitting(true)
         const formData = new FormData(e.currentTarget)
 
+        const startTime = new Date(formData.get('start_time') as string)
+        const endTime = new Date(formData.get('end_time') as string)
+
+        if (endTime <= startTime) {
+            alert('結束時間必須晚於開始時間')
+            setIsSubmitting(false)
+            return
+        }
+
         try {
             const updateData = {
                 title: formData.get('title') as string,
@@ -123,23 +132,21 @@ export default function MyBookings({
                                     </td>
                                     <td className="whitespace-nowrap px-3 py-4 text-sm">
                                         <div className="flex gap-2">
-                                            {(isAdmin || !isExpired) && (
-                                                <>
-                                                    <button
-                                                        onClick={() => setEditingBooking(booking)}
-                                                        className="text-primary hover:text-primary/80"
-                                                    >
-                                                        編輯
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDelete(booking.id)}
-                                                        disabled={isDeleting === booking.id}
-                                                        className="text-destructive hover:text-destructive/80 disabled:opacity-50"
-                                                    >
-                                                        {isDeleting === booking.id ? '刪除中...' : '刪除'}
-                                                    </button>
-                                                </>
-                                            )}
+                                            <>
+                                                <button
+                                                    onClick={() => setEditingBooking(booking)}
+                                                    className="text-primary hover:text-primary/80"
+                                                >
+                                                    編輯
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(booking.id)}
+                                                    disabled={isDeleting === booking.id}
+                                                    className="text-destructive hover:text-destructive/80 disabled:opacity-50"
+                                                >
+                                                    {isDeleting === booking.id ? '刪除中...' : '刪除'}
+                                                </button>
+                                            </>
                                         </div>
                                     </td>
                                 </tr>

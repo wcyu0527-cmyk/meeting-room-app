@@ -301,15 +301,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
             return
         }
 
-        // 驗證：一般使用者不能新增過去日期的預約（編輯模式除外）
-        if (!editingBooking && !isAdmin) {
-            const now = new Date()
-            if (endDateTime < now) {
-                alert('已逾期，不可申請!')
-                setIsSubmitting(false)
-                return
-            }
-        }
+
 
         let error
         if (editingBooking) {
@@ -375,7 +367,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     const isExpired = editingBooking ? new Date(editingBooking.end_time) < new Date() : false
     const isOwnBooking = editingBooking && user && editingBooking.user_id === user.id
     const isReadOnly = editingBooking && user && editingBooking.user_id !== user.id && !isAdmin
-    const isEcoOnlyEditable = isOwnBooking && isExpired && !isAdmin
+    const isEcoOnlyEditable = false
 
     return (
         <div ref={containerRef} className="rounded-xl border bg-card text-card-foreground shadow">
@@ -847,8 +839,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
 
                                 <div className="flex justify-between space-x-2 pt-2">
                                     {editingBooking && (
-                                        (isAdmin && !isReadOnly) ||
-                                        (!isAdmin && isOwnBooking && !isExpired)
+                                        !isReadOnly
                                     ) ? (
                                         <button
                                             type="button"
