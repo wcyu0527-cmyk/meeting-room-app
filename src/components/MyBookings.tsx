@@ -82,70 +82,114 @@ export default function MyBookings({
 
     return (
         <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {bookings.map((booking) => {
-                    const startTime = new Date(booking.start_time)
-                    const endTime = new Date(booking.end_time)
-                    const isExpired = isPast(booking)
+            <div className="space-y-8">
+                {/* Section: Today */}
+                {(() => {
+                    const todayBookings = bookings.filter(booking => {
+                        const bookingDate = new Date(booking.start_time)
+                        const today = new Date()
+                        return bookingDate.getDate() === today.getDate() &&
+                            bookingDate.getMonth() === today.getMonth() &&
+                            bookingDate.getFullYear() === today.getFullYear()
+                    })
+
+                    if (todayBookings.length === 0) return null
 
                     return (
-                        <div
-                            key={booking.id}
-                            className={`
-                                relative flex flex-col justify-between rounded-lg border p-4 shadow-sm transition-all hover:shadow-md
-                                ${isExpired ? 'bg-muted/50 opacity-75' : 'bg-card text-card-foreground'}
-                            `}
-                        >
-                            <div className="space-y-3">
-                                <div className="flex items-start justify-between">
-                                    <div className="space-y-1">
-                                        <div className="font-semibold text-lg">
-                                            {startTime.toLocaleDateString('zh-TW', { month: 'long', day: 'numeric' })}
-                                        </div>
-                                        <div className="text-sm text-muted-foreground flex items-center gap-1">
-                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            {startTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })} - {endTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })}
-                                        </div>
-                                    </div>
-                                    {isExpired && (
-                                        <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
-                                            已過期
-                                        </span>
-                                    )}
-                                </div>
-
-                                <div className="space-y-1">
-                                    <div className="flex items-center gap-2 text-sm font-medium">
-                                        <span className="inline-flex items-center justify-center rounded bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
-                                            {booking.rooms.name}
-                                        </span>
-                                    </div>
-                                    <h3 className="font-medium leading-none tracking-tight">
-                                        {booking.title}
-                                    </h3>
-                                </div>
-                            </div>
-
-                            <div className="mt-4 flex items-center justify-end gap-2 pt-4 border-t border-border">
-                                <button
-                                    onClick={() => setEditingBooking(booking)}
-                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3"
-                                >
-                                    編輯
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(booking.id)}
-                                    disabled={isDeleting === booking.id}
-                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-8 px-3"
-                                >
-                                    {isDeleting === booking.id ? '刪除中...' : '刪除'}
-                                </button>
+                        <div className="space-y-4">
+                            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+                                <span className="w-2 h-8 bg-primary rounded-full"></span>
+                                今日
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {todayBookings.map(booking => (
+                                    <BookingCard
+                                        key={booking.id}
+                                        booking={booking}
+                                        statusLabel="今日"
+                                        statusColor="bg-primary text-primary-foreground"
+                                        onEdit={() => setEditingBooking(booking)}
+                                        onDelete={() => handleDelete(booking.id)}
+                                        isDeleting={isDeleting === booking.id}
+                                    />
+                                ))}
                             </div>
                         </div>
                     )
-                })}
+                })()}
+
+                {/* Section: Not Started (Upcoming) */}
+                {(() => {
+                    const upcomingBookings = bookings.filter(booking => {
+                        const bookingDate = new Date(booking.start_time)
+                        const today = new Date()
+                        today.setHours(0, 0, 0, 0)
+                        return bookingDate > today && (
+                            bookingDate.getDate() !== today.getDate() ||
+                            bookingDate.getMonth() !== today.getMonth() ||
+                            bookingDate.getFullYear() !== today.getFullYear()
+                        )
+                    })
+
+                    if (upcomingBookings.length === 0) return null
+
+                    return (
+                        <div className="space-y-4">
+                            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+                                <span className="w-2 h-8 bg-blue-500 rounded-full"></span>
+                                尚未開始
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {upcomingBookings.map(booking => (
+                                    <BookingCard
+                                        key={booking.id}
+                                        booking={booking}
+                                        statusLabel="尚未開始"
+                                        statusColor="bg-blue-100 text-blue-700 border-blue-200"
+                                        onEdit={() => setEditingBooking(booking)}
+                                        onDelete={() => handleDelete(booking.id)}
+                                        isDeleting={isDeleting === booking.id}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )
+                })()}
+
+                {/* Section: Completed (Past) */}
+                {(() => {
+                    const pastBookings = bookings.filter(booking => {
+                        const bookingDate = new Date(booking.start_time)
+                        const today = new Date()
+                        today.setHours(0, 0, 0, 0)
+                        return bookingDate < today
+                    })
+
+                    if (pastBookings.length === 0) return null
+
+                    return (
+                        <div className="space-y-4">
+                            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+                                <span className="w-2 h-8 bg-gray-400 rounded-full"></span>
+                                已進行
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {pastBookings.map(booking => (
+                                    <BookingCard
+                                        key={booking.id}
+                                        booking={booking}
+                                        statusLabel="已進行"
+                                        statusColor="bg-gray-100 text-gray-600 border-gray-200"
+                                        isExpired={true}
+                                        onEdit={() => setEditingBooking(booking)}
+                                        onDelete={() => handleDelete(booking.id)}
+                                        isDeleting={isDeleting === booking.id}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )
+                })()}
             </div>
 
             {/* Edit Modal */}
@@ -341,5 +385,81 @@ export default function MyBookings({
                 </div>
             )}
         </>
+    )
+}
+
+function BookingCard({
+    booking,
+    statusLabel,
+    statusColor,
+    onEdit,
+    onDelete,
+    isDeleting,
+    isExpired = false
+}: {
+    booking: BookingWithRoom
+    statusLabel: string
+    statusColor: string
+    onEdit: () => void
+    onDelete: () => void
+    isDeleting: boolean
+    isExpired?: boolean
+}) {
+    const startTime = new Date(booking.start_time)
+    const endTime = new Date(booking.end_time)
+
+    return (
+        <div
+            className={`
+                relative flex flex-col justify-between rounded-lg border p-4 shadow-sm transition-all hover:shadow-md
+                ${isExpired ? 'bg-muted/50 opacity-75' : 'bg-card text-card-foreground'}
+            `}
+        >
+            <div className="space-y-3">
+                <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                        <div className="font-semibold text-lg">
+                            {startTime.toLocaleDateString('zh-TW', { month: 'long', day: 'numeric' })}
+                        </div>
+                        <div className="text-sm text-muted-foreground flex items-center gap-1">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {startTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })} - {endTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                        </div>
+                    </div>
+                    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent ${statusColor}`}>
+                        {statusLabel}
+                    </span>
+                </div>
+
+                <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                        <span className="inline-flex items-center justify-center rounded bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+                            {booking.rooms.name}
+                        </span>
+                    </div>
+                    <h3 className="font-medium leading-none tracking-tight">
+                        {booking.title}
+                    </h3>
+                </div>
+            </div>
+
+            <div className="mt-4 flex items-center justify-end gap-2 pt-4 border-t border-border">
+                <button
+                    onClick={onEdit}
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3"
+                >
+                    編輯
+                </button>
+                <button
+                    onClick={onDelete}
+                    disabled={isDeleting}
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-8 px-3"
+                >
+                    {isDeleting ? '刪除中...' : '刪除'}
+                </button>
+            </div>
+        </div>
     )
 }
