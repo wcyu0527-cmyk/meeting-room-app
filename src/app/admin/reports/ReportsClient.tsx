@@ -21,7 +21,6 @@ type ReportBooking = {
     }
     profiles: {
         full_name: string | null
-        email: string | null
     } | null
 }
 
@@ -50,8 +49,7 @@ export default function ReportsClient() {
             .from('bookings')
             .select(`
                 *,
-                rooms (name),
-                profiles (full_name, email)
+                rooms (name)
             `)
             .gte('start_time', new Date(startDate).toISOString())
             .lte('start_time', endDateTime.toISOString())
@@ -60,9 +58,28 @@ export default function ReportsClient() {
         if (error) {
             console.error('Error fetching reports:', error)
             alert('查詢失敗: ' + error.message)
-        } else {
-            setBookings(data as unknown as ReportBooking[])
+            setLoading(false)
+            return
         }
+
+        // Fetch profiles for all user_ids in the bookings
+        let bookingsWithProfile: ReportBooking[] = []
+        if (data && data.length > 0) {
+            const userIds = Array.from(new Set(data.map((b: { user_id: string }) => b.user_id)))
+            const { data: profiles } = await supabase
+                .from('profiles')
+                .select('id, full_name')
+                .in('id', userIds)
+
+            const profileMap = new Map(profiles?.map(p => [p.id, p]) || [])
+
+            bookingsWithProfile = data.map((booking: ReportBooking) => ({
+                ...booking,
+                profiles: profileMap.get(booking.user_id) || null
+            }))
+        }
+
+        setBookings(bookingsWithProfile)
         setLoading(false)
     }
 
@@ -150,8 +167,7 @@ export default function ReportsClient() {
                                         {booking.rooms?.name}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        <div>{booking.profiles?.full_name || '未知'}</div>
-                                        <div className="text-gray-500 text-xs">{booking.profiles?.email}</div>
+                                        {booking.profiles?.full_name || '未知'}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         <div className="font-medium">{booking.title}</div>
