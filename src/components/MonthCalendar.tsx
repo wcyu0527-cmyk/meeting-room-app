@@ -296,7 +296,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
         if (!editingBooking && !isAdmin) {
             const now = new Date()
             if (endDateTime < now) {
-                alert('一般使用者無法新增已過去日期的預約紀錄')
+                alert('已逾期，不可申請!')
                 setIsSubmitting(false)
                 return
             }
@@ -724,9 +724,9 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                     />
                                 </div>
 
-                                {/* 免洗餐具及包裝飲用水減量 */}
+                                {/* 免洗餐具及包裝飲用水減量填報 */}
                                 <div className="border-t border-border pt-4 mt-4">
-                                    <h4 className="text-sm font-semibold text-foreground mb-3">免洗餐具及包裝飲用水減量</h4>
+                                    <h4 className="text-sm font-semibold text-foreground mb-3">免洗餐具及包裝飲用水減量填報</h4>
 
                                     <div className="grid grid-cols-2 gap-4">
                                         {/* 類別 */}
@@ -746,10 +746,10 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                             </select>
                                         </div>
 
-                                        {/* 本次使用環保餐盒數量 */}
+                                        {/* 訂購環保餐盒數量 */}
                                         <div>
                                             <label className="block text-sm font-medium text-foreground mb-1">
-                                                本次使用環保餐盒數量
+                                                訂購環保餐盒數量
                                             </label>
                                             <input
                                                 type="number"
@@ -761,10 +761,10 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                             />
                                         </div>
 
-                                        {/* 本次不使用包裝水、紙杯人數 */}
+                                        {/* 未使用包裝水、紙杯人數 */}
                                         <div>
                                             <label className="block text-sm font-medium text-foreground mb-1">
-                                                本次不使用包裝水、紙杯人數
+                                                未使用包裝水、紙杯人數
                                             </label>
                                             <input
                                                 type="number"
@@ -776,11 +776,11 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                             />
                                         </div>
 
-                                        {/* 外帶數量 */}
+                                        {/* 提供外帶餐盒數量 */}
                                         <div>
                                             <label className="block text-sm font-medium text-foreground mb-1">
-                                                外帶數量
-                                                <span className="text-xs text-muted-foreground ml-1">(便當以外，提供非塑膠包裝之餐點個數)</span>
+                                                提供外帶餐盒數量
+                                                <span className="text-xs text-muted-foreground ml-1">(提供非塑膠包裝之餐點數量，不含便當)</span>
                                             </label>
                                             <input
                                                 type="number"
@@ -794,10 +794,10 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4 mt-4">
-                                        {/* 本次無法配合之主要原因 */}
+                                        {/* 無法配合減少使用免洗餐具及包裝飲用水之原因(無則免填) */}
                                         <div>
                                             <label className="block text-sm font-medium text-foreground mb-1">
-                                                本次無法配合之主要原因
+                                                無法配合減少使用免洗餐具及包裝飲用水之原因(無則免填)
                                             </label>
                                             <select
                                                 name="cannot_comply_reason"
@@ -819,10 +819,10 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                                             )}
                                         </div>
 
-                                        {/* 本次報准使用免洗餐盒數量 */}
+                                        {/* 本次經簽准使用免洗餐盒數量 */}
                                         <div>
                                             <label className="block text-sm font-medium text-foreground mb-1">
-                                                本次報准使用免洗餐盒數量
+                                                本次經簽准使用免洗餐盒數量
                                             </label>
                                             <input
                                                 type="number"

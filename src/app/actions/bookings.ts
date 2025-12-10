@@ -51,13 +51,23 @@ export async function deleteBooking(bookingId: string) {
     }
 
     revalidatePath('/')
+    revalidatePath('/my-bookings')
 }
 
 export async function updateBooking(
     bookingId: string,
-    title: string,
-    startTime: string,
-    endTime: string
+    updateData: {
+        title: string
+        start_time: string
+        end_time: string
+        notes?: string | null
+        category?: string
+        eco_box_count?: number
+        no_packaging_count?: number
+        takeout_count?: number
+        cannot_comply_reason?: string
+        approved_disposable_count?: number
+    }
 ) {
     const supabase = await createClient()
 
@@ -98,9 +108,16 @@ export async function updateBooking(
     const { error } = await supabase
         .from('bookings')
         .update({
-            title,
-            start_time: new Date(startTime).toISOString(),
-            end_time: new Date(endTime).toISOString(),
+            title: updateData.title,
+            start_time: new Date(updateData.start_time).toISOString(),
+            end_time: new Date(updateData.end_time).toISOString(),
+            notes: updateData.notes,
+            category: updateData.category || '會議',
+            eco_box_count: updateData.eco_box_count || 0,
+            no_packaging_count: updateData.no_packaging_count || 0,
+            takeout_count: updateData.takeout_count || 0,
+            cannot_comply_reason: updateData.cannot_comply_reason || '無提供便當',
+            approved_disposable_count: updateData.approved_disposable_count || 0,
         })
         .eq('id', bookingId)
 
@@ -109,4 +126,5 @@ export async function updateBooking(
     }
 
     revalidatePath('/')
+    revalidatePath('/my-bookings')
 }
