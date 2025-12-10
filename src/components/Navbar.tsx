@@ -110,10 +110,10 @@ export default function Navbar() {
                                         : 'text-muted-foreground hover:text-foreground border-b-2 border-transparent'
                                         }`}
                                 >
-                                    管理報表
+                                    統計報表
                                 </Link>
                             )}
-                            {user && (
+                            {user && isAdmin && (
                                 <Link
                                     href="/admin"
                                     className={`inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors ${pathname?.startsWith('/admin')
@@ -229,10 +229,10 @@ export default function Navbar() {
                                 : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                                 }`}
                         >
-                            管理報表
+                            統計報表
                         </Link>
                     )}
-                    {user && (
+                    {user && isAdmin && (
                         <Link
                             href="/admin"
                             onClick={() => setMobileMenuOpen(false)}

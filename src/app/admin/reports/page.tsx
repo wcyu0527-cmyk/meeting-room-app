@@ -17,7 +17,7 @@ export default async function ReportsPage() {
                 <div className="px-4 py-6 sm:px-0">
                     <div className="flex justify-between items-center mb-6">
                         <h1 className="text-3xl font-bold text-gray-900">
-                            管理報表
+                            統計報表
                         </h1>
                     </div>
                     <div className="bg-white shadow rounded-lg p-6">
