@@ -355,7 +355,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
     // 3. If it's expired and user is admin -> can edit everything
     const isExpired = editingBooking ? new Date(editingBooking.end_time) < new Date() : false
     const isOwnBooking = editingBooking && user && editingBooking.user_id === user.id
-    const isReadOnly = editingBooking && user && editingBooking.user_id !== user.id
+    const isReadOnly = editingBooking && user && editingBooking.user_id !== user.id && !isAdmin
     const isEcoOnlyEditable = isOwnBooking && isExpired && !isAdmin
 
     return (
