@@ -27,42 +27,42 @@ export default async function AdminPage() {
         .select('*', { count: 'exact', head: true })
 
     return (
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen bg-background">
             <Navbar />
             <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                 <div className="px-4 py-6 sm:px-0">
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-                        管理員儀表板
+                    <h1 className="text-3xl font-bold text-foreground mb-6">
+                        儀表板
                     </h1>
 
                     {/* Statistics */}
                     <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
-                        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                        <div className="bg-card text-card-foreground overflow-hidden shadow rounded-lg border border-border">
                             <div className="px-4 py-5 sm:p-6">
-                                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                                    會議室總數
+                                <dt className="text-sm font-medium text-muted-foreground truncate">
+                                    會議室數量
                                 </dt>
-                                <dd className="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">
+                                <dd className="mt-1 text-3xl font-semibold text-foreground">
                                     {totalRooms || 0}
                                 </dd>
                             </div>
                         </div>
-                        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                        <div className="bg-card text-card-foreground overflow-hidden shadow rounded-lg border border-border">
                             <div className="px-4 py-5 sm:p-6">
-                                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                                    預約總數
+                                <dt className="text-sm font-medium text-muted-foreground truncate">
+                                    預約數量
                                 </dt>
-                                <dd className="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">
+                                <dd className="mt-1 text-3xl font-semibold text-foreground">
                                     {totalBookings || 0}
                                 </dd>
                             </div>
                         </div>
-                        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                        <div className="bg-card text-card-foreground overflow-hidden shadow rounded-lg border border-border">
                             <div className="px-4 py-5 sm:p-6">
-                                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                                    使用者總數
+                                <dt className="text-sm font-medium text-muted-foreground truncate">
+                                    使用者數量
                                 </dt>
-                                <dd className="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">
+                                <dd className="mt-1 text-3xl font-semibold text-foreground">
                                     {totalUsers || 0}
                                 </dd>
                             </div>
@@ -73,13 +73,13 @@ export default async function AdminPage() {
                     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                         <Link
                             href="/admin/rooms"
-                            className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow"
+                            className="bg-card text-card-foreground overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow border border-border"
                         >
                             <div className="px-4 py-5 sm:p-6">
-                                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                                    管理會議室
+                                <h3 className="text-lg font-medium text-foreground mb-2">
+                                    會議室管理
                                 </h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <p className="text-sm text-muted-foreground">
                                     新增、編輯或刪除會議室
                                 </p>
                             </div>
@@ -87,56 +87,56 @@ export default async function AdminPage() {
 
                         <Link
                             href="/admin/bookings"
-                            className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow"
+                            className="bg-card text-card-foreground overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow border border-border"
                         >
                             <div className="px-4 py-5 sm:p-6">
-                                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                                    管理預約
+                                <h3 className="text-lg font-medium text-foreground mb-2">
+                                    預約管理
                                 </h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    查看和管理所有預約
+                                <p className="text-sm text-muted-foreground">
+                                    新增、編輯或刪除預約
                                 </p>
                             </div>
                         </Link>
 
                         <Link
                             href="/admin/users"
-                            className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow"
+                            className="bg-card text-card-foreground overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow border border-border"
                         >
                             <div className="px-4 py-5 sm:p-6">
-                                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                                    管理使用者
+                                <h3 className="text-lg font-medium text-foreground mb-2">
+                                    使用者管理
                                 </h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    查看和管理使用者帳號
+                                <p className="text-sm text-muted-foreground">
+                                    新增、編輯或刪除使用者帳號
                                 </p>
                             </div>
                         </Link>
 
                         <Link
                             href="/admin/units"
-                            className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow"
+                            className="bg-card text-card-foreground overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow border border-border"
                         >
                             <div className="px-4 py-5 sm:p-6">
-                                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                                    管理單位與人員
+                                <h3 className="text-lg font-medium text-foreground mb-2">
+                                    管理單位群組與人員
                                 </h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    編輯單位名稱與同仁名單
+                                <p className="text-sm text-muted-foreground">
+                                    新增、編輯或刪除單位群組與人員名單
                                 </p>
                             </div>
                         </Link>
 
                         <Link
                             href="/admin/reports"
-                            className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow"
+                            className="bg-card text-card-foreground overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow border border-border"
                         >
                             <div className="px-4 py-5 sm:p-6">
-                                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                                <h3 className="text-lg font-medium text-foreground mb-2">
                                     統計報表
                                 </h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    查詢登記紀錄與減量填報
+                                <p className="text-sm text-muted-foreground">
+                                    查詢免洗餐具及包裝飲用水減量填報
                                 </p>
                             </div>
                         </Link>

@@ -85,12 +85,12 @@ export default function UnitList({ units }: { units: Unit[] }) {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center bg-white px-4 py-5 border-b border-gray-200 sm:px-6 shadow sm:rounded-lg">
+            <div className="flex justify-between items-center bg-card px-4 py-5 border-b border-border sm:px-6 shadow sm:rounded-lg">
                 <div>
-                    <h3 className="text-lg leading-6 font-medium text-gray-900">
+                    <h3 className="text-lg leading-6 font-medium text-foreground">
                         單位列表
                     </h3>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-muted-foreground">
                         點擊「＋新增單位」建立新單位，或在各單位卡片內新增成員
                     </p>
                 </div>
@@ -101,10 +101,10 @@ export default function UnitList({ units }: { units: Unit[] }) {
                 {!isCreating && (
                     <button
                         onClick={() => setIsCreating(true)}
-                        className="bg-white border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-indigo-500 hover:bg-indigo-50 transition-colors flex flex-col items-center justify-center min-h-[200px] group"
+                        className="bg-card border-2 border-dashed border-border rounded-lg p-8 hover:border-primary hover:bg-primary/5 transition-colors flex flex-col items-center justify-center min-h-[200px] group"
                     >
                         <svg
-                            className="w-12 h-12 text-gray-400 group-hover:text-indigo-600 mb-3"
+                            className="w-12 h-12 text-muted-foreground group-hover:text-primary mb-3"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -116,7 +116,7 @@ export default function UnitList({ units }: { units: Unit[] }) {
                                 d="M12 4v16m8-8H4"
                             />
                         </svg>
-                        <span className="text-base font-medium text-gray-700 group-hover:text-indigo-900">
+                        <span className="text-base font-medium text-foreground group-hover:text-primary">
                             新增單位
                         </span>
                     </button>
@@ -124,14 +124,14 @@ export default function UnitList({ units }: { units: Unit[] }) {
 
                 {/* Create Unit Card */}
                 {isCreating && (
-                    <div className="bg-white overflow-hidden shadow rounded-lg border-2 border-indigo-500">
-                        <div className="px-4 py-5 sm:px-6 bg-indigo-50">
-                            <h4 className="text-md font-bold text-indigo-900">建立新單位</h4>
+                    <div className="bg-card overflow-hidden shadow rounded-lg border-2 border-primary">
+                        <div className="px-4 py-5 sm:px-6 bg-primary/10">
+                            <h4 className="text-md font-bold text-primary">建立新單位</h4>
                         </div>
                         <div className="px-4 py-5">
                             <form onSubmit={handleCreateUnit} className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         單位名稱
                                     </label>
                                     <input
@@ -140,7 +140,7 @@ export default function UnitList({ units }: { units: Unit[] }) {
                                         onChange={(e) => setNewUnitName(e.target.value)}
                                         placeholder="例如：業務部"
                                         autoFocus
-                                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2.5 border text-gray-900 bg-white"
+                                        className="shadow-sm focus:ring-ring focus:border-ring block w-full sm:text-sm border-input rounded-md p-2.5 border text-foreground bg-background"
                                     />
                                 </div>
                                 <div className="flex gap-2 justify-end">
@@ -150,13 +150,13 @@ export default function UnitList({ units }: { units: Unit[] }) {
                                             setIsCreating(false)
                                             setNewUnitName('')
                                         }}
-                                        className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                                        className="px-4 py-2 border border-input text-sm font-medium rounded-md text-foreground bg-background hover:bg-muted"
                                     >
                                         取消
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+                                        className="px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-primary-foreground bg-primary hover:bg-primary/90"
                                     >
                                         建立單位
                                     </button>
@@ -168,35 +168,35 @@ export default function UnitList({ units }: { units: Unit[] }) {
 
                 {/* Existing Units */}
                 {units.map((unit) => (
-                    <div key={unit.id} className="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200 hover:shadow-lg transition-shadow">
-                        <div className="px-4 py-5 sm:px-6 flex justify-between items-center bg-gray-50">
+                    <div key={unit.id} className="bg-card overflow-hidden shadow rounded-lg divide-y divide-border hover:shadow-lg transition-shadow border border-border">
+                        <div className="px-4 py-5 sm:px-6 flex justify-between items-center bg-muted/50">
                             {editingUnitId === unit.id ? (
                                 <div className="flex gap-2 w-full">
                                     <input
                                         type="text"
                                         value={editUnitName}
                                         onChange={(e) => setEditUnitName(e.target.value)}
-                                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-1.5 border text-gray-900 bg-white"
+                                        className="shadow-sm focus:ring-ring focus:border-ring block w-full sm:text-sm border-input rounded-md p-1.5 border text-foreground bg-background"
                                     />
-                                    <button onClick={() => handleUpdateUnit(unit.id)} className="text-green-600 hover:text-green-900 text-sm font-medium whitespace-nowrap">儲存</button>
-                                    <button onClick={() => setEditingUnitId(null)} className="text-gray-600 hover:text-gray-900 text-sm whitespace-nowrap">取消</button>
+                                    <button onClick={() => handleUpdateUnit(unit.id)} className="text-primary hover:text-primary/80 text-sm font-medium whitespace-nowrap">儲存</button>
+                                    <button onClick={() => setEditingUnitId(null)} className="text-muted-foreground hover:text-foreground text-sm whitespace-nowrap">取消</button>
                                 </div>
                             ) : (
                                 <>
-                                    <h4 className="text-lg font-semibold text-gray-900 truncate">{unit.name}</h4>
+                                    <h4 className="text-lg font-semibold text-foreground truncate">{unit.name}</h4>
                                     <div className="flex gap-2">
                                         <button
                                             onClick={() => {
                                                 setEditingUnitId(unit.id)
                                                 setEditUnitName(unit.name)
                                             }}
-                                            className="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
+                                            className="text-primary hover:text-primary/80 text-sm font-medium"
                                         >
                                             編輯
                                         </button>
                                         <button
                                             onClick={() => handleDeleteUnit(unit.id)}
-                                            className="text-red-600 hover:text-red-900 text-sm font-medium"
+                                            className="text-destructive hover:text-destructive/80 text-sm font-medium"
                                         >
                                             刪除
                                         </button>
@@ -206,29 +206,29 @@ export default function UnitList({ units }: { units: Unit[] }) {
                         </div>
                         <div className="px-4 py-4 sm:px-6">
                             <div className="flex justify-between items-center mb-3">
-                                <h5 className="text-sm font-medium text-gray-700">成員名單</h5>
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                <h5 className="text-sm font-medium text-foreground">成員名單</h5>
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
                                     {unit.unit_members.length} 人
                                 </span>
                             </div>
 
                             <ul className="space-y-2 mb-4 max-h-40 overflow-y-auto">
                                 {unit.unit_members.map((member) => (
-                                    <li key={member.id} className="flex justify-between items-center text-sm bg-gray-50 rounded px-3 py-2 hover:bg-gray-100 transition-colors">
-                                        <span className="text-gray-700 font-medium">{member.name}</span>
+                                    <li key={member.id} className="flex justify-between items-center text-sm bg-muted/30 rounded px-3 py-2 hover:bg-muted/50 transition-colors">
+                                        <span className="text-foreground font-medium">{member.name}</span>
                                         <button
                                             onClick={() => handleDeleteMember(member.id)}
-                                            className="text-red-400 hover:text-red-600 font-bold text-lg leading-none"
+                                            className="text-destructive/60 hover:text-destructive font-bold text-lg leading-none"
                                             title="刪除成員"
                                         >
                                             ×
                                         </button>
                                     </li>
                                 ))}
-                                {unit.unit_members.length === 0 && <li className="text-gray-400 text-sm italic text-center py-2">尚無成員</li>}
+                                {unit.unit_members.length === 0 && <li className="text-muted-foreground text-sm italic text-center py-2">尚無成員</li>}
                             </ul>
 
-                            <div className="border-t border-gray-200 pt-3">
+                            <div className="border-t border-border pt-3">
                                 <form onSubmit={(e) => handleAddMember(e, unit.id)} className="flex gap-2">
                                     <input
                                         type="text"
@@ -238,11 +238,11 @@ export default function UnitList({ units }: { units: Unit[] }) {
                                             setNewMemberName(e.target.value)
                                         }}
                                         placeholder="輸入成員姓名"
-                                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full text-sm border-gray-300 rounded-md p-2 border text-gray-900 bg-white"
+                                        className="shadow-sm focus:ring-ring focus:border-ring block w-full text-sm border-input rounded-md p-2 border text-foreground bg-background"
                                     />
                                     <button
                                         type="submit"
-                                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 whitespace-nowrap"
+                                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded shadow-sm text-primary-foreground bg-primary hover:bg-primary/90 whitespace-nowrap"
                                     >
                                         ＋新增
                                     </button>

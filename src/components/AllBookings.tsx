@@ -21,8 +21,8 @@ export default function AllBookings({ bookings }: { bookings: BookingWithRoom[] 
                 <thead className="bg-muted/50">
                     <tr>
                         <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6 w-[100px] sm:w-[220px]">
-                            <span className="hidden sm:inline">日期與時間</span>
-                            <span className="sm:hidden">日期</span>
+                            <span className="hidden sm:inline">時間</span>
+                            <span className="sm:hidden">時間</span>
                         </th>
                         <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground w-[100px] sm:w-[150px]">
                             會議室
@@ -32,8 +32,7 @@ export default function AllBookings({ bookings }: { bookings: BookingWithRoom[] 
                             <span className="sm:hidden whitespace-pre-line">會議{"\n"}名稱</span>
                         </th>
                         <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground w-[80px] sm:w-[100px]">
-                            <span className="hidden sm:inline">持續時間</span>
-                            <span className="sm:hidden">登記人</span>
+                            登記單位
                         </th>
                     </tr>
                 </thead>
@@ -60,8 +59,7 @@ export default function AllBookings({ bookings }: { bookings: BookingWithRoom[] 
                                     {booking.title}
                                 </td>
                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
-                                    <span className="hidden sm:inline">{duration} 分鐘</span>
-                                    <span className="sm:hidden text-foreground font-medium">{booking.profile?.full_name || '未知'}</span>
+                                    {booking.units?.name || '未知'}
                                 </td>
                             </tr>
                         )

@@ -37,7 +37,7 @@ export default async function Home({ searchParams }: { searchParams: { error?: s
   const now = new Date()
   const { data: allBookingsData } = await supabase
     .from('bookings')
-    .select('*, rooms(*)')
+    .select('*, rooms(*), units(name)')
     .gte('end_time', now.toISOString())
     .order('start_time')
     .limit(50)

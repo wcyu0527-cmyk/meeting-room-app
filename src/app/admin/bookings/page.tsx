@@ -23,7 +23,14 @@ export default async function AdminBookingsPage() {
       end_time,
       user_id,
       room_id,
+      created_at,
       rooms!inner (
+        name
+      ),
+      units (
+        name
+      ),
+      unit_members (
         name
       )
     `)
@@ -37,25 +44,28 @@ export default async function AdminBookingsPage() {
         start_time: booking.start_time,
         end_time: booking.end_time,
         user_id: booking.user_id,
+        created_at: booking.created_at,
         rooms: {
             name: booking.rooms.name
-        }
+        },
+        units: booking.units ? { name: booking.units.name } : null,
+        unit_members: booking.unit_members ? { name: booking.unit_members.name } : null
     })) || []
 
     return (
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen bg-background">
             <Navbar />
             <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                 <div className="px-4 py-6 sm:px-0">
                     <div className="flex justify-between items-center mb-6">
-                        <h1 className="text-3xl font-bold text-gray-900">
-                            管理預約
+                        <h1 className="text-3xl font-bold text-foreground">
+                            預約管理
                         </h1>
                         <Link
                             href="/admin"
-                            className="text-sm text-gray-600 hover:text-gray-900"
+                            className="text-sm text-muted-foreground hover:text-foreground"
                         >
-                            ← 返回管理後台
+                            ← 返回儀表板
                         </Link>
                     </div>
 
@@ -65,7 +75,7 @@ export default async function AdminBookingsPage() {
                         </div>
                     )}
 
-                    <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+                    <div className="bg-card shadow overflow-hidden sm:rounded-lg border border-border">
                         <AdminBookingsList bookings={bookings} />
                     </div>
                 </div>

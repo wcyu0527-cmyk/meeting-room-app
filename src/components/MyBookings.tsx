@@ -27,7 +27,7 @@ export default function MyBookings({
     }
 
     const handleDelete = async (bookingId: string) => {
-        if (!confirm('確定要刪除此預約嗎？')) {
+        if (!confirm('請確認是否刪除?')) {
             return
         }
 
@@ -68,7 +68,12 @@ export default function MyBookings({
             setEditingBooking(null)
             alert('更新成功！')
         } catch (error) {
-            alert('更新預約失敗: ' + (error as Error).message)
+            const errorMessage = (error as Error).message
+            if (errorMessage.includes('conflicting key value violates exclusion constraint "no_overlap"')) {
+                alert('更新預約失敗:同時段已有登記')
+            } else {
+                alert('更新預約失敗: ' + errorMessage)
+            }
         } finally {
             setIsSubmitting(false)
         }
@@ -371,7 +376,7 @@ export default function MyBookings({
                                     disabled={isSubmitting}
                                     className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 disabled:opacity-50"
                                 >
-                                    {isSubmitting ? '更新中...' : '更新預約'}
+                                    {isSubmitting ? '儲存中...' : '儲存'}
                                 </button>
                             </div>
                         </form>

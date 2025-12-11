@@ -29,6 +29,7 @@ export type Booking = {
 export type BookingWithRoom = Booking & {
     rooms: Room | null
     profile?: { full_name: string | null }
+    units?: { name: string } | null
 }
 
 export type Profile = {

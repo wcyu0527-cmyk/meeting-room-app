@@ -51,29 +51,29 @@ export default async function AdminUsersPage() {
     })
 
     return (
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen bg-background">
             <Navbar />
             <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                 <div className="px-4 py-6 sm:px-0">
                     <div className="flex justify-between items-center mb-6">
-                        <h1 className="text-3xl font-bold text-gray-900">
-                            管理使用者
+                        <h1 className="text-3xl font-bold text-foreground">
+                            使用者管理
                         </h1>
                         <Link
                             href="/admin"
-                            className="text-sm text-gray-600 hover:text-gray-900"
+                            className="text-sm text-muted-foreground hover:text-foreground"
                         >
-                            ← 返回管理後台
+                            ← 返回儀表板
                         </Link>
                     </div>
 
                     {fetchError && (
-                        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+                        <div className="mb-4 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded">
                             錯誤: {fetchError}
                         </div>
                     )}
 
-                    <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+                    <div className="bg-card shadow overflow-hidden sm:rounded-lg border border-border">
                         <AdminUsersList profiles={profilesWithEmail} />
                     </div>
                 </div>

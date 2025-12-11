@@ -30,47 +30,47 @@ export default function AdminRoomsList({ rooms }: { rooms: Room[] }) {
     }
 
     return (
-        <table className="min-w-full divide-y divide-gray-300">
-            <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-border">
+            <thead className="bg-muted/50">
                 <tr>
-                    <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                    <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6">
                         會議室名稱
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
                         容納人數
                     </th>
-                    <th scope="col" className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sm:table-cell">
+                    <th scope="col" className="hidden px-3 py-3.5 text-left text-sm font-semibold text-foreground sm:table-cell">
                         設備
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        操作
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
+                        動作
                     </th>
                 </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
+            <tbody className="divide-y divide-border bg-card">
                 {rooms?.map((room) => (
                     <tr key={room.id}>
-                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-foreground sm:pl-6">
                             {room.name}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
                             {room.capacity} 人
                         </td>
-                        <td className="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell">
+                        <td className="hidden px-3 py-4 text-sm text-muted-foreground sm:table-cell">
                             {room.equipment?.join(', ')}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm">
                             <div className="flex gap-3">
                                 <Link
                                     href={`/admin/rooms/${room.id}`}
-                                    className="text-indigo-600 hover:text-indigo-900"
+                                    className="text-primary hover:text-primary/80"
                                 >
                                     編輯
                                 </Link>
                                 <button
                                     onClick={() => handleDelete(room.id)}
                                     disabled={isDeleting === room.id}
-                                    className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                                    className="text-destructive hover:text-destructive/80 disabled:opacity-50"
                                 >
                                     {isDeleting === room.id ? '刪除中...' : '刪除'}
                                 </button>
