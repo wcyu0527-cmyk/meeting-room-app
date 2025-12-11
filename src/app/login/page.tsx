@@ -6,15 +6,15 @@ export default function LoginPage({
     searchParams: { message: string; error: string }
 }) {
     return (
-        <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 py-12 sm:px-6 lg:px-8">
+        <div className="flex min-h-screen flex-col items-center justify-center bg-background py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <h1 className="text-center text-4xl font-bold text-indigo-600 mb-8">
+                <h1 className="text-center text-4xl font-bold text-primary mb-8">
                     臺中工務段會議室
                 </h1>
             </div>
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                <div className="bg-card py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-border">
                     <LoginForm
                         error={searchParams?.error}
                         message={searchParams?.message}
