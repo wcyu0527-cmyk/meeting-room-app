@@ -381,7 +381,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
             </div>
 
             {/* Calendar Navigation Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+            <div className="flex flex-col sm:flex-row items-center justify-between px-4 sm:px-6 py-4 border-b border-border gap-4 sm:gap-0">
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => changeMonth(-1)}

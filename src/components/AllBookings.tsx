@@ -16,7 +16,7 @@ export default function AllBookings({ bookings }: { bookings: BookingWithRoom[] 
     }
 
     return (
-        <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+        <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-xl">
             <table className="min-w-full divide-y divide-border">
                 <thead className="bg-muted/50">
                     <tr>
@@ -28,8 +28,7 @@ export default function AllBookings({ bookings }: { bookings: BookingWithRoom[] 
                             會議室
                         </th>
                         <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
-                            <span className="hidden sm:inline">會議名稱</span>
-                            <span className="sm:hidden whitespace-pre-line">會議{"\n"}名稱</span>
+                            會議名稱
                         </th>
                         <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground w-[80px] sm:w-[100px]">
                             登記單位

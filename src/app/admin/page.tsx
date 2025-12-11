@@ -126,20 +126,6 @@ export default async function AdminPage() {
                                 </p>
                             </div>
                         </Link>
-
-                        <Link
-                            href="/admin/reports"
-                            className="bg-card text-card-foreground overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow border border-border"
-                        >
-                            <div className="px-4 py-5 sm:p-6">
-                                <h3 className="text-lg font-medium text-foreground mb-2">
-                                    統計報表
-                                </h3>
-                                <p className="text-sm text-muted-foreground">
-                                    查詢免洗餐具及包裝飲用水減量填報
-                                </p>
-                            </div>
-                        </Link>
                     </div>
                 </div>
             </main>
