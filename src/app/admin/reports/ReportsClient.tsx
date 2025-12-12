@@ -562,9 +562,11 @@ export default function ReportsClient() {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                                         <div className="font-medium">{booking.title}</div>
-                                        <div className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
-                                            {booking.category}
-                                        </div>
+                                        {booking.category && (
+                                            <div className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary text-primary-foreground mt-1">
+                                                {booking.category}
+                                            </div>
+                                        )}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 text-center">
                                         {booking.eco_box_count}
