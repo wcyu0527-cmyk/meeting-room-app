@@ -337,7 +337,12 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
         }
 
         if (error) {
-            alert((editingBooking ? '更新' : '預約') + '失敗: ' + error.message)
+            const errorMessage = error.message
+            if (errorMessage.includes('conflicting key value violates exclusion constraint "no_overlap"')) {
+                alert('預約失敗: 同時段已有預約')
+            } else {
+                alert((editingBooking ? '更新' : '預約') + '失敗: ' + errorMessage)
+            }
             throw error // Re-throw to let BookingForm know
         } else {
             alert((editingBooking ? '更新' : '預約') + '成功！')

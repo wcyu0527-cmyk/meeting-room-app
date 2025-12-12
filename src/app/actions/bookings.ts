@@ -29,11 +29,11 @@ export async function deleteBooking(bookingId: string) {
     const isAdmin = profile?.role === 'admin'
 
     if (!booking) {
-        throw new Error('Booking not found')
+        throw new Error('找不到預約')
     }
 
     if (booking.user_id !== user.id && !isAdmin) {
-        throw new Error('Unauthorized')
+        throw new Error('無權限')
     }
 
 
@@ -93,11 +93,11 @@ export async function updateBooking(
     const isAdmin = profile?.role === 'admin'
 
     if (!booking) {
-        throw new Error('Booking not found')
+        throw new Error('找不到預約')
     }
 
     if (booking.user_id !== user.id && !isAdmin) {
-        throw new Error('Unauthorized')
+        throw new Error('無權限')
     }
 
 

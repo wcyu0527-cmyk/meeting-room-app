@@ -18,6 +18,6 @@ export async function isAdmin(): Promise<boolean> {
 export async function requireAdmin() {
     const admin = await isAdmin()
     if (!admin) {
-        throw new Error('Unauthorized: Admin access required')
+        throw new Error('權限不足：需要管理員權限')
     }
 }
