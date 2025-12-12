@@ -543,7 +543,7 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                                         ${isSelected
                                             ? 'ring-2 ring-primary border-transparent bg-accent'
                                             : showHolidayStyle
-                                                ? 'border-red-200 dark:border-red-900 hover:border-red-300 dark:hover:border-red-800 hover:shadow-sm bg-red-50 dark:bg-red-950/20'
+                                                ? 'border-red-400 dark:border-red-500 hover:border-red-500 dark:hover:border-red-400 hover:shadow-sm bg-card'
                                                 : 'border-border hover:border-primary/50 hover:shadow-sm bg-card'
                                         }
                                     `}
@@ -552,7 +552,7 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                                         inline-flex items-center justify-center w-6 h-6 md:w-7 md:h-7 rounded-full text-xs md:text-sm font-medium
                                         ${isToday
                                             ? 'bg-primary text-primary-foreground'
-                                            : isSelected ? 'text-primary' : showHolidayStyle ? 'text-red-600 dark:text-red-400' : 'text-foreground'
+                                            : isSelected ? 'text-primary' : showHolidayStyle ? 'text-red-500 dark:text-red-400' : 'text-foreground'
                                         }
                                     `}>
                                         {date.getDate()}
