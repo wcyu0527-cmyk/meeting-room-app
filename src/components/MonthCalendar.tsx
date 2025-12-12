@@ -368,7 +368,7 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
         <div ref={containerRef} className="rounded-xl border bg-card text-card-foreground shadow">
             {/* Main Title & Filter Tags */}
             <div className="flex flex-wrap items-center px-6 py-4 border-b border-border gap-x-6 gap-y-3">
-                <h2 className="text-xl font-bold tracking-tight text-foreground whitespace-nowrap">
+                <h2 className="text-2xl font-bold tracking-tight text-foreground whitespace-nowrap">
                     本月會議
                 </h2>
                 <div className="flex flex-wrap gap-2 items-center">
