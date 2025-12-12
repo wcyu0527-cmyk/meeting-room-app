@@ -279,6 +279,20 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
             return
         }
 
+        // Check if user is trying to book a past date (regular users only)
+        if (!editingBooking && !isAdmin) {
+            const today = new Date()
+            today.setHours(0, 0, 0, 0)
+            const bookingDate = new Date(selectedDate)
+            bookingDate.setHours(0, 0, 0, 0)
+
+            if (bookingDate < today) {
+                alert('已逾期，無法新增')
+                setIsSubmitting(false)
+                return
+            }
+        }
+
         // Get unit_id and unit_member_id from formData directly, as BookingForm manages the state
         const unitId = formData.get('unit_id') as string
         const rawUnitMemberId = formData.get('unit_member_id') as string
