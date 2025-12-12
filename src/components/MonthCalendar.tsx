@@ -31,6 +31,7 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
 
     const router = useRouter()
     const containerRef = useRef<HTMLDivElement>(null)
+    const datePickerRef = useRef<HTMLInputElement>(null)
     const [isCompact, setIsCompact] = useState(false)
 
     useEffect(() => {
@@ -440,6 +441,42 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                     </button>
                 </div>
                 <div className="flex items-center gap-2">
+                    {/* Hidden Date Input for Jump to Date */}
+                    <input
+                        type="date"
+                        ref={datePickerRef}
+                        className="sr-only"
+                        onChange={(e) => {
+                            if (e.target.value) {
+                                const newDate = new Date(e.target.value)
+                                // Handle timezone offset issues by manually parsing or setting hours
+                                // Simple fix: treat input as local date 
+                                const year = parseInt(e.target.value.substring(0, 4))
+                                const month = parseInt(e.target.value.substring(5, 7)) - 1
+                                const day = parseInt(e.target.value.substring(8, 10))
+                                const adjustedDate = new Date(year, month, day)
+
+                                setCurrentDate(new Date(year, month, 1))
+                                setSelectedDate(adjustedDate)
+                                fetchMonthBookings(new Date(year, month, 1))
+
+                                // Reset input so same date can be picked again if needed (though unlikely)
+                                e.target.value = ''
+                            }
+                        }}
+                    />
+
+                    <button
+                        onClick={() => datePickerRef.current?.showPicker()}
+                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1"
+                        title="前往特定日期"
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span className="hidden sm:inline">前往</span>
+                    </button>
+
                     <button
                         onClick={() => changeSelectedDate(-1)}
                         className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8"
@@ -453,6 +490,7 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                             const today = new Date()
                             setCurrentDate(today)
                             setSelectedDate(today)
+                            fetchMonthBookings(today)
                         }}
                         className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3"
                     >
@@ -488,6 +526,11 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                             const isToday = isSameDay(date, new Date())
                             const holiday = getHoliday(date)
 
+                            // 2026年起，以及2025年12月的週六週日顯示假日樣式
+                            const isWeekend = date.getDay() === 0 || date.getDay() === 6
+                            const isWeekendHoliday = isWeekend && (date.getFullYear() >= 2026 || (date.getFullYear() === 2025 && date.getMonth() === 11))
+                            const showHolidayStyle = holiday || isWeekendHoliday
+
                             return (
                                 <button
                                     key={date.toISOString()}
@@ -499,7 +542,7 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                                         relative min-h-[3.5rem] ${isCompact ? '' : 'h-32'} p-1 ${isCompact ? '' : 'p-2'} rounded-lg border transition-all text-left group flex flex-col ${isCompact ? 'items-center' : 'items-start'}
                                         ${isSelected
                                             ? 'ring-2 ring-primary border-transparent bg-accent'
-                                            : holiday
+                                            : showHolidayStyle
                                                 ? 'border-red-200 dark:border-red-900 hover:border-red-300 dark:hover:border-red-800 hover:shadow-sm bg-red-50 dark:bg-red-950/20'
                                                 : 'border-border hover:border-primary/50 hover:shadow-sm bg-card'
                                         }
@@ -509,7 +552,7 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                                         inline-flex items-center justify-center w-6 h-6 md:w-7 md:h-7 rounded-full text-xs md:text-sm font-medium
                                         ${isToday
                                             ? 'bg-primary text-primary-foreground'
-                                            : isSelected ? 'text-primary' : holiday ? 'text-red-600 dark:text-red-400' : 'text-foreground'
+                                            : isSelected ? 'text-primary' : showHolidayStyle ? 'text-red-600 dark:text-red-400' : 'text-foreground'
                                         }
                                     `}>
                                         {date.getDate()}
