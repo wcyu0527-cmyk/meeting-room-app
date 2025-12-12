@@ -28,12 +28,22 @@ export default function ReportsClient() {
     // 設定預設日期為本月
     const getDefaultDates = () => {
         const now = new Date()
-        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
-        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+        const year = now.getFullYear()
+        const month = now.getMonth()
+
+        const firstDay = new Date(year, month, 1)
+        const lastDay = new Date(year, month + 1, 0)
+
+        const formatDate = (date: Date) => {
+            const y = date.getFullYear()
+            const m = String(date.getMonth() + 1).padStart(2, '0')
+            const d = String(date.getDate()).padStart(2, '0')
+            return `${y}-${m}-${d}`
+        }
 
         return {
-            start: firstDay.toISOString().split('T')[0],
-            end: lastDay.toISOString().split('T')[0]
+            start: formatDate(firstDay),
+            end: formatDate(lastDay)
         }
     }
 
@@ -78,8 +88,9 @@ export default function ReportsClient() {
         const supabase = createClient()
 
         // Adjust end date to include the whole day
-        const endDateTime = new Date(endDate)
-        endDateTime.setHours(23, 59, 59, 999)
+        // 使用 T00:00:00 確保解析為本地時間
+        const startDateTime = new Date(`${startDate}T00:00:00`)
+        const endDateTime = new Date(`${endDate}T23:59:59.999`)
 
         const { data, error } = await supabase
             .from('bookings')
@@ -88,7 +99,7 @@ export default function ReportsClient() {
                 rooms (name),
                 units (name)
             `)
-            .gte('start_time', new Date(startDate).toISOString())
+            .gte('start_time', startDateTime.toISOString())
             .lte('start_time', endDateTime.toISOString())
             .order('start_time', { ascending: false })
 
