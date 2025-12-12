@@ -516,7 +516,7 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                                     </span>
 
                                     {/* Holiday Name */}
-                                    {holiday && !isCompact && (
+                                    {holiday && (
                                         <div className="text-[9px] text-red-600 dark:text-red-400 font-medium mt-0.5 truncate w-full px-0.5">
                                             {holiday.name}
                                         </div>
@@ -582,6 +582,11 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-medium text-foreground">
                                 {selectedDate.toLocaleDateString('zh-TW', { weekday: 'long', month: 'long', day: 'numeric' })}
+                                {getHoliday(selectedDate) && (
+                                    <span className="ml-2 text-sm text-red-600 dark:text-red-400">
+                                        ({getHoliday(selectedDate)?.name})
+                                    </span>
+                                )}
                             </h3>
                         </div>
 
