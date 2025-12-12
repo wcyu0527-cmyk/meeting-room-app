@@ -6,6 +6,7 @@ import { Room, BookingWithRoom } from '@/types'
 import { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 import BookingForm from './BookingForm'
+import { getHoliday } from '@/data/holidays'
 
 type CalendarProps = {
     initialBookings: BookingWithRoom[]
@@ -485,6 +486,7 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                             const dayBookings = getDayBookings(date)
                             const isSelected = selectedDate && isSameDay(date, selectedDate)
                             const isToday = isSameDay(date, new Date())
+                            const holiday = getHoliday(date)
 
                             return (
                                 <button
@@ -497,7 +499,9 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                                         relative min-h-[3.5rem] ${isCompact ? '' : 'h-32'} p-1 ${isCompact ? '' : 'p-2'} rounded-lg border transition-all text-left group flex flex-col ${isCompact ? 'items-center' : 'items-start'}
                                         ${isSelected
                                             ? 'ring-2 ring-primary border-transparent bg-accent'
-                                            : 'border-border hover:border-primary/50 hover:shadow-sm bg-card'
+                                            : holiday
+                                                ? 'border-red-200 dark:border-red-900 hover:border-red-300 dark:hover:border-red-800 hover:shadow-sm bg-red-50 dark:bg-red-950/20'
+                                                : 'border-border hover:border-primary/50 hover:shadow-sm bg-card'
                                         }
                                     `}
                                 >
@@ -505,11 +509,18 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                                         inline-flex items-center justify-center w-6 h-6 md:w-7 md:h-7 rounded-full text-xs md:text-sm font-medium
                                         ${isToday
                                             ? 'bg-primary text-primary-foreground'
-                                            : isSelected ? 'text-primary' : 'text-foreground'
+                                            : isSelected ? 'text-primary' : holiday ? 'text-red-600 dark:text-red-400' : 'text-foreground'
                                         }
                                     `}>
                                         {date.getDate()}
                                     </span>
+
+                                    {/* Holiday Name */}
+                                    {holiday && !isCompact && (
+                                        <div className="text-[9px] text-red-600 dark:text-red-400 font-medium mt-0.5 truncate w-full px-0.5">
+                                            {holiday.name}
+                                        </div>
+                                    )}
 
                                     {/* Mobile: Dots Indicators */}
                                     <div className={`mt-1 flex flex-wrap gap-0.5 justify-center content-center w-full px-0.5 ${isCompact ? 'flex' : 'hidden'}`}>
