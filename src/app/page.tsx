@@ -14,6 +14,19 @@ export default async function Home({ searchParams }: { searchParams: { error?: s
   // Get user session
   const { data: { user } } = await supabase.auth.getUser()
 
+  let currentUserUnitId: string | undefined = undefined
+  if (user) {
+    const { data: userProfile } = await supabase
+      .from('profiles')
+      .select('unit_id')
+      .eq('id', user.id)
+      .single()
+
+    if (userProfile?.unit_id) {
+      currentUserUnitId = userProfile.unit_id
+    }
+  }
+
   const { data: rooms, error } = await supabase.from('rooms').select('*').order('name')
 
   if (error) {
@@ -107,7 +120,7 @@ export default async function Home({ searchParams }: { searchParams: { error?: s
           {/* Month Calendar Section - Only for logged in users */}
           {user && (
             <div className="mb-8">
-              <MonthCalendar initialBookings={monthBookings} rooms={rooms as Room[]} />
+              <MonthCalendar initialBookings={monthBookings} rooms={rooms as Room[]} userUnitId={currentUserUnitId} />
             </div>
           )}
 

@@ -9,14 +9,22 @@ type Profile = {
     alias: string | null
     role: string | null
     email: string
+    unit_id: string | null
+    units: { name: string } | null
 }
 
-export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
+type Unit = {
+    id: string
+    name: string
+}
+
+export default function AdminUsersList({ profiles, units }: { profiles: Profile[], units: Unit[] }) {
     const [editingId, setEditingId] = useState<string | null>(null)
     const [editForm, setEditForm] = useState({
         full_name: '',
         alias: '',
         role: 'user',
+        unit_id: '',
         password: '',
     })
     const [isUpdating, setIsUpdating] = useState(false)
@@ -29,7 +37,8 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
         password: '',
         full_name: '',
         alias: '',
-        role: 'user'
+        role: 'user',
+        unit_id: ''
     })
     const [isCreating, setIsCreating] = useState(false)
 
@@ -39,6 +48,7 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
             full_name: profile.full_name || '',
             alias: profile.alias || '',
             role: profile.role || 'user',
+            unit_id: profile.unit_id || '',
             password: '',
         })
     }
@@ -46,7 +56,7 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
     const handleSave = async (userId: string) => {
         setIsUpdating(true)
         try {
-            await updateUserProfile(userId, editForm.full_name, editForm.alias)
+            await updateUserProfile(userId, editForm.full_name, editForm.alias, editForm.unit_id || null)
             await updateUserRole(userId, editForm.role as 'user' | 'admin')
 
             if (editForm.password) {
@@ -86,9 +96,9 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
         e.preventDefault()
         setIsCreating(true)
         try {
-            await createUser(createForm.username, createForm.password, createForm.full_name, createForm.role as 'user' | 'admin')
+            await createUser(createForm.username, createForm.password, createForm.full_name, createForm.role as 'user' | 'admin', createForm.unit_id || null)
             setShowCreateForm(false)
-            setCreateForm({ username: '', password: '', full_name: '', alias: '', role: 'user' })
+            setCreateForm({ username: '', password: '', full_name: '', alias: '', role: 'user', unit_id: '' })
             window.location.reload()
         } catch (error) {
             alert('建立使用者失敗: ' + (error as Error).message)
@@ -158,6 +168,21 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                                 <option value="admin">管理員</option>
                             </select>
                         </div>
+                        <div>
+                            <label className="block text-sm font-medium text-foreground">單位</label>
+                            <select
+                                value={createForm.unit_id}
+                                onChange={e => setCreateForm({ ...createForm, unit_id: e.target.value })}
+                                className="mt-1 block w-full rounded-md border-input shadow-sm focus:border-ring focus:ring-ring sm:text-sm border px-3 py-2 text-foreground bg-background"
+                            >
+                                <option value="">無單位</option>
+                                {units.map(unit => (
+                                    <option key={unit.id} value={unit.id}>
+                                        {unit.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
                         <button
                             type="submit"
                             disabled={isCreating}
@@ -185,6 +210,9 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                             </th>
                             <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
                                 角色
+                            </th>
+                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
+                                單位
                             </th>
                             <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
                                 密碼
@@ -232,6 +260,24 @@ export default function AdminUsersList({ profiles }: { profiles: Profile[] }) {
                                                 }`}>
                                                 {profile.role === 'admin' ? '管理員' : '一般使用者'}
                                             </span>
+                                        )}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                        {isEditing ? (
+                                            <select
+                                                value={editForm.unit_id}
+                                                onChange={(e) => setEditForm({ ...editForm, unit_id: e.target.value })}
+                                                className="block w-full rounded-md border-input shadow-sm focus:border-ring focus:ring-ring sm:text-sm px-2 py-1 border text-foreground bg-background"
+                                            >
+                                                <option value="">無單位</option>
+                                                {units.map(unit => (
+                                                    <option key={unit.id} value={unit.id}>
+                                                        {unit.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        ) : (
+                                            profile.units?.name || '-'
                                         )}
                                     </td>
                                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">

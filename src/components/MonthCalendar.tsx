@@ -10,9 +10,10 @@ import BookingForm from './BookingForm'
 type CalendarProps = {
     initialBookings: BookingWithRoom[]
     rooms: Room[]
+    userUnitId?: string
 }
 
-export default function MonthCalendar({ initialBookings, rooms }: CalendarProps) {
+export default function MonthCalendar({ initialBookings, rooms, userUnitId }: CalendarProps) {
     const [currentDate, setCurrentDate] = useState(new Date())
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
     const [bookings, setBookings] = useState<BookingWithRoom[]>(initialBookings)
@@ -626,6 +627,7 @@ export default function MonthCalendar({ initialBookings, rooms }: CalendarProps)
                 selectedDate={selectedDate}
                 isReadOnly={isReadOnly}
                 isEcoOnlyEditable={isEcoOnlyEditable}
+                userUnitId={userUnitId}
             />
         </div >
     )

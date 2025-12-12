@@ -7,19 +7,29 @@ import AdminUsersList from './AdminUsersList'
 export default async function AdminUsersPage() {
     const supabase = await createClient()
 
-    let profiles: { id: string, full_name: string | null, role: string, alias: string | null }[] = []
+    let profiles: { id: string, full_name: string | null, role: string, alias: string | null, unit_id: string | null, units: { name: string } | null }[] = []
+    let units: { id: string, name: string }[] = []
     let users: { id: string, email?: string }[] = []
     let fetchError: string | null = null
 
     try {
-        // Fetch profiles
+        // Fetch units
+        const { data: unitsData, error: unitsError } = await supabase
+            .from('units')
+            .select('id, name')
+            .order('name')
+
+        if (unitsError) throw unitsError
+        if (unitsData) units = unitsData
+
+        // Fetch profiles with units
         const { data: profilesData, error: profilesError } = await supabase
             .from('profiles')
-            .select('id, full_name, role, alias')
+            .select('id, full_name, role, alias, unit_id, units(name)')
             .order('full_name', { ascending: true, nullsFirst: false })
 
         if (profilesError) throw profilesError
-        if (profilesData) profiles = profilesData
+        if (profilesData) profiles = profilesData as any
 
         // Try to fetch auth users
         try {
@@ -74,7 +84,7 @@ export default async function AdminUsersPage() {
                     )}
 
                     <div className="bg-card shadow overflow-hidden sm:rounded-lg border border-border">
-                        <AdminUsersList profiles={profilesWithEmail} />
+                        <AdminUsersList profiles={profilesWithEmail} units={units} />
                     </div>
                 </div>
             </main>

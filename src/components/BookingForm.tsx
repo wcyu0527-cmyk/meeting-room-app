@@ -21,6 +21,7 @@ type BookingFormProps = {
     isReadOnly?: boolean
     isEcoOnlyEditable?: boolean
     title?: string
+    userUnitId?: string
 }
 
 export default function BookingForm({
@@ -34,7 +35,8 @@ export default function BookingForm({
     selectedDate,
     isReadOnly = false,
     isEcoOnlyEditable = false,
-    title
+    title,
+    userUnitId
 }: BookingFormProps) {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [selectedUnitId, setSelectedUnitId] = useState('')
@@ -47,11 +49,11 @@ export default function BookingForm({
             setSelectedMemberId(initialData.unit_member_id || '')
             setCannotComplyReason(initialData.cannot_comply_reason || '無提供便當')
         } else {
-            setSelectedUnitId('')
+            setSelectedUnitId(userUnitId || '')
             setSelectedMemberId('')
             setCannotComplyReason('無提供便當')
         }
-    }, [initialData])
+    }, [initialData, userUnitId])
 
     if (!isOpen) return null
 

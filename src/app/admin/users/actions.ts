@@ -22,7 +22,7 @@ export async function updateUserRole(userId: string, role: 'user' | 'admin') {
     revalidatePath('/admin/users')
 }
 
-export async function updateUserProfile(userId: string, fullName: string, alias: string | null) {
+export async function updateUserProfile(userId: string, fullName: string, alias: string | null, unitId: string | null) {
     await requireAdmin()
 
     const supabase = await createClient()
@@ -31,7 +31,8 @@ export async function updateUserProfile(userId: string, fullName: string, alias:
         .from('profiles')
         .update({
             full_name: fullName,
-            alias: alias
+            alias: alias,
+            unit_id: unitId
         })
         .eq('id', userId)
 
@@ -42,7 +43,7 @@ export async function updateUserProfile(userId: string, fullName: string, alias:
     revalidatePath('/admin/users')
 }
 
-export async function createUser(username: string, password: string, fullName: string, role: 'user' | 'admin') {
+export async function createUser(username: string, password: string, fullName: string, role: 'user' | 'admin', unitId: string | null) {
     try {
         await requireAdmin()
 
@@ -78,7 +79,7 @@ export async function createUser(username: string, password: string, fullName: s
             // Let's try to update.
             const { error: profileError } = await supabaseAdmin
                 .from('profiles')
-                .update({ role: role, full_name: fullName }) // Ensure name is set too
+                .update({ role: role, full_name: fullName, unit_id: unitId }) // Ensure name is set too
                 .eq('id', data.user.id)
 
             if (profileError) {
