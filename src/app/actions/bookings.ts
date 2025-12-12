@@ -54,6 +54,7 @@ export async function deleteBooking(bookingId: string) {
 export async function updateBooking(
     bookingId: string,
     updateData: {
+        room_id?: string
         title: string
         start_time: string
         end_time: string
@@ -64,6 +65,8 @@ export async function updateBooking(
         takeout_count?: number
         cannot_comply_reason?: string
         approved_disposable_count?: number
+        unit_id?: string
+        unit_member_id?: string
     }
 ) {
     const supabase = await createClient()
@@ -102,6 +105,7 @@ export async function updateBooking(
     const { error } = await supabase
         .from('bookings')
         .update({
+            room_id: updateData.room_id,
             title: updateData.title,
             start_time: new Date(updateData.start_time).toISOString(),
             end_time: new Date(updateData.end_time).toISOString(),
@@ -112,6 +116,8 @@ export async function updateBooking(
             takeout_count: updateData.takeout_count || 0,
             cannot_comply_reason: updateData.cannot_comply_reason || '無提供便當',
             approved_disposable_count: updateData.approved_disposable_count || 0,
+            unit_id: updateData.unit_id || null,
+            unit_member_id: updateData.unit_member_id || null,
         })
         .eq('id', bookingId)
 

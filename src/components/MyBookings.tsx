@@ -1,22 +1,61 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { deleteBooking, updateBooking } from '@/app/actions/bookings'
 import { Booking, Room } from '@/types'
+import BookingForm from './BookingForm'
+import { createClient } from '@/utils/supabase/client'
 
 type BookingWithRoom = Booking & {
     rooms: Room
 }
 
+type Unit = {
+    id: string
+    name: string
+    unit_members: { id: string, name: string }[]
+}
+
 export default function MyBookings({
     bookings,
+    userId,
+    rooms,
+    isAdmin
 }: {
     bookings: BookingWithRoom[]
     userId: string
+    rooms: Room[]
+    isAdmin: boolean
 }) {
     const [editingBooking, setEditingBooking] = useState<BookingWithRoom | null>(null)
     const [isDeleting, setIsDeleting] = useState<string | null>(null)
-    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [units, setUnits] = useState<Unit[]>([])
+
+    useEffect(() => {
+        const fetchUnits = async () => {
+            const supabase = createClient()
+            const { data } = await supabase
+                .from('units')
+                .select(`
+                    id, 
+                    name, 
+                    unit_members (
+                        id, 
+                        name
+                    )
+                `)
+                .order('name')
+
+            if (data) {
+                const sortedUnits = data.map((unit: any) => ({
+                    ...unit,
+                    unit_members: unit.unit_members.sort((a: any, b: any) => a.name.localeCompare(b.name))
+                }))
+                setUnits(sortedUnits)
+            }
+        }
+        fetchUnits()
+    }, [])
 
     if (!bookings || bookings.length === 0) {
         return (
@@ -26,8 +65,8 @@ export default function MyBookings({
         )
     }
 
-    const handleDelete = async (bookingId: string) => {
-        if (!confirm('請確認是否刪除?')) {
+    const handleDelete = async (bookingId: string, skipConfirm = false) => {
+        if (!skipConfirm && !confirm('請確認是否刪除?')) {
             return
         }
 
@@ -41,20 +80,27 @@ export default function MyBookings({
         }
     }
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+    const handleUpdate = async (formData: FormData) => {
         if (!editingBooking) return
 
-        setIsSubmitting(true)
-        const formData = new FormData(e.currentTarget)
-
-
-
         try {
+            // Get the original booking date
+            const bookingDate = new Date(editingBooking.start_time)
+            const year = bookingDate.getFullYear()
+            const month = String(bookingDate.getMonth() + 1).padStart(2, '0')
+            const day = String(bookingDate.getDate()).padStart(2, '0')
+            const dateStr = `${year}-${month}-${day}`
+
+            // Combine date with time values from form
+            const startTime = formData.get('start_time') as string
+            const endTime = formData.get('end_time') as string
+            const startDateTime = `${dateStr}T${startTime}:00`
+            const endDateTime = `${dateStr}T${endTime}:00`
+
             const updateData = {
                 title: formData.get('title') as string,
-                start_time: formData.get('start_time') as string,
-                end_time: formData.get('end_time') as string,
+                start_time: startDateTime,
+                end_time: endDateTime,
                 notes: formData.get('notes') as string || null,
                 category: formData.get('category') as string || '會議',
                 eco_box_count: parseInt(formData.get('eco_box_count') as string) || 0,
@@ -62,6 +108,9 @@ export default function MyBookings({
                 takeout_count: parseInt(formData.get('takeout_count') as string) || 0,
                 cannot_comply_reason: formData.get('cannot_comply_reason') as string || '無提供便當',
                 approved_disposable_count: parseInt(formData.get('approved_disposable_count') as string) || 0,
+                unit_id: formData.get('unit_id') as string,
+                unit_member_id: formData.get('unit_member_id') as string,
+                room_id: formData.get('room_id') as string,
             }
 
             await updateBooking(editingBooking.id, updateData)
@@ -74,10 +123,28 @@ export default function MyBookings({
             } else {
                 alert('更新預約失敗: ' + errorMessage)
             }
-        } finally {
-            setIsSubmitting(false)
+            throw error // Re-throw to let BookingForm know it failed
         }
     }
+
+    // Extract unique rooms from bookings for the form (though editing usually doesn't allow changing room in MyBookings, 
+    // but BookingForm has room select. We can pass all unique rooms found in bookings, or we might need to fetch all rooms if we want to allow changing room.
+    // The original MyBookings disabled room input. BookingForm has it enabled unless isReadOnly.
+    // If we want to keep it disabled or restricted, we can pass only the current room or handle it.
+    // However, the user said "Use the Month Meeting interface", which allows selecting room.
+    // But for "My Bookings", maybe they want to change room too?
+    // Let's assume they want the full capability. But we need the list of ALL rooms.
+    // MyBookings props only has bookings. We don't have all rooms.
+    // We might need to fetch rooms too or just pass the room from the booking as the only option.
+    // Let's fetch rooms too to be safe and fully functional.
+
+    // Wait, I can't easily fetch rooms inside the component without adding more state/effects.
+    // But `bookings` contains `rooms` info.
+    // If I only pass the room of the current booking, they can't change room.
+    // Let's check if `MonthCalendar` passes `rooms`. Yes.
+    // `MyBookings` page should probably pass `rooms` too.
+    // But I can't change the page component easily without checking it.
+    // Let's check `src/app/my-bookings/page.tsx`.
 
     return (
         <>
@@ -191,198 +258,22 @@ export default function MyBookings({
                 })()}
             </div>
 
-            {/* Edit Modal */}
-            {editingBooking && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-background rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 border border-border">
-                        <h3 className="text-lg font-semibold text-foreground mb-4">
-                            編輯預約
-                        </h3>
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-foreground mb-1">
-                                    會議室
-                                </label>
-                                <input
-                                    type="text"
-                                    value={editingBooking.rooms.name}
-                                    disabled
-                                    className="flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm text-muted-foreground cursor-not-allowed"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-foreground mb-1">
-                                    會議主題
-                                </label>
-                                <input
-                                    type="text"
-                                    name="title"
-                                    required
-                                    defaultValue={editingBooking.title}
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-foreground mb-1">
-                                        開始時間
-                                    </label>
-                                    <input
-                                        type="datetime-local"
-                                        name="start_time"
-                                        required
-                                        defaultValue={new Date(editingBooking.start_time).toISOString().slice(0, 16)}
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-foreground mb-1">
-                                        結束時間
-                                    </label>
-                                    <input
-                                        type="datetime-local"
-                                        name="end_time"
-                                        required
-                                        defaultValue={new Date(editingBooking.end_time).toISOString().slice(0, 16)}
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-foreground mb-1">
-                                    備註 (選填)
-                                </label>
-                                <textarea
-                                    name="notes"
-                                    rows={3}
-                                    defaultValue={editingBooking.notes || ''}
-                                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                />
-                            </div>
-
-                            {/* 免洗餐具及包裝飲用水減量填報 */}
-                            <div className="border-t border-border pt-4 mt-4">
-                                <h4 className="text-sm font-semibold text-foreground mb-3">免洗餐具及包裝飲用水減量填報</h4>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    {/* 類別 */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-foreground mb-1">
-                                            類別
-                                        </label>
-                                        <select
-                                            name="category"
-                                            defaultValue={editingBooking.category || '會議'}
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                        >
-                                            <option value="會議">會議</option>
-                                            <option value="訓練">訓練</option>
-                                            <option value="活動">活動</option>
-                                        </select>
-                                    </div>
-
-                                    {/* 訂購環保餐盒數量 */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-foreground mb-1">
-                                            訂購環保餐盒數量
-                                        </label>
-                                        <input
-                                            type="number"
-                                            name="eco_box_count"
-                                            min="0"
-                                            defaultValue={editingBooking.eco_box_count || 0}
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                        />
-                                    </div>
-
-                                    {/* 未使用包裝水、紙杯人數 */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-foreground mb-1">
-                                            未使用包裝水、紙杯人數
-                                        </label>
-                                        <input
-                                            type="number"
-                                            name="no_packaging_count"
-                                            min="0"
-                                            defaultValue={editingBooking.no_packaging_count || 0}
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                        />
-                                    </div>
-
-                                    {/* 提供外帶餐盒數量 */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-foreground mb-1">
-                                            提供外帶餐盒數量
-                                            <span className="text-xs text-muted-foreground ml-1">(提供非塑膠包裝之餐點數量，不含便當)</span>
-                                        </label>
-                                        <input
-                                            type="number"
-                                            name="takeout_count"
-                                            min="0"
-                                            defaultValue={editingBooking.takeout_count || 0}
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4 mt-4">
-                                    {/* 無法配合減少使用免洗餐具及包裝飲用水的原因 */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-foreground mb-1">
-                                            無法配合減少使用免洗餐具及包裝飲用水的原因
-                                        </label>
-                                        <select
-                                            name="cannot_comply_reason"
-                                            defaultValue={editingBooking.cannot_comply_reason || '無提供便當'}
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                        >
-                                            <option value="無提供便當">無提供便當</option>
-                                            <option value="因訂購數量無法配合">因訂購數量無法配合</option>
-                                            <option value="因收送時間無法配合">因收送時間無法配合</option>
-                                            <option value="因辦理地點無法配合">因辦理地點無法配合</option>
-                                            <option value="因其他原因無法配合">因其他原因無法配合</option>
-                                        </select>
-                                    </div>
-
-                                    {/* 本次經簽准使用免洗餐盒數量 */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-foreground mb-1">
-                                            本次經簽准使用免洗餐盒數量
-                                        </label>
-                                        <input
-                                            type="number"
-                                            name="approved_disposable_count"
-                                            min="0"
-                                            defaultValue={editingBooking.approved_disposable_count || 0}
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex justify-end space-x-2 pt-4">
-                                <button
-                                    type="button"
-                                    onClick={() => setEditingBooking(null)}
-                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
-                                >
-                                    取消
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 disabled:opacity-50"
-                                >
-                                    {isSubmitting ? '儲存中...' : '儲存'}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+            <BookingForm
+                isOpen={!!editingBooking}
+                onClose={() => setEditingBooking(null)}
+                onSubmit={handleUpdate}
+                onDelete={async () => {
+                    if (editingBooking) {
+                        await handleDelete(editingBooking.id, true)
+                    }
+                }}
+                initialData={editingBooking}
+                rooms={rooms}
+                units={units}
+                selectedDate={editingBooking ? new Date(editingBooking.start_time) : null}
+                isReadOnly={false}
+                isEcoOnlyEditable={editingBooking ? (new Date(editingBooking.end_time) < new Date() && !isAdmin) : false}
+            />
         </>
     )
 }
