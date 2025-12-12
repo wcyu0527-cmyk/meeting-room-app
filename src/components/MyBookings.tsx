@@ -120,6 +120,8 @@ export default function MyBookings({
             const errorMessage = (error as Error).message
             if (errorMessage.includes('conflicting key value violates exclusion constraint "no_overlap"')) {
                 alert('更新預約失敗:同時段已有登記')
+            } else if (errorMessage.includes('bookings_time_check')) {
+                alert('更新預約失敗: 結束時間必須晚於開始時間')
             } else {
                 alert('更新預約失敗: ' + errorMessage)
             }
