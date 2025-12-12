@@ -280,7 +280,7 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
         }
 
         // Check if user is trying to book a past date (regular users only)
-        if (!editingBooking && !isAdmin) {
+        if (!editingBooking && !isAdmin && selectedDate) {
             const today = new Date()
             today.setHours(0, 0, 0, 0)
             const bookingDate = new Date(selectedDate)
