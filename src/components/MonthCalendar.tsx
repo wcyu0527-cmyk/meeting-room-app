@@ -541,7 +541,7 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                                                     }}
                                                     className={`text-[10px] px-1.5 py-1 rounded border flex flex-col leading-tight cursor-pointer ${isMyBooking
                                                         ? 'bg-primary text-primary-foreground border-primary hover:opacity-90'
-                                                        : 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20'
+                                                        : 'bg-primary/20 text-foreground border-primary/30 hover:bg-primary/30'
                                                         }`}
                                                 >
                                                     <span className="font-semibold truncate">
@@ -591,7 +591,7 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                                                 }`}
                                         >
                                             <div className="flex justify-between items-start mb-2">
-                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary text-primary-foreground">
                                                     {(booking.rooms as unknown as Room)?.name || '會議室'}
                                                 </span>
                                                 {isMyBooking ? (
