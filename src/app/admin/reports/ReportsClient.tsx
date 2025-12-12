@@ -71,6 +71,52 @@ export default function ReportsClient() {
     }, [])
 
 
+
+    // 快速日期選擇
+    const setDateRange = (type: 'thisWeek' | 'thisMonth' | 'lastMonth' | 'thisYear') => {
+        const now = new Date()
+        const year = now.getFullYear()
+        const month = now.getMonth()
+        const currentDay = now.getDay() // 0 is Sunday
+
+        let start = new Date()
+        let end = new Date()
+
+        const formatDate = (date: Date) => {
+            const y = date.getFullYear()
+            const m = String(date.getMonth() + 1).padStart(2, '0')
+            const d = String(date.getDate()).padStart(2, '0')
+            return `${y}-${m}-${d}`
+        }
+
+        switch (type) {
+            case 'thisWeek':
+                // Monday to Sunday
+                // If today is Sunday (0), diff is 6. If Monday (1), diff is 0.
+                const diffToMonday = currentDay === 0 ? 6 : currentDay - 1
+                start = new Date(now)
+                start.setDate(now.getDate() - diffToMonday)
+                end = new Date(start)
+                end.setDate(start.getDate() + 6)
+                break
+            case 'thisMonth':
+                start = new Date(year, month, 1)
+                end = new Date(year, month + 1, 0)
+                break
+            case 'lastMonth':
+                start = new Date(year, month - 1, 1)
+                end = new Date(year, month, 0)
+                break
+            case 'thisYear':
+                start = new Date(year, 0, 1)
+                end = new Date(year, 11, 31)
+                break
+        }
+
+        setStartDate(formatDate(start))
+        setEndDate(formatDate(end))
+    }
+
     const handleSearch = async () => {
         if (!startDate || !endDate) {
             alert('請選擇開始與結束日期')
@@ -287,6 +333,32 @@ export default function ReportsClient() {
         <div className="space-y-6">
             {/* Search Controls */}
             <div className="bg-muted/50 p-4 rounded-md border border-border">
+                <div className="flex flex-wrap gap-2 mb-4">
+                    <button
+                        onClick={() => setDateRange('thisWeek')}
+                        className="px-3 py-1.5 text-sm font-medium rounded-md bg-background border border-input hover:bg-accent hover:text-accent-foreground transition-colors"
+                    >
+                        本週
+                    </button>
+                    <button
+                        onClick={() => setDateRange('thisMonth')}
+                        className="px-3 py-1.5 text-sm font-medium rounded-md bg-background border border-input hover:bg-accent hover:text-accent-foreground transition-colors"
+                    >
+                        本月
+                    </button>
+                    <button
+                        onClick={() => setDateRange('lastMonth')}
+                        className="px-3 py-1.5 text-sm font-medium rounded-md bg-background border border-input hover:bg-accent hover:text-accent-foreground transition-colors"
+                    >
+                        上月
+                    </button>
+                    <button
+                        onClick={() => setDateRange('thisYear')}
+                        className="px-3 py-1.5 text-sm font-medium rounded-md bg-background border border-input hover:bg-accent hover:text-accent-foreground transition-colors"
+                    >
+                        今年
+                    </button>
+                </div>
                 <div className="flex flex-wrap items-end gap-4">
                     <div className="flex-1 min-w-[150px]">
                         <label className="block text-sm font-medium text-foreground mb-1">
@@ -521,6 +593,6 @@ export default function ReportsClient() {
                     </tbody>
                 </table>
             </div>
-        </div>
+        </div >
     )
 }
