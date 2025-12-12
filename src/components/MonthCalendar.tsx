@@ -279,7 +279,17 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
 
         // Get unit_id and unit_member_id from formData directly, as BookingForm manages the state
         const unitId = formData.get('unit_id') as string
-        const unitMemberId = formData.get('unit_member_id') as string
+        const rawUnitMemberId = formData.get('unit_member_id') as string
+        const customUnitMemberName = formData.get('custom_unit_member_name') as string
+
+        let finalUnitMemberId: string | null = null
+        let finalCustomUnitMemberName: string | null = null
+
+        if (rawUnitMemberId === 'other') {
+            finalCustomUnitMemberName = customUnitMemberName
+        } else {
+            finalUnitMemberId = rawUnitMemberId || null
+        }
 
         let error
         if (editingBooking) {
@@ -292,7 +302,8 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                     end_time: endDateTime.toISOString(),
                     notes: notes || null,
                     unit_id: unitId || null,
-                    unit_member_id: unitMemberId || null,
+                    unit_member_id: finalUnitMemberId,
+                    custom_unit_member_name: finalCustomUnitMemberName,
                     category: category || '會議',
                     eco_box_count: ecoBoxCount,
                     no_packaging_count: noPackagingCount,
@@ -313,7 +324,8 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                     end_time: endDateTime.toISOString(),
                     notes: notes || null,
                     unit_id: unitId || null,
-                    unit_member_id: unitMemberId || null,
+                    unit_member_id: finalUnitMemberId,
+                    custom_unit_member_name: finalCustomUnitMemberName,
                     category: category || '會議',
                     eco_box_count: ecoBoxCount,
                     no_packaging_count: noPackagingCount,

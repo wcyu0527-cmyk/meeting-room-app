@@ -46,7 +46,13 @@ export default function BookingForm({
     useEffect(() => {
         if (initialData) {
             setSelectedUnitId(initialData.unit_id || '')
-            setSelectedMemberId(initialData.unit_member_id || '')
+            if (initialData.unit_member_id) {
+                setSelectedMemberId(initialData.unit_member_id)
+            } else if (initialData.custom_unit_member_name) {
+                setSelectedMemberId('other')
+            } else {
+                setSelectedMemberId('')
+            }
             setCannotComplyReason(initialData.cannot_comply_reason || '無提供便當')
         } else {
             setSelectedUnitId(userUnitId || '')
@@ -187,7 +193,19 @@ export default function BookingForm({
                                 {selectedUnit?.unit_members.map(member => (
                                     <option key={member.id} value={member.id}>{member.name}</option>
                                 ))}
+                                <option value="other">其他</option>
                             </select>
+                            {selectedMemberId === 'other' && (
+                                <input
+                                    type="text"
+                                    name="custom_unit_member_name"
+                                    required
+                                    defaultValue={initialData?.custom_unit_member_name || ''}
+                                    placeholder="請輸入聯絡人姓名"
+                                    disabled={isReadOnly || isEcoOnlyEditable}
+                                    className="flex h-10 w-full mt-2 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                />
+                            )}
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">

@@ -23,6 +23,7 @@ export type Booking = {
     approved_disposable_count?: number
     unit_id?: string
     unit_member_id?: string
+    custom_unit_member_name?: string
     created_at: string
 }
 
