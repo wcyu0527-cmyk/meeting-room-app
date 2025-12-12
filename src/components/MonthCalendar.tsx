@@ -358,13 +358,8 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
 
     const selectedDayBookings = selectedDate ? getDayBookings(selectedDate) : []
 
-    // Check if booking is read-only or eco-only editable
-    // 1. If it's someone else's booking -> fully read-only
-    // 2. If it's expired and user's own booking -> can edit eco fields only
-    // 3. If it's expired and user is admin -> can edit everything
-    // 3. If it's expired and user is admin -> can edit everything
+    // Check if booking is read-only (not user's own booking and not admin)
     const isReadOnly = Boolean(editingBooking && user && editingBooking.user_id !== user.id && !isAdmin)
-    const isEcoOnlyEditable = false
 
     return (
         <div ref={containerRef} className="rounded-xl border bg-card text-card-foreground shadow">
@@ -702,7 +697,6 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                 units={units}
                 selectedDate={selectedDate}
                 isReadOnly={isReadOnly}
-                isEcoOnlyEditable={isEcoOnlyEditable}
                 userUnitId={userUnitId}
             />
         </div >

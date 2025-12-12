@@ -272,7 +272,6 @@ export default function MyBookings({
                 units={units}
                 selectedDate={editingBooking ? new Date(editingBooking.start_time) : null}
                 isReadOnly={false}
-                isEcoOnlyEditable={editingBooking ? (new Date(editingBooking.end_time) < new Date() && !isAdmin) : false}
             />
         </>
     )

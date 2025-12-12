@@ -19,7 +19,6 @@ type BookingFormProps = {
     units: Unit[]
     selectedDate: Date | null
     isReadOnly?: boolean
-    isEcoOnlyEditable?: boolean
     title?: string
     userUnitId?: string
 }
@@ -34,7 +33,6 @@ export default function BookingForm({
     units,
     selectedDate,
     isReadOnly = false,
-    isEcoOnlyEditable = false,
     title,
     userUnitId
 }: BookingFormProps) {
@@ -116,9 +114,7 @@ export default function BookingForm({
             <div className="bg-background rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 border border-border">
                 <h3 className="text-lg font-semibold text-foreground mb-4">
                     {title || (initialData ? (
-                        isReadOnly ? '預約詳情' :
-                            isEcoOnlyEditable ? '編輯預約（僅限環保資訊）' :
-                                '編輯預約'
+                        isReadOnly ? '預約詳情' : '編輯預約'
                     ) : `預約會議 - ${selectedDate?.toLocaleDateString('zh-TW')}`)}
                 </h3>
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -129,7 +125,7 @@ export default function BookingForm({
                         <select
                             name="room_id"
                             required
-                            disabled={isReadOnly || isEcoOnlyEditable}
+                            disabled={isReadOnly}
                             defaultValue={initialData?.room_id}
                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         >
@@ -148,7 +144,7 @@ export default function BookingForm({
                             type="text"
                             name="title"
                             required
-                            disabled={isReadOnly || isEcoOnlyEditable}
+                            disabled={isReadOnly}
                             defaultValue={initialData?.title}
                             placeholder="例如：施工會議"
                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -164,7 +160,7 @@ export default function BookingForm({
                                 name="unit_id"
                                 value={selectedUnitId}
                                 required
-                                disabled={isReadOnly || isEcoOnlyEditable}
+                                disabled={isReadOnly}
                                 onChange={(e) => {
                                     setSelectedUnitId(e.target.value)
                                     setSelectedMemberId('')
@@ -186,7 +182,7 @@ export default function BookingForm({
                                 value={selectedMemberId}
                                 required
                                 onChange={(e) => setSelectedMemberId(e.target.value)}
-                                disabled={!selectedUnitId || isReadOnly || isEcoOnlyEditable}
+                                disabled={!selectedUnitId || isReadOnly}
                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
                             >
                                 <option value="">{selectedUnitId ? '請選擇同仁' : '請先選擇單位'}</option>
@@ -202,7 +198,7 @@ export default function BookingForm({
                                     required
                                     defaultValue={initialData?.custom_unit_member_name || ''}
                                     placeholder="請輸入聯絡人姓名"
-                                    disabled={isReadOnly || isEcoOnlyEditable}
+                                    disabled={isReadOnly}
                                     className="flex h-10 w-full mt-2 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 />
                             )}
@@ -216,7 +212,7 @@ export default function BookingForm({
                             <select
                                 name="start_time"
                                 required
-                                disabled={isReadOnly || isEcoOnlyEditable}
+                                disabled={isReadOnly}
                                 defaultValue={initialData ? new Date(initialData.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : "09:00"}
                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             >
@@ -236,7 +232,7 @@ export default function BookingForm({
                             <select
                                 name="end_time"
                                 required
-                                disabled={isReadOnly || isEcoOnlyEditable}
+                                disabled={isReadOnly}
                                 defaultValue={initialData ? new Date(initialData.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : "10:00"}
                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             >
@@ -258,7 +254,7 @@ export default function BookingForm({
                         <textarea
                             name="notes"
                             rows={3}
-                            disabled={isReadOnly || isEcoOnlyEditable}
+                            disabled={isReadOnly}
                             defaultValue={initialData?.notes || ''}
                             className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         />
