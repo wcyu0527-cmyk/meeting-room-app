@@ -63,6 +63,16 @@ export default function UnitList({ units }: { units: Unit[] }) {
         e.preventDefault()
         if (!newMemberName.trim()) return
 
+        // 檢查是否重覆
+        const unit = units.find(u => u.id === unitId)
+        if (unit) {
+            const exists = unit.unit_members.some(m => m.name === newMemberName.trim())
+            if (exists) {
+                alert('此單位已存在該成員')
+                return
+            }
+        }
+
         const res = await createUnitMember(unitId, newMemberName)
         if (res.success) {
             setNewMemberName('')
