@@ -456,7 +456,8 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                     <input
                         type="date"
                         ref={datePickerRef}
-                        className="sr-only"
+                        className="absolute opacity-0 pointer-events-none"
+                        style={{ width: '1px', height: '1px' }}
                         onChange={(e) => {
                             if (e.target.value) {
                                 const newDate = new Date(e.target.value)
@@ -478,7 +479,25 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
                     />
 
                     <button
-                        onClick={() => datePickerRef.current?.click()}
+                        onClick={() => {
+                            const input = datePickerRef.current
+                            if (!input) return
+
+                            // Try showPicker first (modern browsers)
+                            if (typeof input.showPicker === 'function') {
+                                try {
+                                    input.showPicker()
+                                } catch (e) {
+                                    // Fallback to click if showPicker fails
+                                    input.click()
+                                }
+                            } else {
+                                // Fallback for browsers that don't support showPicker
+                                input.click()
+                                // Additional focus for better compatibility
+                                input.focus()
+                            }
+                        }}
                         className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1"
                         title="前往特定日期"
                     >
