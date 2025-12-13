@@ -162,6 +162,7 @@ export default function AllBookings({
                         {bookings.map((booking) => {
                             const startTime = new Date(booking.start_time)
                             const endTime = new Date(booking.end_time)
+                            const isMyBooking = userId && booking.user_id === userId
 
                             return (
                                 <tr
@@ -184,7 +185,14 @@ export default function AllBookings({
                                         {booking.title}
                                     </td>
                                     <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
-                                        {booking.units?.name || '未知'}
+                                        <div className="flex items-center justify-between gap-2">
+                                            <span>{booking.units?.name || '未知'}</span>
+                                            {isMyBooking && (
+                                                <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary border border-primary/20">
+                                                    您的預約
+                                                </span>
+                                            )}
+                                        </div>
                                     </td>
                                 </tr>
                             )
