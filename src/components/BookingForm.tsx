@@ -90,6 +90,21 @@ export default function BookingForm({
             return
         }
 
+        // 驗證：不能預約昨天或更早的日期
+        const bookingDateStr = formData.get('booking_date') as string
+        if (bookingDateStr) {
+            const bookingDate = new Date(bookingDateStr + 'T00:00:00')
+            const now = new Date()
+            const utc8Time = new Date(now.getTime() + (8 * 60 * 60 * 1000))
+            const todayStart = new Date(utc8Time.getUTCFullYear(), utc8Time.getUTCMonth(), utc8Time.getUTCDate())
+
+            if (bookingDate < todayStart) {
+                alert('已逾期，無法新增')
+                setIsSubmitting(false)
+                return
+            }
+        }
+
         try {
             await onSubmit(formData)
             onClose()
