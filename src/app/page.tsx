@@ -41,7 +41,7 @@ export default async function Home({ searchParams }: { searchParams: { error?: s
 
   const { data: todayBookings } = await supabase
     .from('bookings')
-    .select('*, rooms(*)')
+    .select('*, rooms(*), units(*)')
     .gte('start_time', today.toISOString())
     .lt('start_time', tomorrow.toISOString())
     .order('start_time')
@@ -114,7 +114,7 @@ export default async function Home({ searchParams }: { searchParams: { error?: s
 
           {/* Today's Meetings Section */}
           <div className="mb-8">
-            <TodayBookings initialBookings={todayBookings as unknown as BookingWithRoom[]} />
+            <TodayBookings initialBookings={todayBookings as unknown as BookingWithRoom[]} userId={user?.id} rooms={rooms as Room[]} />
           </div>
 
           {/* Month Calendar Section - Only for logged in users */}
@@ -129,7 +129,7 @@ export default async function Home({ searchParams }: { searchParams: { error?: s
             <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">
               尚未開始
             </h2>
-            <div className="rounded-xl border bg-card text-card-foreground shadow">
+            <div>
               <AllBookings bookings={allBookingsWithProfile} rooms={rooms as Room[]} userId={user?.id} />
             </div>
           </div>

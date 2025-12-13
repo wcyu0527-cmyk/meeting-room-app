@@ -77,12 +77,9 @@ export default function AllBookings({
         if (!editingBooking) return
 
         try {
-            // Get the original booking date
-            const bookingDate = new Date(editingBooking.start_time)
-            const year = bookingDate.getFullYear()
-            const month = String(bookingDate.getMonth() + 1).padStart(2, '0')
-            const day = String(bookingDate.getDate()).padStart(2, '0')
-            const dateStr = `${year}-${month}-${day}`
+            // Get the date from form
+            const bookingDateStr = formData.get('booking_date') as string
+            const dateStr = bookingDateStr // Already in YYYY-MM-DD format
 
             // Combine date with time values from form
             const startTime = formData.get('start_time') as string
@@ -139,66 +136,57 @@ export default function AllBookings({
 
     return (
         <>
-            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-xl">
-                <table className="min-w-full divide-y divide-border">
-                    <thead className="bg-muted/50">
-                        <tr>
-                            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6 w-[100px] sm:w-[220px]">
-                                <span className="hidden sm:inline">時間</span>
-                                <span className="sm:hidden">時間</span>
-                            </th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground w-[100px] sm:w-[150px]">
-                                會議室
-                            </th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
-                                會議名稱
-                            </th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground w-[80px] sm:w-[100px]">
-                                登記單位
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border bg-card">
-                        {bookings.map((booking) => {
-                            const startTime = new Date(booking.start_time)
-                            const endTime = new Date(booking.end_time)
-                            const isMyBooking = userId && booking.user_id === userId
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {bookings.map((booking) => {
+                    const startTime = new Date(booking.start_time)
+                    const endTime = new Date(booking.end_time)
+                    const isMyBooking = userId && booking.user_id === userId
 
-                            return (
-                                <tr
-                                    key={booking.id}
-                                    onClick={() => setEditingBooking(booking)}
-                                    className="cursor-pointer hover:bg-muted/30 transition-colors"
-                                >
-                                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                                        <div className="font-medium text-foreground">
-                                            {startTime.toLocaleDateString('zh-TW', { month: '2-digit', day: '2-digit' })}
-                                        </div>
-                                        <div className="text-muted-foreground hidden sm:block">
-                                            {startTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: true })} - {endTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: true })}
-                                        </div>
-                                    </td>
-                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-foreground">
-                                        {booking.rooms?.name || '未知會議室'}
-                                    </td>
-                                    <td className="px-3 py-4 text-sm text-foreground">
-                                        {booking.title}
-                                    </td>
-                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
-                                        <div className="flex items-center justify-between gap-2">
-                                            <span>{booking.units?.name || '未知'}</span>
-                                            {isMyBooking && (
-                                                <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary border border-primary/20">
-                                                    您的預約
-                                                </span>
-                                            )}
-                                        </div>
-                                    </td>
-                                </tr>
-                            )
-                        })}
-                    </tbody>
-                </table>
+                    return (
+                        <div
+                            key={booking.id}
+                            onClick={() => setEditingBooking(booking)}
+                            className="group relative flex flex-col gap-2 rounded-lg border bg-card p-4 text-card-foreground shadow-sm transition-all hover:shadow-md cursor-pointer border-border/50 hover:border-primary/50"
+                        >
+                            <div className="flex items-start justify-between gap-2">
+                                <div className="font-semibold text-lg text-primary tracking-tight">
+                                    {booking.rooms?.name || '未知會議室'}
+                                </div>
+                                {isMyBooking && (
+                                    <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary border border-primary/20 shrink-0">
+                                        您的預約
+                                    </span>
+                                )}
+                            </div>
+
+                            <div className="flex flex-col gap-1">
+                                <div className="text-base font-medium text-foreground line-clamp-2">
+                                    {booking.title}
+                                </div>
+
+                                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                    <svg className="h-4 w-4 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <span>
+                                        {startTime.toLocaleDateString('zh-TW', { month: '2-digit', day: '2-digit' })} ({['日', '一', '二', '三', '四', '五', '六'][startTime.getDay()]})
+                                    </span>
+                                    <span className="mx-1 text-border">|</span>
+                                    <span>
+                                        {startTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })} - {endTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                                    </span>
+                                </div>
+
+                                <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-1">
+                                    <svg className="h-4 w-4 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                    </svg>
+                                    <span>{booking.units?.name || '未知單位'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                })}
             </div>
 
             <BookingForm

@@ -258,8 +258,14 @@ export default function MonthCalendar({ initialBookings, rooms, userUnitId }: Ca
         const approvedDisposableCount = parseInt(formData.get('approved_disposable_count') as string) || 0
 
         // Combine date and time
-        // 編輯模式：使用原始預約的日期；新增模式：使用選擇的日期
-        const dateToUse = editingBooking ? new Date(editingBooking.start_time) : selectedDate
+        // 編輯模式：從表單讀取日期；新增模式：使用選擇的日期
+        let dateToUse: Date | null = null
+        if (editingBooking) {
+            const bookingDateStr = formData.get('booking_date') as string
+            dateToUse = bookingDateStr ? new Date(bookingDateStr + 'T00:00:00') : new Date(editingBooking.start_time)
+        } else {
+            dateToUse = selectedDate
+        }
         if (!dateToUse) return
 
         const year = dateToUse.getFullYear()

@@ -40,6 +40,7 @@ export default function BookingForm({
     const [selectedUnitId, setSelectedUnitId] = useState('')
     const [selectedMemberId, setSelectedMemberId] = useState('')
     const [cannotComplyReason, setCannotComplyReason] = useState('無提供便當')
+    const [selectedBookingDate, setSelectedBookingDate] = useState<Date | null>(null)
 
     useEffect(() => {
         if (initialData) {
@@ -52,12 +53,14 @@ export default function BookingForm({
                 setSelectedMemberId('')
             }
             setCannotComplyReason(initialData.cannot_comply_reason || '無提供便當')
+            setSelectedBookingDate(new Date(initialData.start_time))
         } else {
             setSelectedUnitId(userUnitId || '')
             setSelectedMemberId('')
             setCannotComplyReason('無提供便當')
+            setSelectedBookingDate(selectedDate)
         }
-    }, [initialData, userUnitId])
+    }, [initialData, userUnitId, selectedDate])
 
     if (!isOpen) return null
 
@@ -118,6 +121,30 @@ export default function BookingForm({
                     ) : `預約會議 - ${selectedDate?.toLocaleDateString('zh-TW')}`)}
                 </h3>
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-foreground mb-1">
+                            預約日期
+                        </label>
+                        <input
+                            type="date"
+                            name="booking_date"
+                            required
+                            disabled={isReadOnly}
+                            value={selectedBookingDate ?
+                                `${selectedBookingDate.getFullYear()}-${String(selectedBookingDate.getMonth() + 1).padStart(2, '0')}-${String(selectedBookingDate.getDate()).padStart(2, '0')}`
+                                : ''}
+                            onChange={(e) => {
+                                if (e.target.value) {
+                                    const [year, month, day] = e.target.value.split('-')
+                                    const newDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+                                    setSelectedBookingDate(newDate)
+                                } else {
+                                    setSelectedBookingDate(null)
+                                }
+                            }}
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        />
+                    </div>
                     <div>
                         <label className="block text-sm font-medium text-foreground mb-1">
                             會議室
