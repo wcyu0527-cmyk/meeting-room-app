@@ -21,6 +21,23 @@ export async function deleteBooking(bookingId: string) {
     revalidatePath('/admin/bookings')
 }
 
+export async function bulkDeleteBookings(bookingIds: string[]) {
+    await requireAdmin()
+
+    const supabase = await createClient()
+
+    const { error } = await supabase
+        .from('bookings')
+        .delete()
+        .in('id', bookingIds)
+
+    if (error) {
+        throw new Error(error.message)
+    }
+
+    revalidatePath('/admin/bookings')
+}
+
 export async function updateBooking(
     bookingId: string,
     title: string,
