@@ -314,9 +314,12 @@ export default function BookingForm({
 
                             {/* 提供外帶餐盒數量 */}
                             <div>
-                                <label className="block text-sm font-medium text-foreground mb-1">
-                                    提供外帶餐盒數量
-                                    <span className="text-xs text-muted-foreground ml-1">(提供非塑膠包裝之餐點數量，不含便當)</span>
+                                <label className="block text-sm font-medium text-foreground mb-1 w-fit group relative cursor-help">
+                                    <span className="border-b border-dotted border-gray-400">提供外帶餐盒數量</span>
+                                    <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-max max-w-[240px] px-2 py-1 bg-slate-800 text-slate-50 text-xs rounded shadow-md z-10 pointer-events-none">
+                                        非塑膠包裝之餐點數量，不含便當
+                                        <div className="absolute top-full left-4 -mt-[1px] border-4 border-transparent border-t-slate-800"></div>
+                                    </div>
                                 </label>
                                 <input
                                     type="number"
@@ -398,7 +401,7 @@ export default function BookingForm({
                         </div>
                     </div>
                 </form>
-            </div>
-        </div>
+            </div >
+        </div >
     )
 }

@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Meeting Room Booking",
+  title: "中工段會議室",
   description: "Meeting room booking system",
 };
 
