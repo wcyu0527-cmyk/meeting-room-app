@@ -39,9 +39,11 @@ export default function TodayBookings({
             const supabase = createClient()
 
             // Create UTC+8 timezone-aware date range
-            const year = date.getFullYear()
-            const month = date.getMonth()
-            const day = date.getDate()
+            // Add 8 hours to get UTC+8 time, then extract date components
+            const utc8Time = new Date(date.getTime() + (8 * 60 * 60 * 1000))
+            const year = utc8Time.getUTCFullYear()
+            const month = utc8Time.getUTCMonth()
+            const day = utc8Time.getUTCDate()
 
             const startOfDayUTC = new Date(Date.UTC(year, month, day, -8, 0, 0, 0))
             const endOfDayUTC = new Date(Date.UTC(year, month, day + 1, -8, 0, 0, 0))
@@ -142,9 +144,10 @@ export default function TodayBookings({
 
             // Refresh bookings after update (UTC+8 timezone-aware)
             const supabase = createClient()
-            const year = currentDate.getFullYear()
-            const month = currentDate.getMonth()
-            const day = currentDate.getDate()
+            const utc8Time = new Date(currentDate.getTime() + (8 * 60 * 60 * 1000))
+            const year = utc8Time.getUTCFullYear()
+            const month = utc8Time.getUTCMonth()
+            const day = utc8Time.getUTCDate()
 
             const startOfDayUTC = new Date(Date.UTC(year, month, day, -8, 0, 0, 0))
             const endOfDayUTC = new Date(Date.UTC(year, month, day + 1, -8, 0, 0, 0))
@@ -183,9 +186,10 @@ export default function TodayBookings({
 
             // Refresh bookings after delete (UTC+8 timezone-aware)
             const supabase = createClient()
-            const year = currentDate.getFullYear()
-            const month = currentDate.getMonth()
-            const day = currentDate.getDate()
+            const utc8Time = new Date(currentDate.getTime() + (8 * 60 * 60 * 1000))
+            const year = utc8Time.getUTCFullYear()
+            const month = utc8Time.getUTCMonth()
+            const day = utc8Time.getUTCDate()
 
             const startOfDayUTC = new Date(Date.UTC(year, month, day, -8, 0, 0, 0))
             const endOfDayUTC = new Date(Date.UTC(year, month, day + 1, -8, 0, 0, 0))

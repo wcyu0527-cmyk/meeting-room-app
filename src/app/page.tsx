@@ -34,13 +34,15 @@ export default async function Home({ searchParams }: { searchParams: { error?: s
   }
 
   // Get today's bookings (UTC+8 timezone)
+  // Server might be in UTC, so we need to explicitly work with UTC+8
   const now = new Date()
-  const year = now.getFullYear()
-  const month = now.getMonth()
-  const day = now.getDate()
+  const utc8Time = new Date(now.getTime() + (8 * 60 * 60 * 1000))
+
+  const year = utc8Time.getUTCFullYear()
+  const month = utc8Time.getUTCMonth()
+  const day = utc8Time.getUTCDate()
 
   // Create UTC timestamps for the start and end of today in UTC+8
-  // UTC+8 means we need to subtract 8 hours from UTC to get local midnight
   const todayStartUTC = new Date(Date.UTC(year, month, day, -8, 0, 0, 0))
   const tomorrowStartUTC = new Date(Date.UTC(year, month, day + 1, -8, 0, 0, 0))
 
@@ -80,8 +82,13 @@ export default async function Home({ searchParams }: { searchParams: { error?: s
   // Get current month bookings if user is logged in
   let monthBookings: BookingWithRoom[] = []
   if (user) {
-    const startOfMonth = new Date(year, month, 1, -8, 0, 0, 0)
-    const endOfMonth = new Date(year, month + 1, 0, 15, 59, 59, 999)
+    // Use UTC+8 aware date for month calculations
+    const utc8Now = new Date(nowTime.getTime() + (8 * 60 * 60 * 1000))
+    const currentYear = utc8Now.getUTCFullYear()
+    const currentMonth = utc8Now.getUTCMonth()
+
+    const startOfMonth = new Date(Date.UTC(currentYear, currentMonth, 1, -8, 0, 0, 0))
+    const endOfMonth = new Date(Date.UTC(currentYear, currentMonth + 1, 0, 15, 59, 59, 999))
 
     const { data: mb } = await supabase
       .from('bookings')
