@@ -81,6 +81,15 @@ export default function BookingForm({
             return
         }
 
+        // 驗證：開始時間不能等於結束時間
+        const startTime = formData.get('start_time') as string
+        const endTime = formData.get('end_time') as string
+        if (startTime === endTime) {
+            alert('預約失敗: 結束時間必須晚於開始時間')
+            setIsSubmitting(false)
+            return
+        }
+
         try {
             await onSubmit(formData)
             onClose()
