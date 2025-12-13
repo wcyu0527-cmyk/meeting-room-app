@@ -217,7 +217,7 @@ export default function UnitList({ units }: { units: Unit[] }) {
                         <div className="px-4 py-4 sm:px-6">
                             <div className="flex justify-between items-center mb-3">
                                 <h5 className="text-sm font-medium text-foreground">成員名單</h5>
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-600 text-white">
                                     {unit.unit_members.length} 人
                                 </span>
                             </div>

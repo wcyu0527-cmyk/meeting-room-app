@@ -256,7 +256,7 @@ export default function AdminUsersList({ profiles, units }: { profiles: Profile[
                                                 <option value="admin">管理員</option>
                                             </select>
                                         ) : (
-                                            <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${profile.role === 'admin' ? 'bg-destructive/10 text-destructive' : 'bg-primary/10 text-primary'
+                                            <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${profile.role === 'admin' ? 'bg-red-600 text-white' : 'bg-blue-600 text-white'
                                                 }`}>
                                                 {profile.role === 'admin' ? '管理員' : '一般使用者'}
                                             </span>

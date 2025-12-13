@@ -326,7 +326,7 @@ function BookingCard({
 
                 <div className="space-y-1">
                     <div className="flex items-center gap-2 text-sm font-medium">
-                        <span className="inline-flex items-center justify-center rounded bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+                        <span className="inline-flex items-center justify-center rounded bg-blue-600 px-2 py-1 text-xs font-medium text-white">
                             {booking.rooms.name}
                         </span>
                     </div>
