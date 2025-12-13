@@ -130,7 +130,7 @@ export default async function Home({ searchParams }: { searchParams: { error?: s
               尚未開始
             </h2>
             <div className="rounded-xl border bg-card text-card-foreground shadow">
-              <AllBookings bookings={allBookingsWithProfile} />
+              <AllBookings bookings={allBookingsWithProfile} rooms={rooms as Room[]} userId={user?.id} />
             </div>
           </div>
 
