@@ -23,6 +23,7 @@ export default function AllBookings({
 }) {
     const [editingBooking, setEditingBooking] = useState<BookingWithRoom | null>(null)
     const [units, setUnits] = useState<Unit[]>([])
+    const [isAdmin, setIsAdmin] = useState(false)
 
     useEffect(() => {
         const fetchUnits = async () => {
@@ -49,6 +50,20 @@ export default function AllBookings({
         }
         fetchUnits()
     }, [])
+
+    useEffect(() => {
+        const checkAdmin = async () => {
+            if (!userId) return
+            const supabase = createClient()
+            const { data } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', userId)
+                .single()
+            setIsAdmin(data?.role === 'admin')
+        }
+        checkAdmin()
+    }, [userId])
 
     if (!bookings || bookings.length === 0) {
         return (
@@ -119,6 +134,9 @@ export default function AllBookings({
         }
     }
 
+    // Check if booking is read-only (not user's own booking and not admin)
+    const isReadOnly = Boolean(editingBooking && userId && editingBooking.user_id !== userId && !isAdmin)
+
     return (
         <>
             <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-xl">
@@ -184,7 +202,7 @@ export default function AllBookings({
                 rooms={rooms}
                 units={units}
                 selectedDate={editingBooking ? new Date(editingBooking.start_time) : null}
-                isReadOnly={false}
+                isReadOnly={isReadOnly}
             />
         </>
     )
