@@ -38,17 +38,19 @@ export default function TodayBookings({
             setLoading(true)
             const supabase = createClient()
 
-            const startOfDay = new Date(date)
-            startOfDay.setHours(0, 0, 0, 0)
+            // Create UTC+8 timezone-aware date range
+            const year = date.getFullYear()
+            const month = date.getMonth()
+            const day = date.getDate()
 
-            const endOfDay = new Date(date)
-            endOfDay.setHours(23, 59, 59, 999)
+            const startOfDayUTC = new Date(Date.UTC(year, month, day, -8, 0, 0, 0))
+            const endOfDayUTC = new Date(Date.UTC(year, month, day + 1, -8, 0, 0, 0))
 
             const { data } = await supabase
                 .from('bookings')
                 .select('*, rooms(*), units(*)')
-                .gte('start_time', startOfDay.toISOString())
-                .lt('start_time', endOfDay.toISOString())
+                .gte('start_time', startOfDayUTC.toISOString())
+                .lt('start_time', endOfDayUTC.toISOString())
                 .order('start_time')
 
             if (data) {
@@ -138,18 +140,20 @@ export default function TodayBookings({
             await updateBooking(editingBooking.id, updateData)
             setEditingBooking(null)
 
-            // Refresh bookings after update
+            // Refresh bookings after update (UTC+8 timezone-aware)
             const supabase = createClient()
-            const startOfDay = new Date(currentDate)
-            startOfDay.setHours(0, 0, 0, 0)
-            const endOfDay = new Date(currentDate)
-            endOfDay.setHours(23, 59, 59, 999)
+            const year = currentDate.getFullYear()
+            const month = currentDate.getMonth()
+            const day = currentDate.getDate()
+
+            const startOfDayUTC = new Date(Date.UTC(year, month, day, -8, 0, 0, 0))
+            const endOfDayUTC = new Date(Date.UTC(year, month, day + 1, -8, 0, 0, 0))
 
             const { data } = await supabase
                 .from('bookings')
                 .select('*, rooms(*), units(*)')
-                .gte('start_time', startOfDay.toISOString())
-                .lt('start_time', endOfDay.toISOString())
+                .gte('start_time', startOfDayUTC.toISOString())
+                .lt('start_time', endOfDayUTC.toISOString())
                 .order('start_time')
 
             if (data) {
@@ -177,18 +181,20 @@ export default function TodayBookings({
             await deleteBooking(editingBooking.id)
             setEditingBooking(null)
 
-            // Refresh bookings after delete
+            // Refresh bookings after delete (UTC+8 timezone-aware)
             const supabase = createClient()
-            const startOfDay = new Date(currentDate)
-            startOfDay.setHours(0, 0, 0, 0)
-            const endOfDay = new Date(currentDate)
-            endOfDay.setHours(23, 59, 59, 999)
+            const year = currentDate.getFullYear()
+            const month = currentDate.getMonth()
+            const day = currentDate.getDate()
+
+            const startOfDayUTC = new Date(Date.UTC(year, month, day, -8, 0, 0, 0))
+            const endOfDayUTC = new Date(Date.UTC(year, month, day + 1, -8, 0, 0, 0))
 
             const { data } = await supabase
                 .from('bookings')
                 .select('*, rooms(*), units(*)')
-                .gte('start_time', startOfDay.toISOString())
-                .lt('start_time', endOfDay.toISOString())
+                .gte('start_time', startOfDayUTC.toISOString())
+                .lt('start_time', endOfDayUTC.toISOString())
                 .order('start_time')
 
             if (data) {

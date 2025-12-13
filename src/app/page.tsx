@@ -33,25 +33,30 @@ export default async function Home({ searchParams }: { searchParams: { error?: s
     console.error('Error fetching rooms:', error)
   }
 
-  // Get today's bookings
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const tomorrow = new Date(today)
-  tomorrow.setDate(tomorrow.getDate() + 1)
+  // Get today's bookings (UTC+8 timezone)
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = now.getMonth()
+  const day = now.getDate()
+
+  // Create UTC timestamps for the start and end of today in UTC+8
+  // UTC+8 means we need to subtract 8 hours from UTC to get local midnight
+  const todayStartUTC = new Date(Date.UTC(year, month, day, -8, 0, 0, 0))
+  const tomorrowStartUTC = new Date(Date.UTC(year, month, day + 1, -8, 0, 0, 0))
 
   const { data: todayBookings } = await supabase
     .from('bookings')
     .select('*, rooms(*), units(*)')
-    .gte('start_time', today.toISOString())
-    .lt('start_time', tomorrow.toISOString())
+    .gte('start_time', todayStartUTC.toISOString())
+    .lt('start_time', tomorrowStartUTC.toISOString())
     .order('start_time')
 
   // Get all current bookings (future bookings)
-  const now = new Date()
+  const nowTime = new Date()
   const { data: allBookingsData } = await supabase
     .from('bookings')
     .select('*, rooms(*), units(name)')
-    .gte('end_time', now.toISOString())
+    .gte('end_time', nowTime.toISOString())
     .order('start_time')
     .limit(50)
 
@@ -75,8 +80,8 @@ export default async function Home({ searchParams }: { searchParams: { error?: s
   // Get current month bookings if user is logged in
   let monthBookings: BookingWithRoom[] = []
   if (user) {
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
-    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59)
+    const startOfMonth = new Date(year, month, 1, -8, 0, 0, 0)
+    const endOfMonth = new Date(year, month + 1, 0, 15, 59, 59, 999)
 
     const { data: mb } = await supabase
       .from('bookings')
