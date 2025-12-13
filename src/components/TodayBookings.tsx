@@ -48,7 +48,7 @@ export default function TodayBookings({
                 .from('bookings')
                 .select('*, rooms(*), units(*)')
                 .gte('start_time', startOfDay.toISOString())
-                .lte('end_time', endOfDay.toISOString())
+                .lt('start_time', endOfDay.toISOString())
                 .order('start_time')
 
             if (data) {
@@ -149,7 +149,7 @@ export default function TodayBookings({
                 .from('bookings')
                 .select('*, rooms(*), units(*)')
                 .gte('start_time', startOfDay.toISOString())
-                .lte('end_time', endOfDay.toISOString())
+                .lt('start_time', endOfDay.toISOString())
                 .order('start_time')
 
             if (data) {
@@ -188,7 +188,7 @@ export default function TodayBookings({
                 .from('bookings')
                 .select('*, rooms(*), units(*)')
                 .gte('start_time', startOfDay.toISOString())
-                .lte('end_time', endOfDay.toISOString())
+                .lt('start_time', endOfDay.toISOString())
                 .order('start_time')
 
             if (data) {
